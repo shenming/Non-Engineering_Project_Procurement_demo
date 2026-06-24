@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../common/styles.css">
+</head>
+<body class="content-page">
+
+<div class="sub-navbar">
+    <span class="sub-nav-title">📋 采购过程列表</span>
+</div>
+
+<div class="flex-between mb-16">
+    <div>
+        <span class="text-muted">共 <strong>8</strong> 条采购记录</span>
+    </div>
+    <div class="flex gap-8">
+        <button class="btn btn-sm btn-outline">📥 导出</button>
+        <button class="btn btn-sm btn-primary" onclick="navTo('procurement','procurement/create.html')">＋ 发起申请</button>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:16px;">
+    <div class="card-body" style="padding:12px 20px;">
+        <div class="flex gap-12" style="flex-wrap:wrap;">
+            <select class="form-control form-control-sm" style="width:auto;min-width:120px;">
+                <option>全部状态</option><option>审批中</option><option>进行中</option><option>已完成</option><option>已作废</option>
+            </select>
+            <select class="form-control form-control-sm" style="width:auto;min-width:130px;">
+                <option>全部方式</option><option>公开招标</option><option>邀请招标</option><option>询比采购</option><option>谈判采购</option><option>直接采购</option>
+            </select>
+            <input class="form-control form-control-sm" placeholder="搜索申请编号/项目名称..." style="width:220px;">
+            <button class="btn btn-sm btn-primary">查询</button>
+            <button class="btn btn-sm btn-outline">重置</button>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>申请编号</th>
+                        <th>项目名称</th>
+                        <th>采购方式</th>
+                        <th>金额</th>
+                        <th>所属单位</th>
+                        <th>当前节点</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>ZB-2026-003</strong></td>
+                        <td>集团年度物业服务</td>
+                        <td><span class="tag tag-blue">公开招标</span></td>
+                        <td><span class="money">¥186.5万</span></td>
+                        <td>集团总部</td>
+                        <td>评标&公示</td>
+                        <td><span class="tag tag-yellow">进行中</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>ZB-2026-005</strong></td>
+                        <td>办公设备集中采购</td>
+                        <td><span class="tag tag-purple">询比采购</span></td>
+                        <td><span class="money">¥45.2万</span></td>
+                        <td>成员企业A</td>
+                        <td>已定标</td>
+                        <td><span class="tag tag-green">已完成</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline">归档</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>ZB-2026-006</strong></td>
+                        <td>法律顾问服务</td>
+                        <td><span class="tag tag-orange">直接采购</span></td>
+                        <td><span class="money">¥8.5万</span></td>
+                        <td>集团总部</td>
+                        <td>采购申请</td>
+                        <td><span class="tag tag-blue">审批中</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/adjust.html')">修改</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>ZB-2026-007</strong></td>
+                        <td>IT运维服务</td>
+                        <td><span class="tag tag-yellow">谈判采购</span></td>
+                        <td><span class="money">¥32.0万</span></td>
+                        <td>成员企业A</td>
+                        <td>谈判中</td>
+                        <td><span class="tag tag-yellow">进行中</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/adjust.html')">修改</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>ZB-2026-008</strong></td>
+                        <td>办公家具采购</td>
+                        <td><span class="tag tag-blue">公开招标</span></td>
+                        <td><span class="money">¥89.0万</span></td>
+                        <td>成员企业B</td>
+                        <td>开标</td>
+                        <td><span class="tag tag-yellow">进行中</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>ZB-2026-009</strong></td>
+                        <td>年度培训服务</td>
+                        <td><span class="tag tag-yellow">谈判采购</span></td>
+                        <td><span class="money">¥28.0万</span></td>
+                        <td>成员企业A</td>
+                        <td>谈判结束</td>
+                        <td><span class="tag tag-green">已完成</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>ZB-2026-010</strong></td>
+                        <td>生产设备维护</td>
+                        <td><span class="tag tag-purple">询比采购</span></td>
+                        <td><span class="money">¥67.0万</span></td>
+                        <td>成员企业B</td>
+                        <td>采购申请</td>
+                        <td><span class="tag tag-gray">草稿</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                            <button class="btn btn-xs btn-primary" onclick="navTo('procurement','procurement/adjust.html')">编辑</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);">
+        <span class="text-muted text-sm">显示 1-7 / 共 8 条</span>
+        <div class="flex gap-8">
+            <button class="btn btn-xs btn-outline" disabled>上一页</button>
+            <button class="btn btn-xs btn-primary">1</button>
+            <button class="btn btn-xs btn-outline">2</button>
+            <button class="btn btn-xs btn-outline" disabled>下一页</button>
+        </div>
+    </div>
+</div>
+
+<script src="../common/scripts.js"></script>
+</body>
+</html>

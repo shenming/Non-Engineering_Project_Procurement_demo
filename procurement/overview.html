@@ -6,57 +6,74 @@
 </head>
 <body class="content-page">
 
-    <div class="sub-navbar">
-        <span class="sub-nav-title">⚡ 采购过程</span>
-    </div>
+<div class="sub-navbar">
+    <span class="sub-nav-title">⚡ 采购方式选择</span>
+    <span class="breadcrumb">
+        <a onclick="navTo('procurement','procurement/list.html')">采购过程列表</a><span> › </span>方式选择
+    </span>
+</div>
 
-    <div class="flex-between mb-16">
-        <span class="text-muted">选择采购方式，进入对应流程</span>
-        <div class="flex gap-8">
-            <button class="btn btn-sm btn-outline">📥 导出</button>
-            <button class="btn btn-sm btn-outline">📋 查看全部</button>
+<div class="flex-between mb-16">
+    <span class="text-muted">选择采购方式，查看对应流程示意</span>
+    <div class="flex gap-8">
+        <button class="btn btn-sm btn-primary" onclick="navTo('procurement','procurement/create.html')">＋ 发起申请</button>
+        <button class="btn btn-sm btn-outline" onclick="navTo('procurement','procurement/list.html')">📋 返回列表</button>
+    </div>
+</div>
+
+<div class="method-grid">
+    <div class="method-card" onclick="showProcurementDetail('公开招标')"><span class="m-icon">📢</span><div class="m-name">公开招标</div><div class="m-desc">≥200万(货物) / ≥100万(服务)</div></div>
+    <div class="method-card" onclick="showProcurementDetail('邀请招标')"><span class="m-icon">📨</span><div class="m-name">邀请招标</div><div class="m-desc">≥100万(货物) / ≥50万(服务)</div></div>
+    <div class="method-card" onclick="showProcurementDetail('询比采购')"><span class="m-icon">📊</span><div class="m-name">询比采购</div><div class="m-desc">≥10万 · 3家以上供应商</div></div>
+    <div class="method-card" onclick="showProcurementDetail('谈判采购')"><span class="m-icon">🤝</span><div class="m-name">谈判采购</div><div class="m-desc">技术复杂 / 2家以上供应商</div></div>
+    <div class="method-card" onclick="showProcurementDetail('直接采购')"><span class="m-icon">📌</span><div class="m-name">直接采购</div><div class="m-desc"><10万 或 特殊情形</div></div>
+</div>
+
+<div class="card mt-16" id="procurementDetail">
+    <div class="card-header">
+        <h3 id="procDetailTitle">📢 公开招标 · 流程示意</h3>
+        <div class="actions">
+            <span class="tag tag-blue">进行中</span>
+            <button class="btn btn-sm btn-primary" onclick="navTo('procurement','procurement/create.html')">＋ 发起申请</button>
         </div>
     </div>
-
-    <div class="method-grid">
-        <div class="method-card" onclick="showProcurementDetail('公开招标')"><span class="m-icon">📢</span><div class="m-name">公开招标</div><div class="m-desc">≥200万(货物) / ≥100万(服务)</div></div>
-        <div class="method-card" onclick="showProcurementDetail('邀请招标')"><span class="m-icon">📨</span><div class="m-name">邀请招标</div><div class="m-desc">≥100万(货物) / ≥50万(服务)</div></div>
-        <div class="method-card" onclick="showProcurementDetail('询比采购')"><span class="m-icon">📊</span><div class="m-name">询比采购</div><div class="m-desc">≥10万 · 3家以上供应商</div></div>
-        <div class="method-card" onclick="showProcurementDetail('谈判采购')"><span class="m-icon">🤝</span><div class="m-name">谈判采购</div><div class="m-desc">技术复杂 / 2家以上供应商</div></div>
-        <div class="method-card" onclick="showProcurementDetail('直接采购')"><span class="m-icon">📌</span><div class="m-name">直接采购</div><div class="m-desc"><10万 或 特殊情形</div></div>
-    </div>
-
-    <div class="card mt-16" id="procurementDetail">
-        <div class="card-header">
-            <h3 id="procDetailTitle">📢 公开招标 · 流程示意</h3>
-            <div class="actions"><span class="tag tag-blue">进行中</span><button class="btn btn-sm btn-primary" onclick="navTo('procurement','procurement/create.html')">＋ 发起申请</button></div>
+    <div class="card-body">
+        <div class="steps" id="procSteps">
+            <span class="step done"><span class="num">1</span> 招标申请</span><span class="arrow">→</span>
+            <span class="step done"><span class="num">2</span> 公告发布</span><span class="arrow">→</span>
+            <span class="step active"><span class="num">3</span> 开标</span><span class="arrow">→</span>
+            <span class="step"><span class="num">4</span> 评标&公示</span><span class="arrow">→</span>
+            <span class="step"><span class="num">5</span> 中标结果</span><span class="arrow">→</span>
+            <span class="step"><span class="num">6</span> 中标公告</span>
         </div>
-        <div class="card-body">
-            <div class="steps" id="procSteps">
-                <span class="step done"><span class="num">1</span> 招标申请</span><span class="arrow">→</span>
-                <span class="step done"><span class="num">2</span> 公告发布</span><span class="arrow">→</span>
-                <span class="step active"><span class="num">3</span> 开标</span><span class="arrow">→</span>
-                <span class="step"><span class="num">4</span> 评标&公示</span><span class="arrow">→</span>
-                <span class="step"><span class="num">5</span> 中标结果</span><span class="arrow">→</span>
-                <span class="step"><span class="num">6</span> 中标公告</span>
+        <div class="alert alert-info" style="margin-top:8px;">
+            <span>📌</span>
+            <div><strong>当前节点：开标</strong> <span class="text-muted" style="margin-left:12px;">开标时间：2026-06-20 09:30</span><span class="text-muted" style="margin-left:12px;">已上传：开标记录、现场资料</span></div>
+        </div>
+        <div style="margin-top:12px;">
+            <div class="flex-between"><span class="fw-600 text-sm">📎 已归档附件</span><button class="btn btn-xs btn-outline">上传附件</button></div>
+            <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;">
+                <span class="tag tag-gray">📄 招标文件.pdf</span>
+                <span class="tag tag-gray">📄 招标公告.pdf</span>
+                <span class="tag tag-green">📄 开标记录.pdf</span>
+                <span class="tag tag-green">📄 开标现场资料.pdf</span>
             </div>
-            <div class="alert alert-info" style="margin-top:8px;"><span>📌</span><div><strong>当前节点：开标</strong> <span class="text-muted" style="margin-left:12px;">开标时间：2026-06-20 09:30</span><span class="text-muted" style="margin-left:12px;">已上传：开标记录、现场资料</span></div></div>
-            <div style="margin-top:12px;"><div class="flex-between"><span class="fw-600 text-sm">📎 已归档附件</span><button class="btn btn-xs btn-outline">上传附件</button></div><div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;"><span class="tag tag-gray">📄 招标文件.pdf</span><span class="tag tag-gray">📄 招标公告.pdf</span><span class="tag tag-green">📄 开标记录.pdf</span><span class="tag tag-green">📄 开标现场资料.pdf</span></div></div>
-            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-200);"><div class="flex-between text-sm"><span class="text-muted">审批状态：<span class="tag tag-yellow">OA审批中</span></span><span class="text-muted">经办人：李经理 · 2026-06-19</span></div><div class="flex gap-8 mt-8"><button class="btn btn-sm btn-outline">查看审批单</button><button class="btn btn-sm btn-danger" onclick="if(confirm('确认执行流标/弃标操作？此操作不可撤销。'))showAlert('已提交流标/弃标审批')">流标/弃标</button><button class="btn btn-sm btn-primary">补充招标文件</button></div></div>
+        </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-200);">
+            <div class="flex-between text-sm">
+                <span class="text-muted">审批状态：<span class="tag tag-yellow">OA审批中</span></span>
+                <span class="text-muted">经办人：李经理 · 2026-06-19</span>
+            </div>
+            <div class="flex gap-8 mt-8">
+                <button class="btn btn-sm btn-outline">查看审批单</button>
+                <button class="btn btn-sm btn-danger" onclick="if(confirm('确认执行流标/弃标操作？此操作不可撤销。'))showAlert('已提交流标/弃标审批')">流标/弃标</button>
+                <button class="btn btn-sm btn-primary">补充招标文件</button>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="card mt-16">
-        <div class="card-header"><h3>📋 采购流程列表</h3><div class="actions"><button class="btn btn-sm btn-outline">刷新</button></div></div>
-        <div class="card-body" style="padding:0;"><div class="table-wrap"><table><thead><tr><th>申请编号</th><th>项目名称</th><th>采购方式</th><th>金额</th><th>当前节点</th><th>状态</th><th>操作</th></tr></thead><tbody>
-        <tr><td>ZB-2026-003</td><td>集团年度物业服务</td><td><span class="tag tag-blue">公开招标</span></td><td><span class="money">¥186.5万</span></td><td>评标&公示</td><td><span class="tag tag-yellow">进行中</span></td><td><button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button></td></tr>
-        <tr><td>ZB-2026-005</td><td>办公设备集中采购</td><td><span class="tag tag-purple">询比采购</span></td><td><span class="money">¥45.2万</span></td><td>已定标</td><td><span class="tag tag-green">已完成</span></td><td><button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button> <button class="btn btn-xs btn-outline">归档</button></td></tr>
-        <tr><td>ZB-2026-006</td><td>法律顾问服务</td><td><span class="tag tag-orange">直接采购</span></td><td><span class="money">¥8.5万</span></td><td>采购申请</td><td><span class="tag tag-blue">审批中</span></td><td><button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button></td></tr>
-        <tr><td>ZB-2026-007</td><td>IT运维服务</td><td><span class="tag tag-yellow">谈判采购</span></td><td><span class="money">¥32.0万</span></td><td>谈判中</td><td><span class="tag tag-yellow">进行中</span></td><td><button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button></td></tr>
-        </tbody></table></div></div>
-    </div>
-
-    <script src="../common/scripts.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', function(){ showProcurementDetail('公开招标'); });</script>
+<script src="../common/scripts.js"></script>
+<script>document.addEventListener('DOMContentLoaded', function(){ showProcurementDetail('公开招标'); });</script>
 </body>
 </html>

@@ -18,7 +18,7 @@
     var moduleMap = {
         'dashboard':  { file: 'dashboard/index.html',  title: '仪表盘' },
         'plans':      { file: 'plans/list.html',       title: '采购计划' },
-        'procurement':{ file: 'procurement/overview.html', title: '采购过程' },
+        'procurement':{ file: 'procurement/list.html', title: '采购过程' },
         'collective': { file: 'collective/list.html',  title: '集采管理' },
         'reports':    { file: 'reports/overview.html', title: '报表管理' },
         'settings':   { file: 'settings/overview.html', title: '配置管理' }
@@ -97,7 +97,7 @@ function navTo(module, file) {
         var pageMap = {
             'dashboard': 'dashboard/index.html',
             'plans': 'plans/list.html',
-            'procurement': 'procurement/overview.html',
+            'procurement': 'procurement/list.html',
             'collective': 'collective/list.html',
             'reports': 'reports/overview.html',
             'settings': 'settings/overview.html'

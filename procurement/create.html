@@ -1,12 +1,74 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><link rel="stylesheet" href="../common/styles.css"></head><body class="content-page">
-<div class="sub-navbar"><span class="sub-nav-title">⚡ 发起采购申请</span><span class="breadcrumb"><a onclick="navTo('procurement')">采购过程</a> > 发起申请</span></div>
-<div class="alert alert-warning"><span>⚠️</span><div><strong>规则校验：</strong> 必须关联已生效的采购计划。无合规计划项则禁止发起。</div></div>
-<div class="card"><div class="card-header"><h3>采购申请信息</h3></div><div class="card-body">
-<div class="form-group"><label>关联计划 <span class="required">*</span></label><select class="form-control"><option>— 请选择已生效计划 —</option><option>PL-2026-0031 · IT设备采购 · 成员企业B · ¥45.0万</option><option>PL-2026-0042 · 年度培训服务 · 成员企业A · ¥28.0万</option><option selected>PL-2026-0050 · 生产设备维护 · 成员企业B · ¥67.0万</option></select></div>
-<div class="form-group"><label>采购方式 <span class="required">*</span></label><select class="form-control"><option>公开招标</option><option>邀请招标</option><option selected>询比采购</option><option>谈判采购</option><option>直接采购</option></select></div>
-<div class="form-group"><label>项目名称 <span class="required">*</span></label><input class="form-control" value="生产设备维护服务采购"></div>
-<div class="form-row"><div class="form-group"><label>采购限价 (万元) <span class="required">*</span></label><input class="form-control" type="number" value="67.0"></div><div class="form-group"><label>计划定标时间</label><input class="form-control" type="date" value="2026-07-15"></div></div>
-<div class="form-group"><label>附件（招标文件/采购需求等）</label><input class="form-control" type="file" multiple></div>
-<div class="text-xs text-muted mt-8">📌 审批通过后，流程将在OA中流转，用印文件回传系统。</div></div>
-<div class="card-header" style="border-top:1px solid var(--gray-200);border-bottom:none;background:#fff;"><span></span><div class="flex gap-8"><button class="btn btn-outline" onclick="navTo('procurement')">取消</button><button class="btn btn-primary" onclick="showAlert('✅ 采购申请已提交，进入OA审批流程。');navTo('procurement')">提交审批</button></div></div></div>
-<script src="../common/scripts.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../common/styles.css">
+</head>
+<body class="content-page">
+
+<div class="sub-navbar">
+    <span class="sub-nav-title">⚡ 发起采购申请</span>
+    <span class="breadcrumb">
+        <a onclick="navTo('procurement','procurement/list.html')">采购过程列表</a><span> › </span>发起申请
+    </span>
+</div>
+
+<div class="alert alert-warning">
+    <span>⚠️</span>
+    <div><strong>规则校验：</strong> 必须关联已生效的采购计划。无合规计划项则禁止发起。</div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>采购申请信息</h3></div>
+    <div class="card-body">
+        <div class="form-group">
+            <label>关联计划 <span class="required">*</span></label>
+            <select class="form-control">
+                <option>— 请选择已生效计划 —</option>
+                <option>PL-2026-0031 · IT设备采购 · 成员企业B · ¥45.0万</option>
+                <option>PL-2026-0042 · 年度培训服务 · 成员企业A · ¥28.0万</option>
+                <option selected>PL-2026-0050 · 生产设备维护 · 成员企业B · ¥67.0万</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>采购方式 <span class="required">*</span></label>
+            <select class="form-control">
+                <option>公开招标</option>
+                <option>邀请招标</option>
+                <option selected>询比采购</option>
+                <option>谈判采购</option>
+                <option>直接采购</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>项目名称 <span class="required">*</span></label>
+            <input class="form-control" value="生产设备维护服务采购">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>采购限价 (万元) <span class="required">*</span></label>
+                <input class="form-control" type="number" value="67.0">
+            </div>
+            <div class="form-group">
+                <label>计划定标时间</label>
+                <input class="form-control" type="date" value="2026-07-15">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>附件（招标文件/采购需求等）</label>
+            <input class="form-control" type="file" multiple>
+        </div>
+        <div class="text-xs text-muted mt-8">📌 审批通过后，流程将在OA中流转，用印文件回传系统。</div>
+    </div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);border-bottom:none;background:#fff;">
+        <span></span>
+        <div class="flex gap-8">
+            <button class="btn btn-outline" onclick="navTo('procurement','procurement/list.html')">取消</button>
+            <button class="btn btn-primary" onclick="showAlert('✅ 采购申请已提交，进入OA审批流程。');navTo('procurement','procurement/list.html')">提交审批</button>
+        </div>
+    </div>
+</div>
+
+<script src="../common/scripts.js"></script>
+</body>
+</html>
