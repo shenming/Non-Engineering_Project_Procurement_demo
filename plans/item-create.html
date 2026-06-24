@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../common/styles.css">
+</head>
+<body class="content-page">
+
+<div class="sub-navbar">
+    <span class="sub-nav-title">➕ 新增招采项</span>
+    <span class="breadcrumb">
+        <a onclick="navTo('plans')">采购计划</a><span> › </span>
+        <a onclick="navTo('plans','plans/view.html')">2026年度成员企业A采购计划</a><span> › </span>
+        新增招采项
+    </span>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>招采项信息</h3></div>
+    <div class="card-body">
+        <div class="alert alert-info">
+            <span>📌</span>
+            <div>归属计划：<strong>2026年度成员企业A采购计划</strong>（PL-2026-0001）</div>
+        </div>
+
+        <div class="form-group">
+            <label>采购内容 <span class="required">*</span></label>
+            <input class="form-control" placeholder="请填写采购内容描述">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>采购类别 <span class="required">*</span></label>
+                <select class="form-control">
+                    <option value="货物类">货物类</option>
+                    <option value="服务类" selected>服务类</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>预选采购方式 <span class="required">*</span></label>
+                <select class="form-control">
+                    <option>公开招标</option>
+                    <option>邀请招标</option>
+                    <option selected>询比采购</option>
+                    <option>谈判采购</option>
+                    <option>直接采购</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>预估金额 (万元) <span class="required">*</span></label>
+                <input class="form-control" type="number" value="10.0">
+            </div>
+            <div class="form-group">
+                <label>采购限价 (万元)</label>
+                <input class="form-control" type="number" value="9.0">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>计划开始 <span class="required">*</span></label>
+                <input class="form-control" type="date">
+            </div>
+            <div class="form-group">
+                <label>计划结束 <span class="required">*</span></label>
+                <input class="form-control" type="date">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>需求部门 <span class="required">*</span></label>
+                <input class="form-control" value="采购部">
+            </div>
+            <div class="form-group">
+                <label>经办人 <span class="required">*</span></label>
+                <input class="form-control" value="张明">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>是否集团管控项</label>
+            <select class="form-control">
+                <option value="no">否（自主管控）</option>
+                <option value="yes">是（集团重点管控）</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>附件</label>
+            <input class="form-control" type="file" multiple>
+        </div>
+    </div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);border-bottom:none;background:#fff;">
+        <span></span>
+        <div class="flex gap-8">
+            <button class="btn btn-outline" onclick="navTo('plans','plans/view.html')">取消</button>
+            <button class="btn btn-primary" onclick="showAlert('✅ 招采项已保存。');navTo('plans','plans/view.html')">保存</button>
+        </div>
+    </div>
+</div>
+
+<script src="../common/scripts.js"></script>
+</body>
+</html>

@@ -105,7 +105,7 @@
     <div class="card-header">
         <h3>📋 招采项明细</h3>
         <div class="flex gap-8">
-            <button class="btn btn-sm btn-outline" onclick="showAddItemModal()">＋ 新增招采项</button>
+            <button class="btn btn-sm btn-outline" onclick="navTo('plans','plans/item-create.html')">＋ 新增招采项</button>
         </div>
     </div>
     <div class="card-body" style="padding:0;">
@@ -143,8 +143,8 @@
                         <td><span class="tag tag-green">已完成</span></td>
                         <td>
                             <div class="inline-actions">
-                                <button class="btn btn-xs btn-outline">编辑</button>
-                                <button class="btn btn-xs btn-danger">删除</button>
+                                <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/item-edit.html')">编辑</button>
+                                <button class="btn btn-xs btn-danger" onclick="if(confirm('确认删除此招采项？'))showAlert('✅ 招采项已删除。')">删除</button>
                             </div>
                         </td>
                     </tr>
@@ -163,7 +163,7 @@
                         <td><span class="tag tag-yellow">执行中</span></td>
                         <td>
                             <div class="inline-actions">
-                                <button class="btn btn-xs btn-outline">编辑</button>
+                                <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/item-edit.html')">编辑</button>
                                 <button class="btn btn-xs btn-outline" disabled>删除</button>
                             </div>
                         </td>
@@ -183,8 +183,8 @@
                         <td><span class="tag tag-green">已生效</span></td>
                         <td>
                             <div class="inline-actions">
-                                <button class="btn btn-xs btn-outline">编辑</button>
-                                <button class="btn btn-xs btn-danger">删除</button>
+                                <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/item-edit.html')">编辑</button>
+                                <button class="btn btn-xs btn-danger" onclick="if(confirm('确认删除此招采项？'))showAlert('✅ 招采项已删除。')">删除</button>
                             </div>
                         </td>
                     </tr>
@@ -203,7 +203,7 @@
                         <td><span class="tag tag-yellow">执行中</span></td>
                         <td>
                             <div class="inline-actions">
-                                <button class="btn btn-xs btn-outline">编辑</button>
+                                <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/item-edit.html')">编辑</button>
                                 <button class="btn btn-xs btn-outline" disabled>删除</button>
                             </div>
                         </td>
@@ -223,8 +223,8 @@
                         <td><span class="tag tag-green">已生效</span></td>
                         <td>
                             <div class="inline-actions">
-                                <button class="btn btn-xs btn-outline">编辑</button>
-                                <button class="btn btn-xs btn-danger">删除</button>
+                                <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/item-edit.html')">编辑</button>
+                                <button class="btn btn-xs btn-danger" onclick="if(confirm('确认删除此招采项？'))showAlert('✅ 招采项已删除。')">删除</button>
                             </div>
                         </td>
                     </tr>
@@ -243,8 +243,8 @@
                         <td><span class="tag tag-gray">草稿</span></td>
                         <td>
                             <div class="inline-actions">
-                                <button class="btn btn-xs btn-outline">编辑</button>
-                                <button class="btn btn-xs btn-danger">删除</button>
+                                <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/item-edit.html')">编辑</button>
+                                <button class="btn btn-xs btn-danger" onclick="if(confirm('确认删除此招采项？'))showAlert('✅ 招采项已删除。')">删除</button>
                             </div>
                         </td>
                     </tr>
@@ -270,106 +270,6 @@
     </div>
 </div>
 
-<!-- ===== 新增/编辑招采项 模态框 ===== -->
-<div class="modal-overlay" id="itemModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h2 id="itemModalTitle">新增招采项</h2>
-            <button class="close" onclick="closeItemModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label>采购内容 <span class="required">*</span></label>
-                <input class="form-control" id="itemContent" placeholder="请填写采购内容描述">
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>采购类别 <span class="required">*</span></label>
-                    <select class="form-control" id="itemCategory">
-                        <option value="货物类">货物类</option>
-                        <option value="服务类" selected>服务类</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>预选采购方式 <span class="required">*</span></label>
-                    <select class="form-control" id="itemMethod">
-                        <option>公开招标</option>
-                        <option>邀请招标</option>
-                        <option selected>询比采购</option>
-                        <option>谈判采购</option>
-                        <option>直接采购</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>预估金额 (万元) <span class="required">*</span></label>
-                    <input class="form-control" type="number" id="itemAmount" value="10.0">
-                </div>
-                <div class="form-group">
-                    <label>采购限价 (万元)</label>
-                    <input class="form-control" type="number" id="itemLimit" value="9.0">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>计划开始 <span class="required">*</span></label>
-                    <input class="form-control" type="date" id="itemStart">
-                </div>
-                <div class="form-group">
-                    <label>计划结束 <span class="required">*</span></label>
-                    <input class="form-control" type="date" id="itemEnd">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>需求部门 <span class="required">*</span></label>
-                    <input class="form-control" id="itemDept" value="采购部">
-                </div>
-                <div class="form-group">
-                    <label>经办人 <span class="required">*</span></label>
-                    <input class="form-control" id="itemPerson" value="张明">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>是否集团管控项</label>
-                <select class="form-control" id="itemControlled">
-                    <option value="no">否（自主管控）</option>
-                    <option value="yes">是（集团重点管控）</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>附件</label>
-                <input class="form-control" type="file" multiple>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeItemModal()">取消</button>
-            <button class="btn btn-primary" onclick="saveItem()">保存</button>
-        </div>
-    </div>
-</div>
-
-<script>
-function showAddItemModal() {
-    document.getElementById('itemModalTitle').textContent = '新增招采项';
-    document.getElementById('itemModal').classList.add('show');
-}
-
-function closeItemModal() {
-    document.getElementById('itemModal').classList.remove('show');
-}
-
-function saveItem() {
-    showAlert('✅ 招采项已保存。');
-    closeItemModal();
-}
-
-// 点击遮罩关闭
-document.getElementById('itemModal').addEventListener('click', function(e) {
-    if (e.target === this) closeItemModal();
-});
-</script>
 
 <script src="../common/scripts.js"></script>
 </body>
