@@ -8,8 +8,6 @@
         .summary-item { background: var(--gray-50); border-radius: var(--radius); padding: 14px 16px; border: 1px solid var(--gray-200); }
         .summary-item .num { font-size: 22px; font-weight: 700; color: var(--gray-800); }
         .summary-item .label { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
-        .inline-actions { display: flex; gap: 4px; }
-        .inline-actions button { font-size: 11px; padding: 2px 8px; }
         .plan-header-info { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
         .plan-header-info .info-item { font-size: 13px; }
         .plan-header-info .info-item .info-label { color: var(--gray-500); font-size: 12px; }
@@ -17,14 +15,6 @@
         .ver-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; background: var(--primary-lighter); color: var(--primary-light); }
         .ref-tag-ref { display: inline-flex; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; background: #dbeafe; color: #1e40af; }
         .ref-tag-unref { display: inline-flex; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--gray-200); color: var(--gray-600); }
-        tr.changed td { background: #fef9c3 !important; }
-        .inline-actions button:disabled { opacity: 0.35; cursor: not-allowed; background: var(--gray-100); color: var(--gray-400); border-color: var(--gray-200); }
-        .log-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        .log-table th { text-align: left; padding: 6px 10px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
-        .log-table td { padding: 6px 10px; border-bottom: 1px solid var(--gray-100); }
-        .log-old { color: var(--danger); text-decoration: line-through; margin-right: 4px; }
-        .log-arrow { color: var(--gray-400); margin: 0 4px; }
-        .log-new { color: var(--success); font-weight: 500; }
         th .th-filter { margin-top: 3px; }
         th .th-filter select, th .th-filter input { font-size: 11px; padding: 2px 4px; height: 24px; }
         th .th-filter .range-input { display: flex; gap: 2px; align-items: center; }
@@ -43,21 +33,14 @@
     </span>
 </div>
 
-<!-- 变更 Warning 横幅 -->
-<div class="alert alert-warning" id="changeWarning" style="display:none;">
-    <span>⚠️</span>
-    <div id="changeWarningText">该招采计划存在招采项变更，请尽快审批。</div>
-</div>
-
 <!-- 计划概要卡片 -->
 <div class="card">
     <div class="card-header">
         <h3>📄 2026年度成员企业A采购计划 <span class="tag tag-green" style="margin-left:8px;">已生效</span> <span class="ver-badge" style="margin-left:6px;">v2</span></h3>
         <div class="flex gap-8">
-            <button class="btn btn-sm btn-success" id="approveBtn" onclick="approveChanges()">✅ 审批</button>
-            <button class="btn btn-sm btn-danger" onclick="voidPlan()">🗑️ 作废</button>
             <button class="btn btn-sm btn-outline" onclick="showAlert('正在导出计划报表...')">📥 导出</button>
             <a class="btn btn-sm btn-outline" style="color:var(--primary);" onclick="showAlert('正在跳转OA审批案件 PL-2026-0001...')">🔗 OA审批</a>
+            <button class="btn btn-sm btn-primary" onclick="navTo('plans','plans/edit.html')">✏️ 编辑</button>
         </div>
     </div>
     <div class="card-body">
@@ -89,9 +72,9 @@
     <div class="summary-item"><div class="num" style="color:var(--success);">92.5%</div><div class="label">预算使用率</div></div>
 </div>
 
-<!-- 招采项列表 -->
+<!-- 招采项列表（只读） -->
 <div class="card">
-    <div class="card-header"><h3>📋 招采项明细</h3><div class="flex gap-8"><button class="btn btn-sm btn-outline" onclick="exportItems()">📥 导出</button><button class="btn btn-sm btn-outline" onclick="navTo('plans','plans/item-create.html')">＋ 新增招采项</button></div></div>
+    <div class="card-header"><h3>📋 招采项明细</h3><div class="flex gap-8"><button class="btn btn-sm btn-outline" onclick="exportItems()">📥 导出</button></div></div>
     <div class="card-body" style="padding:0;">
         <div class="table-wrap">
             <table>
@@ -108,56 +91,37 @@
                         <th>经办人<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="8"><option value="all">全部</option><option value="张明">张明</option><option value="李华">李华</option><option value="王磊">王磊</option><option value="陈芳">陈芳</option><option value="赵岩">赵岩</option></select></div></th>
                         <th>引用状态<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="9"><option value="all">全部</option><option value="已引用">已引用</option><option value="未引用">未引用</option></select></div></th>
                         <th>状态<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="10"><option value="all">全部</option><option value="已生效">已生效</option><option value="执行中">执行中</option><option value="已完成">已完成</option><option value="草稿">草稿</option></select></div></th>
-                        <th style="width:140px;">操作</th>
                     </tr>
                 </thead>
                 <tbody id="itemTableBody">
-                    <!-- Item 1 - 已引用 -->
-                    <tr data-id="1" data-ref="ref">
+                    <tr data-id="1">
                         <td class="text-muted">1</td>
                         <td><strong>年度法律顾问服务</strong></td>
                         <td><span class="tag tag-blue">服务类</span></td>
                         <td><span class="tag tag-orange">直接采购</span></td>
-                        <td><span class="money">15.0</span></td>
-                        <td>12.0</td>
-                        <td class="text-sm">2026-01 ~ 2026-12</td>
-                        <td>法务部</td>
-                        <td>张明</td>
-                        <td><span class="ref-tag-ref">已引用</span></td>
-                        <td><span class="tag tag-green">已完成</span></td>
-                        <td><div class="inline-actions"><button class="btn btn-xs btn-outline" disabled>编辑</button><button class="btn btn-xs btn-outline" disabled>删除</button></div></td>
+                        <td><span class="money">15.0</span></td><td>12.0</td>
+                        <td class="text-sm">2026-01 ~ 2026-12</td><td>法务部</td><td>张明</td>
+                        <td><span class="ref-tag-ref">已引用</span></td><td><span class="tag tag-green">已完成</span></td>
                     </tr>
-                    <!-- Item 2 - 集团管控 + 已引用 -->
-                    <tr data-id="2" data-ref="ref">
+                    <tr data-id="2">
                         <td class="text-muted">2</td>
                         <td><strong>办公家具采购</strong> <span class="tag tag-red" style="font-size:10px;">集团管控</span></td>
                         <td><span class="tag tag-green">货物类</span></td>
                         <td><span class="tag tag-blue">公开招标</span></td>
-                        <td><span class="money">89.0</span></td>
-                        <td>80.0</td>
-                        <td class="text-sm">2026-03 ~ 2026-05</td>
-                        <td>行政部</td><td>李华</td>
-                        <td><span class="ref-tag-ref">已引用</span></td>
-                        <td><span class="tag tag-yellow">执行中</span></td>
-                        <td><div class="inline-actions"><button class="btn btn-xs btn-outline" disabled>编辑</button><button class="btn btn-xs btn-outline" disabled>删除</button></div></td>
+                        <td><span class="money">89.0</span></td><td>80.0</td>
+                        <td class="text-sm">2026-03 ~ 2026-05</td><td>行政部</td><td>李华</td>
+                        <td><span class="ref-tag-ref">已引用</span></td><td><span class="tag tag-yellow">执行中</span></td>
                     </tr>
-                    <!-- Item 3 - 未引用 -->
-                    <tr data-id="3" data-ref="unref">
+                    <tr data-id="3">
                         <td class="text-muted">3</td>
-                        <td data-field="name" data-orig="IT设备采购"><strong>IT设备采购</strong></td>
-                        <td data-field="cat" data-orig="货物类"><span class="tag tag-green">货物类</span></td>
-                        <td data-field="method" data-orig="询比采购"><span class="tag tag-purple">询比采购</span></td>
-                        <td data-field="amount" data-orig="45.0"><span class="money">45.0</span></td>
-                        <td data-field="limit" data-orig="42.0">42.0</td>
-                        <td data-field="time" data-orig="2026-04 ~ 2026-06" class="text-sm">2026-04 ~ 2026-06</td>
-                        <td data-field="dept" data-orig="信息部">信息部</td>
-                        <td data-field="user" data-orig="王磊">王磊</td>
-                        <td><span class="ref-tag-unref">未引用</span></td>
-                        <td><span class="tag tag-green">已生效</span></td>
-                        <td><div class="inline-actions"><button class="btn btn-xs btn-outline" onclick="enterEdit(this)">编辑</button><button class="btn btn-xs btn-danger" onclick="if(confirm('确认删除此招采项？\n\n删除后将记录变更，需审批通过后方生效。'))deleteItem(this)">删除</button></div></td>
+                        <td><strong>IT设备采购</strong></td>
+                        <td><span class="tag tag-green">货物类</span></td>
+                        <td><span class="tag tag-purple">询比采购</span></td>
+                        <td><span class="money">45.0</span></td><td>42.0</td>
+                        <td class="text-sm">2026-04 ~ 2026-06</td><td>信息部</td><td>王磊</td>
+                        <td><span class="ref-tag-unref">未引用</span></td><td><span class="tag tag-green">已生效</span></td>
                     </tr>
-                    <!-- Item 4 - 集团管控 + 已引用 -->
-                    <tr data-id="4" data-ref="ref">
+                    <tr data-id="4">
                         <td class="text-muted">4</td>
                         <td><strong>物业服务招标</strong> <span class="tag tag-red" style="font-size:10px;">集团管控</span></td>
                         <td><span class="tag tag-blue">服务类</span></td>
@@ -165,37 +129,24 @@
                         <td><span class="money">120.0</span></td><td>110.0</td>
                         <td class="text-sm">2026-02 ~ 2026-04</td><td>行政部</td><td>李华</td>
                         <td><span class="ref-tag-ref">已引用</span></td><td><span class="tag tag-yellow">执行中</span></td>
-                        <td><div class="inline-actions"><button class="btn btn-xs btn-outline" disabled>编辑</button><button class="btn btn-xs btn-outline" disabled>删除</button></div></td>
                     </tr>
-                    <!-- Item 5 - 未引用 -->
-                    <tr data-id="5" data-ref="unref">
+                    <tr data-id="5">
                         <td class="text-muted">5</td>
-                        <td data-field="name" data-orig="年度培训服务"><strong>年度培训服务</strong></td>
-                        <td data-field="cat" data-orig="服务类"><span class="tag tag-blue">服务类</span></td>
-                        <td data-field="method" data-orig="谈判采购"><span class="tag tag-yellow">谈判采购</span></td>
-                        <td data-field="amount" data-orig="28.0"><span class="money">28.0</span></td>
-                        <td data-field="limit" data-orig="25.0">25.0</td>
-                        <td data-field="time" data-orig="2026-05 ~ 2026-11" class="text-sm">2026-05 ~ 2026-11</td>
-                        <td data-field="dept" data-orig="人力资源部">人力资源部</td>
-                        <td data-field="user" data-orig="陈芳">陈芳</td>
-                        <td><span class="ref-tag-unref">未引用</span></td>
-                        <td><span class="tag tag-green">已生效</span></td>
-                        <td><div class="inline-actions"><button class="btn btn-xs btn-outline" onclick="enterEdit(this)">编辑</button><button class="btn btn-xs btn-danger" onclick="if(confirm('确认删除此招采项？\n\n删除后将记录变更，需审批通过后方生效。'))deleteItem(this)">删除</button></div></td>
+                        <td><strong>年度培训服务</strong></td>
+                        <td><span class="tag tag-blue">服务类</span></td>
+                        <td><span class="tag tag-yellow">谈判采购</span></td>
+                        <td><span class="money">28.0</span></td><td>25.0</td>
+                        <td class="text-sm">2026-05 ~ 2026-11</td><td>人力资源部</td><td>陈芳</td>
+                        <td><span class="ref-tag-unref">未引用</span></td><td><span class="tag tag-green">已生效</span></td>
                     </tr>
-                    <!-- Item 6 - 未引用 -->
-                    <tr data-id="6" data-ref="unref">
+                    <tr data-id="6">
                         <td class="text-muted">6</td>
-                        <td data-field="name" data-orig="生产设备维护"><strong>生产设备维护</strong></td>
-                        <td data-field="cat" data-orig="服务类"><span class="tag tag-blue">服务类</span></td>
-                        <td data-field="method" data-orig="邀请招标"><span class="tag tag-blue">邀请招标</span></td>
-                        <td data-field="amount" data-orig="67.0"><span class="money">67.0</span></td>
-                        <td data-field="limit" data-orig="60.0">60.0</td>
-                        <td data-field="time" data-orig="2026-07 ~ 2026-09" class="text-sm">2026-07 ~ 2026-09</td>
-                        <td data-field="dept" data-orig="生产部">生产部</td>
-                        <td data-field="user" data-orig="赵岩">赵岩</td>
-                        <td><span class="ref-tag-unref">未引用</span></td>
-                        <td><span class="tag tag-gray">草稿</span></td>
-                        <td><div class="inline-actions"><button class="btn btn-xs btn-outline" onclick="enterEdit(this)">编辑</button><button class="btn btn-xs btn-danger" onclick="if(confirm('确认删除此招采项？\n\n删除后将记录变更，需审批通过后方生效。'))deleteItem(this)">删除</button></div></td>
+                        <td><strong>生产设备维护</strong></td>
+                        <td><span class="tag tag-blue">服务类</span></td>
+                        <td><span class="tag tag-blue">邀请招标</span></td>
+                        <td><span class="money">67.0</span></td><td>60.0</td>
+                        <td class="text-sm">2026-07 ~ 2026-09</td><td>生产部</td><td>赵岩</td>
+                        <td><span class="ref-tag-unref">未引用</span></td><td><span class="tag tag-gray">草稿</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -204,22 +155,6 @@
     <div class="card-header" style="border-top:1px solid var(--gray-200);">
         <span class="text-muted text-sm">预估合计：<span class="money">¥364.0万</span>｜计划总预算：<span class="money">¥200.0万</span><span class="tag tag-red" style="margin-left:8px;">⚠ 超出预算 ¥164.0万</span></span>
         <span></span>
-    </div>
-</div>
-
-<!-- 变更日志卡片 -->
-<div class="card" id="changeLogCard" style="display:none;">
-    <div class="card-header">
-        <h3>📝 变更日志</h3>
-        <button class="btn btn-sm btn-outline" onclick="resetAllChanges()">↩️ 全部重置</button>
-    </div>
-    <div class="card-body" style="padding:0;">
-        <div class="table-wrap">
-            <table class="log-table">
-                <thead><tr><th>#</th><th>变量名称</th><th>变更字段</th><th>变更前</th><th>变更后</th><th style="width:60px;">重置</th></tr></thead>
-                <tbody id="changeLogBody"><tr><td colspan="6" class="text-muted text-sm" style="padding:20px;text-align:center;">暂无变更记录</td></tr></tbody>
-            </table>
-        </div>
     </div>
 </div>
 
@@ -249,21 +184,7 @@
     <div><strong>集团管控说明：</strong>部分招采项名称旁标有<span class="tag tag-red" style="font-size:10px;">集团管控</span>标签，在升版流程中不可删除。</div>
 </div>
 
-<div class="alert alert-info">
-    <span>💡</span>
-    <div>
-        <strong>招采项调整规则：</strong>
-        <ul style="margin:6px 0 0 16px;padding:0;font-size:12px;">
-            <li><strong>已引用</strong>（已发起招标）招采项不可编辑和删除；</li>
-            <li><strong>未引用</strong>招采项可直接行内编辑，保存后记录变更；</li>
-            <li>变更需通过顶部<strong>「审批」</strong>按钮或<strong>「升版」</strong>提交审批后方可生效；</li>
-            <li>审批通过后可按最新招采项要求进行招标。</li>
-        </ul>
-    </div>
-</div>
-
 <script>
-// ===== 导出招采项 =====
 function exportItems() {
     var visible = 0;
     document.querySelectorAll('#itemTableBody tr').forEach(function(r){ if(r.style.display !== 'none') visible++; });
@@ -277,22 +198,17 @@ function exportItems() {
     }
 }
 
-// ===== 统一列头筛选 =====
 function filterAll() {
     var rows = document.querySelectorAll('#itemTableBody tr');
-    // 收集所有筛选条件
     var filters = [];
     document.querySelectorAll('thead .th-filter select').forEach(function(s) {
         var col = parseInt(s.getAttribute('data-col'));
-        var val = s.value;
-        filters.push({ col: col, type: 'select', value: val });
+        filters.push({ col: col, type: 'select', value: s.value });
     });
     document.querySelectorAll('thead .th-filter input[data-type="range-min"]').forEach(function(inp) {
         var col = parseInt(inp.getAttribute('data-col'));
         var maxInp = inp.parentElement.querySelector('input[data-type="range-max"]');
-        var minVal = inp.value;
-        var maxVal = maxInp ? maxInp.value : '';
-        filters.push({ col: col, type: 'range', min: minVal, max: maxVal });
+        filters.push({ col: col, type: 'range', min: inp.value, max: maxInp ? maxInp.value : '' });
     });
 
     rows.forEach(function(row) {
@@ -309,7 +225,6 @@ function filterAll() {
                 if (tags.length > 0) {
                     tags.forEach(function(t) { if (t.textContent.trim() === f.value) match = true; });
                 }
-                // also try direct text
                 if (!match && text === f.value) match = true;
                 if (!match) { show = false; break; }
             }
@@ -317,14 +232,12 @@ function filterAll() {
                 var cell = cells[f.col];
                 var cellText = cell.textContent.replace('¥','').replace(/,/g,'').trim();
                 if (f.col === 6) {
-                    // 时间列：格式 "2026-01 ~ 2026-12"
                     var parts = cellText.split(/[~～\s]+/);
                     var cellStart = parts[0] ? parts[0].trim() : '';
                     var cellEnd = parts[1] ? parts[1].trim() : '';
                     if (f.min && (!cellEnd || cellEnd < f.min)) { show = false; break; }
                     if (f.max && (!cellStart || cellStart > f.max)) { show = false; break; }
                 } else {
-                    // 金额列
                     var num = parseFloat(cellText);
                     if (isNaN(num)) { show = false; break; }
                     if (f.min && num < parseFloat(f.min)) { show = false; break; }
@@ -332,240 +245,8 @@ function filterAll() {
                 }
             }
         }
-        // 已删除的行不恢复
-        if (show && row.style.display === 'none' && row.classList.contains('changed')) {
-            show = false;
-        }
         row.style.display = show ? '' : 'none';
     });
-}
-
-// ===== 变更日志存储 =====
-var changeLog = [];
-
-// ===== 进入编辑态 =====
-function enterEdit(btn) {
-    var row = btn.closest('tr');
-    if (row.classList.contains('editing')) return;
-    row.classList.add('editing');
-
-    var fields = ['name','cat','method','amount','limit','time','dept'];
-    var fieldLabels = { name:'采购内容', cat:'类别', method:'采购方式', amount:'预估金额(万)', limit:'限价(万)', time:'计划时间', dept:'需求部门' };
-
-    fields.forEach(function(f) {
-        var td = row.querySelector('[data-field="'+f+'"]');
-        if (!td) return;
-        var orig = td.getAttribute('data-orig') || td.textContent.replace('¥','').trim();
-        td.setAttribute('data-before', orig);
-        var html = '';
-
-        if (f === 'cat') {
-            html = '<select class="form-control form-control-sm edit-cat" style="width:80px;"><option value="服务类"'+(orig==='服务类'?' selected':'')+'>服务类</option><option value="货物类"'+(orig==='货物类'?' selected':'')+'>货物类</option></select>';
-        } else if (f === 'method') {
-            var methods = ['公开招标','邀请招标','询比采购','谈判采购','直接采购'];
-            html = '<select class="form-control form-control-sm edit-method" style="width:90px;">';
-            methods.forEach(function(m){ html += '<option value="'+m+'"'+(orig===m?' selected':'')+'>'+m+'</option>'; });
-            html += '</select>';
-        } else if (f === 'amount' || f === 'limit') {
-            html = '<input class="form-control form-control-sm edit-'+f+'" type="number" value="'+orig+'" style="width:70px;">';
-        } else {
-            html = '<input class="form-control form-control-sm edit-'+f+'" value="'+orig+'" style="min-width:60px;">';
-        }
-        td.innerHTML = html;
-    });
-
-    var actionTd = row.cells[row.cells.length - 1];
-    actionTd.innerHTML = '<div class="inline-actions"><button class="btn btn-xs btn-primary" onclick="saveEdit(this)">💾 保存</button><button class="btn btn-xs btn-outline" onclick="cancelEdit(this)">取消</button></div>';
-}
-
-function saveEdit(btn) {
-    var row = btn.closest('tr');
-    var rowId = row.getAttribute('data-id');
-    var rowName = row.querySelector('[data-field="name"] input') ? row.querySelector('[data-field="name"] input').value : '';
-
-    var fields = ['name','cat','method','amount','limit','time','dept'];
-    var fieldLabels = { name:'采购内容', cat:'类别', method:'采购方式', amount:'预估金额(万)', limit:'限价(万)', time:'计划时间', dept:'需求部门' };
-    var tagClasses = { cat:{'服务类':'tag tag-blue','货物类':'tag tag-green'},
-                        method:{'公开招标':'tag tag-blue','邀请招标':'tag tag-blue','询比采购':'tag tag-purple','谈判采购':'tag tag-yellow','直接采购':'tag tag-orange'} };
-
-    fields.forEach(function(f) {
-        var td = row.querySelector('[data-field="'+f+'"]');
-        if (!td) return;
-        var oldVal = td.getAttribute('data-before') || td.getAttribute('data-orig');
-        var input = td.querySelector('input, select');
-        var newVal = input ? input.value : oldVal;
-
-        if (newVal !== oldVal) {
-            changeLog.push({ rowId: rowId, rowName: rowName, field: f, fieldLabel: fieldLabels[f], oldVal: oldVal, newVal: newVal, row: row });
-        }
-
-        var display = newVal;
-        if (f === 'name') display = '<strong>'+newVal+'</strong>';
-        else if (f === 'cat') display = '<span class="'+tagClasses.cat[newVal]+'">'+newVal+'</span>';
-        else if (f === 'method') display = '<span class="'+tagClasses.method[newVal]+'">'+newVal+'</span>';
-        else if (f === 'amount') display = '<span class="money">'+newVal+'</span>';
-
-        td.innerHTML = display;
-        td.setAttribute('data-orig', newVal);
-    });
-
-    delete row.dataset.before;
-    var actionTd = row.cells[row.cells.length - 1];
-    actionTd.innerHTML = '<div class="inline-actions"><button class="btn btn-xs btn-outline" onclick="enterEdit(this)">编辑</button><button class="btn btn-xs btn-danger" onclick="if(confirm(\'确认删除此招采项？\\n\\n删除后将记录变更，需审批通过后方生效。\'))deleteItem(this)">删除</button></div>';
-
-    if (changeLog.filter(function(l){ return l.rowId === rowId; }).length > 0) {
-        row.classList.add('changed');
-    }
-
-    row.classList.remove('editing');
-    refreshUI();
-}
-
-function cancelEdit(btn) {
-    var row = btn.closest('tr');
-    var fields = ['name','cat','method','amount','limit','time','dept'];
-    var tagClasses = { cat:{'服务类':'tag tag-blue','货物类':'tag tag-green','':'tag tag-purple'},
-                        method:{'公开招标':'tag tag-blue','邀请招标':'tag tag-blue','询比采购':'tag tag-purple','谈判采购':'tag tag-yellow','直接采购':'tag tag-orange'} };
-
-    fields.forEach(function(f) {
-        var td = row.querySelector('[data-field="'+f+'"]');
-        if (!td) return;
-        var orig = td.getAttribute('data-before') || td.getAttribute('data-orig');
-        var display = orig;
-        if (f === 'name') display = '<strong>'+orig+'</strong>';
-        else if (f === 'cat') display = '<span class="'+tagClasses.cat[orig]+'">'+orig+'</span>';
-        else if (f === 'method') display = '<span class="'+tagClasses.method[orig]+'">'+orig+'</span>';
-        else if (f === 'amount') display = '<span class="money">'+orig+'</span>';
-        td.innerHTML = display;
-        td.removeAttribute('data-before');
-    });
-
-    var actionTd = row.cells[row.cells.length - 1];
-    actionTd.innerHTML = '<div class="inline-actions"><button class="btn btn-xs btn-outline" onclick="enterEdit(this)">编辑</button><button class="btn btn-xs btn-danger" onclick="if(confirm(\'确认删除此招采项？\\n\\n删除后将记录变更，需审批通过后方生效。\'))deleteItem(this)">删除</button></div>';
-    row.classList.remove('editing');
-}
-
-function deleteItem(btn) {
-    var row = btn.closest('tr');
-    var rowName = row.querySelector('[data-field="name"] strong') ? row.querySelector('[data-field="name"] strong').textContent : '';
-    changeLog.push({ rowId: row.getAttribute('data-id'), rowName: rowName, field: '*', fieldLabel: '整体', oldVal: '存在', newVal: '已删除', row: row, deleted: true });
-    row.style.display = 'none';
-    row.classList.add('changed');
-    refreshUI();
-    showAlert('✅ 招采项已删除。变更已记录，需审批通过后方生效。');
-}
-
-function resetOneChange(rowId, field) {
-    var row = document.querySelector('#itemTableBody tr[data-id="'+rowId+'"]');
-    if (!row) return;
-
-    if (field === '*') {
-        row.style.display = '';
-        row.classList.remove('changed');
-    } else {
-        var td = row.querySelector('[data-field="'+field+'"]');
-        if (!td) return;
-        var orig = td.getAttribute('data-orig');
-        var tagClasses = { cat:{'服务类':'tag tag-blue','货物类':'tag tag-green','':'tag tag-purple'},
-                            method:{'公开招标':'tag tag-blue','邀请招标':'tag tag-blue','询比采购':'tag tag-purple','谈判采购':'tag tag-yellow','直接采购':'tag tag-orange'} };
-        var display = orig;
-        if (field === 'name') display = '<strong>'+orig+'</strong>';
-        else if (field === 'cat') display = '<span class="'+tagClasses.cat[orig]+'">'+orig+'</span>';
-        else if (field === 'method') display = '<span class="'+tagClasses.method[orig]+'">'+orig+'</span>';
-        else if (field === 'amount') display = '<span class="money">'+orig+'</span>';
-        td.innerHTML = display;
-    }
-
-    changeLog = changeLog.filter(function(l){ return !(l.rowId === rowId && l.field === field); });
-
-    var stillChanged = changeLog.some(function(l){ return l.rowId === rowId; });
-    if (!stillChanged) row.classList.remove('changed');
-
-    refreshUI();
-}
-
-function resetAllChanges() {
-    if (changeLog.length === 0) return;
-    if (!confirm('确认重置所有变更？所有招采项将恢复至变更前状态。')) return;
-
-    var changedRows = document.querySelectorAll('#itemTableBody tr.changed');
-    changedRows.forEach(function(row) {
-        if (row.style.display === 'none') row.style.display = '';
-        var fields = ['name','cat','method','amount','limit','time','dept'];
-        var tagClasses = { cat:{'服务类':'tag tag-blue','货物类':'tag tag-green','':'tag tag-purple'},
-                            method:{'公开招标':'tag tag-blue','邀请招标':'tag tag-blue','询比采购':'tag tag-purple','谈判采购':'tag tag-yellow','直接采购':'tag tag-orange'} };
-        fields.forEach(function(f) {
-            var td = row.querySelector('[data-field="'+f+'"]');
-            if (!td) return;
-            var orig = td.getAttribute('data-orig');
-            var display = orig;
-            if (f === 'name') display = '<strong>'+orig+'</strong>';
-            else if (f === 'cat') display = '<span class="'+tagClasses.cat[orig]+'">'+orig+'</span>';
-            else if (f === 'method') display = '<span class="'+tagClasses.method[orig]+'">'+orig+'</span>';
-            else if (f === 'amount') display = '<span class="money">'+orig+'</span>';
-            td.innerHTML = display;
-        });
-        row.classList.remove('changed');
-        row.classList.remove('editing');
-    });
-
-    changeLog = [];
-    refreshUI();
-}
-
-function approveChanges() {
-    if (changeLog.length === 0) { showAlert('当前没有变更记录，无法审批'); return; }
-    if (confirm('确认审批通过所有招采项变更？\n\n审批通过后变更即刻生效，可按最新要求进行招标。')) {
-        changeLog = [];
-        var changedRows = document.querySelectorAll('#itemTableBody tr.changed');
-        changedRows.forEach(function(r){ r.classList.remove('changed'); });
-        showAlert('✅ 审批通过，招采项变更已生效。');
-        refreshUI();
-    }
-}
-
-function refreshUI() {
-    var changedCount = document.querySelectorAll('#itemTableBody tr.changed').length;
-    var warningEl = document.getElementById('changeWarning');
-    var warningText = document.getElementById('changeWarningText');
-
-    if (changedCount > 0) {
-        warningEl.style.display = '';
-        warningText.innerHTML = '⚠️ 该招采计划存在 <strong>'+changedCount+'</strong> 条招采项变更，请尽快审批。';
-    } else {
-        warningEl.style.display = 'none';
-    }
-
-    var logCard = document.getElementById('changeLogCard');
-    var logBody = document.getElementById('changeLogBody');
-
-    if (changeLog.length === 0) {
-        logCard.style.display = 'none';
-    } else {
-        logCard.style.display = '';
-        var html = '';
-        changeLog.forEach(function(l, idx) {
-            html += '<tr>';
-            html += '<td class="text-muted">'+(idx+1)+'</td>';
-            html += '<td>#'+l.rowId+' '+l.rowName+'</td>';
-            html += '<td>'+l.fieldLabel+'</td>';
-            html += '<td><span class="log-old">'+l.oldVal+'</span></td>';
-            html += '<td><span class="log-new">'+l.newVal+'</span></td>';
-            html += '<td><button class="btn btn-xs btn-outline" onclick="resetOneChange(\''+l.rowId+'\',\''+l.field+'\')">↩️</button></td>';
-            html += '</tr>';
-        });
-        logBody.innerHTML = html;
-    }
-}
-
-function voidPlan() {
-    var executingItems = document.querySelectorAll('#itemTableBody .tag-yellow');
-    var hasExecuting = false;
-    executingItems.forEach(function(tag){ if(tag.textContent.trim()==='执行中') hasExecuting = true; });
-    if(hasExecuting){ showAlert('⚠️ 该计划下存在执行中的招采项，请先将相关招采项处理完毕后再作废计划。'); return; }
-    if(confirm('确认作废该采购计划？\n\n作废后将发起OA审批流程，审批通过后计划状态变为"已作废"，不可恢复。')) {
-        showAlert('✅ 作废申请已提交OA审批，请联系部门负责人及分管领导审批。');
-    }
 }
 </script>
 <script src="../common/scripts.js"></script>
