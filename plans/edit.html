@@ -54,7 +54,6 @@
     <div class="card-header">
         <h3>📄 2026年度成员企业A采购计划 <span class="tag tag-green" style="margin-left:8px;">已生效</span> <span class="ver-badge" style="margin-left:6px;">v2</span></h3>
         <div class="flex gap-8">
-            <button class="btn btn-sm btn-outline" onclick="navTo('plans','plans/view.html')">取消</button>
             <button class="btn btn-sm btn-outline" onclick="showAlert('✅ 草稿已保存，可稍后继续编辑。')">💾 保存草稿</button>
             <button class="btn btn-sm btn-success" id="approveBtn" onclick="approveChanges()">✅ 审批</button>
             <a class="btn btn-sm btn-outline" style="color:var(--primary);" onclick="showAlert('正在跳转OA审批案件 PL-2026-0001...')">🔗 OA审批</a>
@@ -218,27 +217,6 @@
             <table class="log-table">
                 <thead><tr><th>#</th><th>变量名称</th><th>变更字段</th><th>变更前</th><th>变更后</th><th style="width:60px;">重置</th></tr></thead>
                 <tbody id="changeLogBody"><tr><td colspan="6" class="text-muted text-sm" style="padding:20px;text-align:center;">暂无变更记录</td></tr></tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- 历史版本 -->
-<div class="card">
-    <div class="card-header"><h3>📜 历史版本</h3></div>
-    <div class="card-body" style="padding:0;">
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>版本号</th><th>生效日期</th><th>创建时间</th><th>状态</th><th>操作</th></tr></thead>
-                <tbody>
-                    <tr>
-                        <td><span class="ver-badge">v1</span></td>
-                        <td>2026-01-01 ~ 2026-06-30</td>
-                        <td class="text-sm">2025-12-15</td>
-                        <td><span class="tag tag-gray">已归档</span></td>
-                        <td><a onclick="navTo('plans','plans/version-view.html')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">查看详情</a></td>
-                    </tr>
-                </tbody>
             </table>
         </div>
     </div>
