@@ -39,6 +39,7 @@
         <h3>📄 2026年度成员企业A采购计划 <span class="tag tag-green" style="margin-left:8px;">已生效</span> <span class="ver-badge" style="margin-left:6px;">v2</span></h3>
         <div class="flex gap-8">
             <button class="btn btn-sm btn-outline" onclick="showAlert('正在导出计划报表...')">📥 导出</button>
+            <button class="btn btn-sm btn-danger" onclick="voidPlan()">🗑️ 作废</button>
             <a class="btn btn-sm btn-outline" style="color:var(--primary);" onclick="showAlert('正在跳转OA审批案件 PL-2026-0001...')">🔗 OA审批</a>
             <button class="btn btn-sm btn-primary" onclick="navTo('plans','plans/edit.html')">✏️ 编辑</button>
         </div>
@@ -185,6 +186,15 @@
 </div>
 
 <script>
+function voidPlan() {
+    var el = document.querySelector('#itemTableBody .tag-yellow');
+    var hasExecuting = el && el.textContent.trim() === '执行中';
+    if (hasExecuting) { showAlert('⚠️ 该计划下存在执行中的招采项，请先将相关招采项处理完毕后再作废计划。'); return; }
+    if (confirm('确认作废该采购计划？\n\n作废后将发起OA审批流程，审批通过后计划状态变为"已作废"，不可恢复。')) {
+        showAlert('✅ 作废申请已提交OA审批，请联系部门负责人及分管领导审批。');
+    }
+}
+
 function exportItems() {
     var visible = 0;
     document.querySelectorAll('#itemTableBody tr').forEach(function(r){ if(r.style.display !== 'none') visible++; });
