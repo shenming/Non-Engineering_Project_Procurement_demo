@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>非工程类招采管理系统 · 原型设计</title>
+    <link rel="stylesheet" href="common/styles.css">
+    <style>
+        /* iframe 容器 */
+        .content {
+            flex: 1;
+            overflow: hidden;
+            padding: 0;
+            position: relative;
+        }
+        .content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 侧边栏 ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">🏗️</div>
+            <div class="logo-text">
+                非工程招采
+                <small>上海地产集团 · 原型</small>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-label">导航</div>
+            <div class="menu-item active" data-page="dashboard">
+                <span class="icon">📊</span>
+                <span class="label">仪表盘</span>
+                <span class="badge warning">3</span>
+            </div>
+            <div class="menu-item" data-page="plans">
+                <span class="icon">📋</span>
+                <span class="label">采购计划</span>
+                <span class="badge">5</span>
+            </div>
+            <div class="menu-item" data-page="procurement">
+                <span class="icon">⚡</span>
+                <span class="label">采购过程</span>
+            </div>
+            <div class="menu-item" data-page="collective">
+                <span class="icon">🤝</span>
+                <span class="label">集采管理</span>
+            </div>
+            <div class="menu-item" data-page="reports">
+                <span class="icon">📈</span>
+                <span class="label">报表管理</span>
+            </div>
+            <div style="margin-top:20px;">
+                <div class="menu-label">系统</div>
+                <div class="menu-item" data-page="settings">
+                    <span class="icon">⚙️</span>
+                    <span class="label">配置管理</span>
+                </div>
+            </div>
+        </nav>
+        <div class="sidebar-footer">v1.0 · 原型设计</div>
+    </aside>
+
+    <!-- ===== 主区域 ===== -->
+    <div class="main">
+        <!-- 顶部栏 -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <div class="page-title" id="pageTitle">仪表盘 <span>· 非工程类招采管理</span></div>
+            </div>
+            <div class="topbar-right">
+                <span class="env-tag">🧪 原型示意</span>
+                <div class="user">
+                    <span>张明</span>
+                    <div class="avatar">张</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- iframe 内容区 -->
+        <div class="content">
+            <iframe id="contentFrame" src="dashboard/index.html"></iframe>
+        </div>
+    </div>
+
+    <!-- 原型水印 -->
+    <div class="prototype-badge">⚡ 原型示意 · v1.0</div>
+
+    <!-- 框架脚本 -->
+    <script src="common/scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><link rel="stylesheet" href="../common/styles.css"></head><body class="content-page">
+<div class="sub-navbar"><span class="sub-nav-title">🚨 预警规则配置</span><span class="breadcrumb"><a onclick="navTo('settings')">配置管理</a> > 预警规则</span></div>
+<div class="card"><div class="card-header"><h3>三色预警规则配置</h3><div class="actions"><button class="btn btn-sm btn-primary">保存配置</button></div></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>预警等级</th><th>指示</th><th>触发条件</th><th>预警颜色</th><th>通知方式</th><th>状态</th></tr></thead><tbody>
+<tr><td>绿灯</td><td><span class="led led-green"></span></td><td><input class="form-control form-control-sm" value="距计划结束 > 30天" style="width:180px;"></td><td><span class="tag tag-green">绿色</span></td><td>仅记录</td><td><span class="tag tag-green">启用</span></td></tr>
+<tr><td>黄灯</td><td><span class="led led-yellow"></span></td><td><input class="form-control form-control-sm" value="距计划结束 7-30天" style="width:180px;"></td><td><span class="tag tag-yellow">黄色</span></td><td>系统消息</td><td><span class="tag tag-green">启用</span></td></tr>
+<tr><td>红灯</td><td><span class="led led-red"></span></td><td><input class="form-control form-control-sm" value="超过计划结束日期" style="width:180px;"></td><td><span class="tag tag-red">红色</span></td><td>系统消息 + 短信</td><td><span class="tag tag-green">启用</span></td></tr>
+</tbody></table></div></div></div>
+<button class="btn btn-outline mt-12" onclick="navTo('settings')">← 返回配置</button>
+<script src="../common/scripts.js"></script></body></html>

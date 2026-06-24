@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../common/styles.css">
+</head>
+<body class="content-page">
+
+<div class="sub-navbar">
+    <span class="sub-nav-title">📋 采购计划列表</span>
+</div>
+
+<div class="flex-between mb-16">
+    <div>
+        <span class="text-muted">共 <strong>8</strong> 个计划</span>
+        <span class="text-muted" style="margin-left:12px;">集团管控 <strong>3</strong> · 自主 <strong>5</strong></span>
+    </div>
+    <div class="flex gap-8">
+        <button class="btn btn-sm btn-outline">📥 导出</button>
+        <button class="btn btn-sm btn-primary" onclick="navTo('plans','plans/create.html')">＋ 新建计划</button>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:16px;">
+    <div class="card-body" style="padding:12px 20px;">
+        <div class="flex gap-12" style="flex-wrap:wrap;">
+            <select class="form-control form-control-sm" style="width:auto;min-width:120px;">
+                <option>全部状态</option><option>编制中</option><option>审批中</option><option>已生效</option><option>执行中</option><option>已完成</option><option>已作废</option>
+            </select>
+            <select class="form-control form-control-sm" style="width:auto;min-width:120px;">
+                <option>全部类型</option><option>按年度</option><option>按事项</option>
+            </select>
+            <select class="form-control form-control-sm" style="width:auto;min-width:150px;">
+                <option>全部单位</option><option>集团总部</option><option>成员企业A</option><option>成员企业B</option>
+            </select>
+            <select class="form-control form-control-sm" style="width:auto;min-width:120px;">
+                <option>全部年份</option><option>2025</option><option selected>2026</option><option>2027</option>
+            </select>
+            <input class="form-control form-control-sm" placeholder="搜索计划名称..." style="width:200px;">
+            <button class="btn btn-sm btn-primary">查询</button>
+            <button class="btn btn-sm btn-outline">重置</button>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>计划名称</th>
+                        <th>类型</th>
+                        <th>所属单位</th>
+                        <th>计划年度</th>
+                        <th>招采项数</th>
+                        <th>预估总金额</th>
+                        <th>已执行金额</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- row 1 -->
+                    <tr>
+                        <td><strong>2026年度成员企业A采购计划</strong><br><span class="text-xs text-muted">PL-2026-0001</span></td>
+                        <td><span class="tag tag-blue">按年度</span></td>
+                        <td>成员企业A</td>
+                        <td>2026</td>
+                        <td><span class="fw-600">6</span> 项</td>
+                        <td><span class="money">¥185.0万</span></td>
+                        <td><span class="money">¥72.0万</span></td>
+                        <td><span class="tag tag-green">已生效</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/adjust.html')">调整</button>
+                        </td>
+                    </tr>
+                    <!-- row 2 -->
+                    <tr>
+                        <td><strong>2026年度集团总部采购计划</strong><br><span class="text-xs text-muted">PL-2026-0002</span></td>
+                        <td><span class="tag tag-blue">按年度</span></td>
+                        <td>集团总部</td>
+                        <td>2026</td>
+                        <td><span class="fw-600">12</span> 项</td>
+                        <td><span class="money">¥520.0万</span></td>
+                        <td><span class="money">¥210.0万</span></td>
+                        <td><span class="tag tag-yellow">执行中</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" disabled>调整</button>
+                        </td>
+                    </tr>
+                    <!-- row 3 -->
+                    <tr>
+                        <td><strong>进博会专项采购计划</strong><br><span class="text-xs text-muted">PL-2026-0003</span></td>
+                        <td><span class="tag tag-purple">按事项</span></td>
+                        <td>成员企业B</td>
+                        <td>2026</td>
+                        <td><span class="fw-600">4</span> 项</td>
+                        <td><span class="money">¥68.0万</span></td>
+                        <td><span class="money">¥0.0万</span></td>
+                        <td><span class="tag tag-blue">审批中</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" disabled>调整</button>
+                        </td>
+                    </tr>
+                    <!-- row 4 -->
+                    <tr>
+                        <td><strong>2025年度成员企业A采购计划（下半年补充）</strong><br><span class="text-xs text-muted">PL-2025-0012</span></td>
+                        <td><span class="tag tag-blue">按年度</span></td>
+                        <td>成员企业A</td>
+                        <td>2025</td>
+                        <td><span class="fw-600">3</span> 项</td>
+                        <td><span class="money">¥35.0万</span></td>
+                        <td><span class="money">¥35.0万</span></td>
+                        <td><span class="tag tag-green">已完成</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" disabled>调整</button>
+                        </td>
+                    </tr>
+                    <!-- row 5 -->
+                    <tr>
+                        <td><strong>2025年度集团总部采购计划</strong><br><span class="text-xs text-muted">PL-2025-0008</span></td>
+                        <td><span class="tag tag-blue">按年度</span></td>
+                        <td>集团总部</td>
+                        <td>2025</td>
+                        <td><span class="fw-600">8</span> 项</td>
+                        <td><span class="money">¥380.0万</span></td>
+                        <td><span class="money">¥380.0万</span></td>
+                        <td><span class="tag tag-green">已完成</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" disabled>调整</button>
+                        </td>
+                    </tr>
+                    <!-- row 6 -->
+                    <tr>
+                        <td><strong>信息化专项采购计划</strong><br><span class="text-xs text-muted">PL-2026-0004</span></td>
+                        <td><span class="tag tag-purple">按事项</span></td>
+                        <td>成员企业A</td>
+                        <td>2026</td>
+                        <td><span class="fw-600">2</span> 项</td>
+                        <td><span class="money">¥150.0万</span></td>
+                        <td><span class="money">¥0.0万</span></td>
+                        <td><span class="tag tag-gray">编制中</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/adjust.html')">编辑</button>
+                        </td>
+                    </tr>
+                    <!-- row 7 -->
+                    <tr>
+                        <td><strong>2026年度成员企业B采购计划</strong><br><span class="text-xs text-muted">PL-2026-0005</span></td>
+                        <td><span class="tag tag-blue">按年度</span></td>
+                        <td>成员企业B</td>
+                        <td>2026</td>
+                        <td><span class="fw-600">5</span> 项</td>
+                        <td><span class="money">¥95.0万</span></td>
+                        <td><span class="money">¥15.0万</span></td>
+                        <td><span class="tag tag-yellow">执行中</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" disabled>调整</button>
+                        </td>
+                    </tr>
+                    <!-- row 8 -->
+                    <tr>
+                        <td><strong>疫情防控物资专项采购计划</strong><br><span class="text-xs text-muted">PL-2026-0006</span></td>
+                        <td><span class="tag tag-purple">按事项</span></td>
+                        <td>集团总部</td>
+                        <td>2026</td>
+                        <td><span class="fw-600">3</span> 项</td>
+                        <td><span class="money">¥45.0万</span></td>
+                        <td><span class="money">¥45.0万</span></td>
+                        <td><span class="tag tag-green">已完成</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="navTo('plans','plans/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" disabled>调整</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);">
+        <span class="text-muted text-sm">显示 1-8 / 共 8 条</span>
+        <div class="flex gap-8">
+            <button class="btn btn-xs btn-outline" disabled>上一页</button>
+            <button class="btn btn-xs btn-primary">1</button>
+            <button class="btn btn-xs btn-outline">2</button>
+            <button class="btn btn-xs btn-outline" disabled>下一页</button>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info">
+    <span>💡</span>
+    <div><strong>规则提示：</strong> 计划按年度或事项创建。生效后的计划可在详情页维护招采项明细。计划调整需发起升版审批，历史版本永久留存。</div>
+</div>
+
+<script src="../common/scripts.js"></script>
+</body>
+</html>

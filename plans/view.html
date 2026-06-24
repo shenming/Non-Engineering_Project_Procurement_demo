@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../common/styles.css">
+    <style>
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .summary-item { background: var(--gray-50); border-radius: var(--radius); padding: 14px 16px; border: 1px solid var(--gray-200); }
+        .summary-item .num { font-size: 22px; font-weight: 700; color: var(--gray-800); }
+        .summary-item .label { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+        .item-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .inline-actions { display: flex; gap: 4px; }
+        .inline-actions button { font-size: 11px; padding: 2px 8px; }
+        .plan-header-info { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .plan-header-info .info-item { font-size: 13px; }
+        .plan-header-info .info-item .info-label { color: var(--gray-500); font-size: 12px; }
+        .plan-header-info .info-item .info-value { font-weight: 500; margin-top: 2px; }
+    </style>
+</head>
+<body class="content-page">
+
+<div class="sub-navbar">
+    <span class="sub-nav-title">📋 计划详情</span>
+    <span class="breadcrumb">
+        <a onclick="navTo('plans')">采购计划</a><span> › </span>
+        2026年度成员企业A采购计划
+    </span>
+</div>
+
+<!-- 计划概要卡片 -->
+<div class="card">
+    <div class="card-header">
+        <h3>📄 2026年度成员企业A采购计划 <span class="tag tag-green" style="margin-left:8px;">已生效</span></h3>
+        <div class="flex gap-8">
+            <button class="btn btn-sm btn-outline" onclick="navTo('plans','plans/adjust.html')">✏️ 调整计划</button>
+            <button class="btn btn-sm btn-outline" onclick="showAlert('正在导出计划报表...')">📥 导出</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="plan-header-info">
+            <div class="info-item">
+                <div class="info-label">计划编号</div>
+                <div class="info-value">PL-2026-0001</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">计划类型</div>
+                <div class="info-value"><span class="tag tag-blue">按年度</span></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">计划年度</div>
+                <div class="info-value">2026</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">所属单位</div>
+                <div class="info-value">成员企业A</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">生效日期</div>
+                <div class="info-value">2026-01-01 ~ 2026-12-31</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">计划总预算</div>
+                <div class="info-value"><span class="money">¥200.0万</span></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">编制部门 / 编制人</div>
+                <div class="info-value">采购部 / 张明</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">状态</div>
+                <div class="info-value"><span class="tag tag-green">已生效</span></div>
+            </div>
+        </div>
+        <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--gray-200);">
+            <div class="info-item">
+                <div class="info-label">计划说明</div>
+                <div class="info-value text-sm" style="margin-top:4px;">涵盖2026年度办公用品、IT设备、法律咨询等货物及服务采购需求。</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 招采项汇总 -->
+<div class="summary-grid">
+    <div class="summary-item">
+        <div class="num">6 <span class="text-xs text-muted" style="font-weight:400;">项</span></div>
+        <div class="label">招采项总数</div>
+    </div>
+    <div class="summary-item">
+        <div class="num">¥185.0 <span class="text-xs text-muted" style="font-weight:400;">万</span></div>
+        <div class="label">预估总金额</div>
+    </div>
+    <div class="summary-item">
+        <div class="num">¥72.0 <span class="text-xs text-muted" style="font-weight:400;">万</span></div>
+        <div class="label">已执行金额</div>
+    </div>
+    <div class="summary-item">
+        <div class="num" style="color:var(--success);">92.5%</div>
+        <div class="label">预算使用率（预估/预算）</div>
+    </div>
+</div>
+
+<!-- 招采项列表 -->
+<div class="card">
+    <div class="card-header">
+        <h3>📋 招采项明细</h3>
+        <div class="flex gap-8">
+            <button class="btn btn-sm btn-outline" onclick="showAddItemModal()">＋ 新增招采项</button>
+        </div>
+    </div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:40px;">#</th>
+                        <th>采购内容</th>
+                        <th>类别</th>
+                        <th>采购方式</th>
+                        <th>预估金额(万)</th>
+                        <th>限价(万)</th>
+                        <th>计划时间</th>
+                        <th>需求部门</th>
+                        <th>经办人</th>
+                        <th>管控项</th>
+                        <th>状态</th>
+                        <th style="width:110px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Item 1 -->
+                    <tr>
+                        <td class="text-muted">1</td>
+                        <td><strong>年度法律顾问服务</strong></td>
+                        <td><span class="tag tag-blue">服务类</span></td>
+                        <td><span class="tag tag-orange">直接采购</span></td>
+                        <td><span class="money">15.0</span></td>
+                        <td>12.0</td>
+                        <td class="text-sm">2026-01 ~ 2026-12</td>
+                        <td>法务部</td>
+                        <td>张明</td>
+                        <td><span class="tag tag-gray">自主</span></td>
+                        <td><span class="tag tag-green">已完成</span></td>
+                        <td>
+                            <div class="inline-actions">
+                                <button class="btn btn-xs btn-outline">编辑</button>
+                                <button class="btn btn-xs btn-danger">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Item 2 -->
+                    <tr>
+                        <td class="text-muted">2</td>
+                        <td><strong>办公家具采购</strong></td>
+                        <td><span class="tag tag-green">货物类</span></td>
+                        <td><span class="tag tag-blue">公开招标</span></td>
+                        <td><span class="money">89.0</span></td>
+                        <td>80.0</td>
+                        <td class="text-sm">2026-03 ~ 2026-05</td>
+                        <td>行政部</td>
+                        <td>李华</td>
+                        <td><span class="tag tag-red">集团管控</span></td>
+                        <td><span class="tag tag-yellow">执行中</span></td>
+                        <td>
+                            <div class="inline-actions">
+                                <button class="btn btn-xs btn-outline">编辑</button>
+                                <button class="btn btn-xs btn-outline" disabled>删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Item 3 -->
+                    <tr>
+                        <td class="text-muted">3</td>
+                        <td><strong>IT设备采购</strong></td>
+                        <td><span class="tag tag-green">货物类</span></td>
+                        <td><span class="tag tag-purple">询比采购</span></td>
+                        <td><span class="money">45.0</span></td>
+                        <td>42.0</td>
+                        <td class="text-sm">2026-04 ~ 2026-06</td>
+                        <td>信息部</td>
+                        <td>王磊</td>
+                        <td><span class="tag tag-gray">自主</span></td>
+                        <td><span class="tag tag-green">已生效</span></td>
+                        <td>
+                            <div class="inline-actions">
+                                <button class="btn btn-xs btn-outline">编辑</button>
+                                <button class="btn btn-xs btn-danger">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Item 4 -->
+                    <tr>
+                        <td class="text-muted">4</td>
+                        <td><strong>物业服务招标</strong></td>
+                        <td><span class="tag tag-blue">服务类</span></td>
+                        <td><span class="tag tag-blue">公开招标</span></td>
+                        <td><span class="money">120.0</span></td>
+                        <td>110.0</td>
+                        <td class="text-sm">2026-02 ~ 2026-04</td>
+                        <td>行政部</td>
+                        <td>李华</td>
+                        <td><span class="tag tag-yellow">集团管控</span></td>
+                        <td><span class="tag tag-yellow">执行中</span></td>
+                        <td>
+                            <div class="inline-actions">
+                                <button class="btn btn-xs btn-outline">编辑</button>
+                                <button class="btn btn-xs btn-outline" disabled>删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Item 5 -->
+                    <tr>
+                        <td class="text-muted">5</td>
+                        <td><strong>年度培训服务</strong></td>
+                        <td><span class="tag tag-blue">服务类</span></td>
+                        <td><span class="tag tag-yellow">谈判采购</span></td>
+                        <td><span class="money">28.0</span></td>
+                        <td>25.0</td>
+                        <td class="text-sm">2026-05 ~ 2026-11</td>
+                        <td>人力资源部</td>
+                        <td>陈芳</td>
+                        <td><span class="tag tag-gray">自主</span></td>
+                        <td><span class="tag tag-green">已生效</span></td>
+                        <td>
+                            <div class="inline-actions">
+                                <button class="btn btn-xs btn-outline">编辑</button>
+                                <button class="btn btn-xs btn-danger">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Item 6 -->
+                    <tr>
+                        <td class="text-muted">6</td>
+                        <td><strong>生产设备维护</strong></td>
+                        <td><span class="tag tag-blue">服务类</span></td>
+                        <td><span class="tag tag-blue">邀请招标</span></td>
+                        <td><span class="money">67.0</span></td>
+                        <td>60.0</td>
+                        <td class="text-sm">2026-07 ~ 2026-09</td>
+                        <td>生产部</td>
+                        <td>赵岩</td>
+                        <td><span class="tag tag-gray">自主</span></td>
+                        <td><span class="tag tag-gray">草稿</span></td>
+                        <td>
+                            <div class="inline-actions">
+                                <button class="btn btn-xs btn-outline">编辑</button>
+                                <button class="btn btn-xs btn-danger">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);">
+        <span class="text-muted text-sm">
+            预估合计：<span class="money">¥364.0万</span>
+            ｜计划总预算：<span class="money">¥200.0万</span>
+            <span class="tag tag-red" style="margin-left:8px;">⚠ 超出预算 ¥164.0万</span>
+        </span>
+        <span></span>
+    </div>
+</div>
+
+<div class="alert alert-info">
+    <span>💡</span>
+    <div>
+        <strong>操作说明：</strong>
+        已生效/执行中的招采项如需删除需先作废；集团管控项禁止删除。修改已生效的招采项建议通过"调整计划"统一发起升版审批。
+    </div>
+</div>
+
+<!-- ===== 新增/编辑招采项 模态框 ===== -->
+<div class="modal-overlay" id="itemModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="itemModalTitle">新增招采项</h2>
+            <button class="close" onclick="closeItemModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>采购内容 <span class="required">*</span></label>
+                <input class="form-control" id="itemContent" placeholder="请填写采购内容描述">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>采购类别 <span class="required">*</span></label>
+                    <select class="form-control" id="itemCategory">
+                        <option value="货物类">货物类</option>
+                        <option value="服务类" selected>服务类</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>预选采购方式 <span class="required">*</span></label>
+                    <select class="form-control" id="itemMethod">
+                        <option>公开招标</option>
+                        <option>邀请招标</option>
+                        <option selected>询比采购</option>
+                        <option>谈判采购</option>
+                        <option>直接采购</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>预估金额 (万元) <span class="required">*</span></label>
+                    <input class="form-control" type="number" id="itemAmount" value="10.0">
+                </div>
+                <div class="form-group">
+                    <label>采购限价 (万元)</label>
+                    <input class="form-control" type="number" id="itemLimit" value="9.0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>计划开始 <span class="required">*</span></label>
+                    <input class="form-control" type="date" id="itemStart">
+                </div>
+                <div class="form-group">
+                    <label>计划结束 <span class="required">*</span></label>
+                    <input class="form-control" type="date" id="itemEnd">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>需求部门 <span class="required">*</span></label>
+                    <input class="form-control" id="itemDept" value="采购部">
+                </div>
+                <div class="form-group">
+                    <label>经办人 <span class="required">*</span></label>
+                    <input class="form-control" id="itemPerson" value="张明">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>是否集团管控项</label>
+                <select class="form-control" id="itemControlled">
+                    <option value="no">否（自主管控）</option>
+                    <option value="yes">是（集团重点管控）</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>附件</label>
+                <input class="form-control" type="file" multiple>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeItemModal()">取消</button>
+            <button class="btn btn-primary" onclick="saveItem()">保存</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function showAddItemModal() {
+    document.getElementById('itemModalTitle').textContent = '新增招采项';
+    document.getElementById('itemModal').classList.add('show');
+}
+
+function closeItemModal() {
+    document.getElementById('itemModal').classList.remove('show');
+}
+
+function saveItem() {
+    showAlert('✅ 招采项已保存。');
+    closeItemModal();
+}
+
+// 点击遮罩关闭
+document.getElementById('itemModal').addEventListener('click', function(e) {
+    if (e.target === this) closeItemModal();
+});
+</script>
+
+<script src="../common/scripts.js"></script>
+</body>
+</html>

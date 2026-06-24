@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../common/styles.css">
+</head>
+<body class="content-page">
+
+    <div class="sub-navbar">
+        <span class="sub-nav-title">🤝 集采管理</span>
+    </div>
+
+    <div class="flex-between mb-16">
+        <div>
+            <span class="text-muted">集中采购 · 多项目联合采购</span>
+            <span class="text-muted" style="margin-left:12px;">统采统签 / 统采分签</span>
+        </div>
+        <div class="flex gap-8">
+            <button class="btn btn-sm btn-outline">📥 导出</button>
+            <button class="btn btn-sm btn-primary" onclick="navTo('collective','collective/create.html')">＋ 发起集采</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h3>🤝 集采项目列表</h3><div class="actions"><select class="form-control form-control-sm" style="width:auto;min-width:100px;"><option>全部模式</option><option>统采统签</option><option>统采分签</option></select></div></div>
+        <div class="card-body" style="padding:0;">
+            <div class="table-wrap"><table><thead><tr><th>集采编号</th><th>集采品类</th><th>业务模式</th><th>涉及单位</th><th>采购方式</th><th>状态</th><th>操作</th></tr></thead><tbody>
+                <tr><td><strong>JC-2026-001</strong></td><td>集团办公耗材</td><td><span class="tag tag-blue">统采统签</span></td><td>集团总部、A、B、C</td><td><span class="tag tag-blue">公开招标</span></td><td><span class="tag tag-green">已完成</span></td><td><button class="btn btn-xs btn-outline" onclick="navTo('collective','collective/view.html')">查看</button> <button class="btn btn-xs btn-outline">合同</button></td></tr>
+                <tr><td><strong>JC-2026-002</strong></td><td>物业服务框架</td><td><span class="tag tag-purple">统采分签</span></td><td>集团总部、A、B</td><td><span class="tag tag-blue">邀请招标</span></td><td><span class="tag tag-yellow">进行中</span></td><td><button class="btn btn-xs btn-outline" onclick="navTo('collective','collective/view.html')">查看</button> <button class="btn btn-xs btn-primary" onclick="navTo('collective','collective/split-sign.html')">分签</button></td></tr>
+                <tr><td><strong>JC-2026-003</strong></td><td>IT设备集采</td><td><span class="tag tag-purple">统采分签</span></td><td>A、B、C、D</td><td><span class="tag tag-purple">询比采购</span></td><td><span class="tag tag-green">已定标</span></td><td><button class="btn btn-xs btn-outline" onclick="navTo('collective','collective/view.html')">查看</button> <button class="btn btn-xs btn-primary" onclick="navTo('collective','collective/split-sign.html')">分签</button></td></tr>
+                <tr><td><strong>JC-2026-004</strong></td><td>法律顾问框架</td><td><span class="tag tag-purple">统采分签</span></td><td>集团总部、A</td><td><span class="tag tag-orange">直接采购</span></td><td><span class="tag tag-blue">审批中</span></td><td><button class="btn btn-xs btn-outline" onclick="navTo('collective','collective/view.html')">查看</button></td></tr>
+            </tbody></table></div>
+        </div>
+    </div>
+
+    <div class="alert alert-success"><span>📌</span><div><strong>统采统签：</strong> 集团统一实施采购，各用户单位无需单独招采。<br><strong>统采分签：</strong> 集团统一实施采购形成框架，各用户单位使用<strong>直接采购</strong>方式分签合同。</div></div>
+
+    <script src="../common/scripts.js"></script>
+</body>
+</html>

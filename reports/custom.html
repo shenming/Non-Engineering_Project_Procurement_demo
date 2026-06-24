@@ -1,0 +1,7 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><link rel="stylesheet" href="../common/styles.css"></head><body class="content-page">
+<div class="sub-navbar"><span class="sub-nav-title">📊 自定义报表</span><span class="breadcrumb"><a onclick="navTo('reports')">报表管理</a> > 自定义</span></div>
+<div class="card"><div class="card-header"><h3>自定义报表生成</h3></div><div class="card-body"><div class="alert alert-info"><span>🔧</span><div>选择维度、指标和时间范围，生成自定义报表并支持导出。</div></div>
+<div class="form-row"><div class="form-group"><label>维度选择</label><select class="form-control" multiple style="height:100px;"><option selected>采购方式</option><option selected>所属单位</option><option>采购类别</option><option>时间维度</option></select></div><div class="form-group"><label>指标选择</label><select class="form-control" multiple style="height:100px;"><option selected>采购金额</option><option selected>项目数量</option><option>执行率</option><option>节约率</option></select></div></div>
+<div class="form-row mt-12"><div class="form-group"><label>开始日期</label><input class="form-control" type="date" value="2026-01-01"></div><div class="form-group"><label>结束日期</label><input class="form-control" type="date" value="2026-06-30"></div></div>
+<div class="mt-12 text-right"><button class="btn btn-primary" onclick="showAlert('✅ 报表生成中，请稍候...');navTo('reports')">生成报表</button> <button class="btn btn-outline" onclick="navTo('reports')">取消</button></div></div></div>
+<script src="../common/scripts.js"></script></body></html>
