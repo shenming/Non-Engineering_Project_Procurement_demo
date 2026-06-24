@@ -24,13 +24,15 @@
 <div style="flex:1;min-width:120px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span class="tag tag-blue">邀请招标</span><span class="fw-600">7%</span></div><div style="height:8px;background:var(--gray-200);border-radius:4px;overflow:hidden;"><div style="width:7%;height:100%;background:#0ea5e9;border-radius:4px;"></div></div></div>
 </div></div></div>
 
-<div class="card"><div class="card-header"><h3>📄 报表列表</h3><div class="actions"><button class="btn btn-sm btn-outline">📥 导出</button><button class="btn btn-sm btn-outline">自定义报表</button></div></div>
-<div class="card-body" style="padding:0;"><div class="table-wrap"><table><thead><tr><th>报表名称</th><th>类型</th><th>更新时间</th><th>操作</th></tr></thead><tbody>
-<tr><td>采购计划执行统计月报</td><td><span class="tag tag-green">计划</span></td><td>2026-06-01</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
-<tr><td>采购方式合规分析</td><td><span class="tag tag-blue">合规</span></td><td>2026-05-28</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
-<tr><td>集采项目汇总表</td><td><span class="tag tag-purple">集采</span></td><td>2026-05-25</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
-<tr><td>预警台账（红灯项）</td><td><span class="tag tag-red">预警</span></td><td>2026-06-20</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-danger">下载</button></td></tr>
-<tr><td>采购全流程追溯台账</td><td><span class="tag tag-gray">归档</span></td><td>2026-06-15</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
+<div class="card"><div class="card-header"><h3>📄 报表列表</h3><div class="actions"><button class="btn btn-sm btn-outline">📥 导出</button><button class="btn btn-sm btn-outline" onclick="navTo('reports','reports/custom.html')">自定义报表</button></div></div>
+<div class="card-body" style="padding:0;"><div class="table-wrap"><table><thead><tr><th>报表名称</th><th>类型</th><th>维度</th><th>更新时间</th><th>操作</th></tr></thead><tbody>
+<tr><td>采购计划执行统计（按计划）</td><td><span class="tag tag-green">计划</span></td><td>计划头</td><td>2026-06-01</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
+<tr><td>招采项明细统计表</td><td><span class="tag tag-green">计划</span></td><td>招采项</td><td>2026-06-01</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
+<tr><td>采购方式合规分析</td><td><span class="tag tag-blue">合规</span></td><td>招采项</td><td>2026-05-28</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
+<tr><td>集采项目汇总表</td><td><span class="tag tag-purple">集采</span></td><td>招采项</td><td>2026-05-25</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
+<tr><td>预警台账（红灯项）</td><td><span class="tag tag-red">预警</span></td><td>招采项</td><td>2026-06-20</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-danger">下载</button></td></tr>
+<tr><td>采购全流程追溯台账</td><td><span class="tag tag-gray">归档</span></td><td>全过程</td><td>2026-06-15</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
+<tr><td>年度预算执行偏差分析</td><td><span class="tag tag-green">计划</span></td><td>计划头</td><td>2026-06-10</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
 </tbody></table></div></div></div>
 
 <script src="../common/scripts.js"></script>

@@ -1,4 +1,55 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><link rel="stylesheet" href="../common/styles.css"></head><body class="content-page">
-<div class="sub-navbar"><span class="sub-nav-title">📄 报表预览</span><span class="breadcrumb"><a onclick="navTo('reports')">报表管理</a> > 预览</span></div>
-<div class="placeholder-page"><div class="ph-icon">📊</div><p class="ph-title">报表预览</p><p class="ph-desc">此处展示选中报表的详细内容，可包含数据表格、统计图表等可视化内容。</p><button class="btn btn-outline" onclick="navTo('reports')">← 返回报表列表</button></div>
-<script src="../common/scripts.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><link rel="stylesheet" href="../common/styles.css"></head>
+<body class="content-page">
+
+<div class="sub-navbar">
+    <span class="sub-nav-title">📄 报表预览</span>
+    <span class="breadcrumb">
+        <a onclick="navTo('reports')">报表管理</a><span> › </span>
+        采购计划执行统计（按计划）
+    </span>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>📊 采购计划执行统计（按计划头维度）</h3>
+        <div class="actions">
+            <button class="btn btn-sm btn-outline">📥 下载PDF</button>
+            <button class="btn btn-sm btn-outline">📥 下载Excel</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="stat-grid">
+            <div class="stat-card"><div class="stat-label">总计划数</div><div class="stat-value">8</div></div>
+            <div class="stat-card"><div class="stat-label">招采项总数</div><div class="stat-value">43</div></div>
+            <div class="stat-card"><div class="stat-label">已执行金额</div><div class="stat-value">¥1,025万</div></div>
+            <div class="stat-card"><div class="stat-label">平均执行率</div><div class="stat-value">78%</div></div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>计划名称</th><th>类型</th><th>年度</th><th>招采项数</th><th>预估总金额</th><th>已执行金额</th><th>执行率</th><th>状态</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2026年度成员企业A采购计划</td><td><span class="tag tag-blue">按年度</span></td><td>2026</td><td>6</td><td>¥185.0万</td><td>¥72.0万</td><td>39%</td><td><span class="tag tag-green">已生效</span></td></tr>
+                    <tr><td>2026年度集团总部采购计划</td><td><span class="tag tag-blue">按年度</span></td><td>2026</td><td>12</td><td>¥520.0万</td><td>¥210.0万</td><td>40%</td><td><span class="tag tag-yellow">执行中</span></td></tr>
+                    <tr><td>进博会专项采购计划</td><td><span class="tag tag-purple">按事项</span></td><td>2026</td><td>4</td><td>¥68.0万</td><td>¥0.0万</td><td>0%</td><td><span class="tag tag-blue">审批中</span></td></tr>
+                    <tr><td>2025年度成员企业A采购计划（下半年补充）</td><td><span class="tag tag-blue">按年度</span></td><td>2025</td><td>3</td><td>¥35.0万</td><td>¥35.0万</td><td>100%</td><td><span class="tag tag-green">已完成</span></td></tr>
+                    <tr><td>2025年度集团总部采购计划</td><td><span class="tag tag-blue">按年度</span></td><td>2025</td><td>8</td><td>¥380.0万</td><td>¥380.0万</td><td>100%</td><td><span class="tag tag-green">已完成</span></td></tr>
+                    <tr><td>信息化专项采购计划</td><td><span class="tag tag-purple">按事项</span></td><td>2026</td><td>2</td><td>¥150.0万</td><td>¥0.0万</td><td>0%</td><td><span class="tag tag-gray">编制中</span></td></tr>
+                    <tr><td>2026年度成员企业B采购计划</td><td><span class="tag tag-blue">按年度</span></td><td>2026</td><td>5</td><td>¥95.0万</td><td>¥15.0万</td><td>16%</td><td><span class="tag tag-yellow">执行中</span></td></tr>
+                    <tr><td>疫情防控物资专项采购计划</td><td><span class="tag tag-purple">按事项</span></td><td>2026</td><td>3</td><td>¥45.0万</td><td>¥45.0万</td><td>100%</td><td><span class="tag tag-green">已完成</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="flex gap-8 mt-16">
+    <button class="btn btn-outline" onclick="navTo('reports')">← 返回报表列表</button>
+</div>
+
+<script src="../common/scripts.js"></script>
+</body>
+</html>

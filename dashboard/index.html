@@ -6,12 +6,16 @@
 </head>
 <body class="content-page">
 
-    <!-- 统计卡片 -->
     <div class="stat-grid">
         <div class="stat-card">
             <div class="stat-label">📋 采购计划</div>
-            <div class="stat-value">24 <span class="sub">项</span></div>
-            <div class="stat-change up">↑ 8% 较上月</div>
+            <div class="stat-value">8 <span class="sub">个计划</span></div>
+            <div class="stat-change up">↑ 2 个较去年</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">📦 招采项</div>
+            <div class="stat-value">43 <span class="sub">项</span></div>
+            <div class="stat-change up">↑ 6 项较上月</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">⚡ 进行中采购</div>
@@ -20,24 +24,61 @@
         </div>
         <div class="stat-card">
             <div class="stat-label">🔴 逾期预警</div>
-            <div class="stat-value" style="color:var(--danger);">3 <span class="sub">项</span></div>
+            <div class="stat-value" style="color:var(--danger);">2 <span class="sub">项</span></div>
             <div class="stat-change down">↑ 需立即处理</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">✅ 已完成采购</div>
-            <div class="stat-value">18 <span class="sub">项</span></div>
-            <div class="stat-change up">↑ 12% 较上月</div>
         </div>
     </div>
 
-    <!-- 预警看板 -->
+    <div class="card">
+        <div class="card-header">
+            <h3>📅 年度计划概览</h3>
+            <div class="actions">
+                <span class="tag tag-blue">按年度 5</span>
+                <span class="tag tag-purple">按事项 3</span>
+                <button class="btn btn-sm btn-outline" onclick="navTo('plans')">查看全部</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>计划名称</th><th>类型</th><th>招采项数</th><th>预估总金额</th><th>已执行</th><th>完成率</th><th>状态</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>2026年度成员企业A采购计划</strong></td>
+                            <td><span class="tag tag-blue">按年度</span></td>
+                            <td>6</td><td><span class="money">¥185.0万</span></td><td><span class="money">¥72.0万</span></td>
+                            <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:6px;background:var(--gray-200);border-radius:4px;"><div style="width:39%;height:100%;background:var(--primary-light);border-radius:4px;"></div></div><span class="text-sm">39%</span></div></td>
+                            <td><span class="tag tag-green">已生效</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>2026年度集团总部采购计划</strong></td>
+                            <td><span class="tag tag-blue">按年度</span></td>
+                            <td>12</td><td><span class="money">¥520.0万</span></td><td><span class="money">¥210.0万</span></td>
+                            <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:6px;background:var(--gray-200);border-radius:4px;"><div style="width:40%;height:100%;background:var(--warning);border-radius:4px;"></div></div><span class="text-sm">40%</span></div></td>
+                            <td><span class="tag tag-yellow">执行中</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>进博会专项采购计划</strong></td>
+                            <td><span class="tag tag-purple">按事项</span></td>
+                            <td>4</td><td><span class="money">¥68.0万</span></td><td><span class="money">¥0.0万</span></td>
+                            <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:6px;background:var(--gray-200);border-radius:4px;"><div style="width:0%;height:100%;background:var(--gray-300);border-radius:4px;"></div></div><span class="text-sm">0%</span></div></td>
+                            <td><span class="tag tag-blue">审批中</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-header">
             <h3>🚨 预警看板 · 三色预警</h3>
             <div class="actions">
-                <span class="tag tag-green"><span class="led led-green"></span>绿灯 12</span>
+                <span class="tag tag-green"><span class="led led-green"></span>绿灯 28</span>
                 <span class="tag tag-yellow"><span class="led led-yellow"></span>黄灯 8</span>
-                <span class="tag tag-red"><span class="led led-red"></span>红灯 3</span>
+                <span class="tag tag-red"><span class="led led-red"></span>红灯 2</span>
                 <button class="btn btn-sm btn-outline">刷新</button>
             </div>
         </div>
@@ -45,64 +86,66 @@
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr><th>计划编号</th><th>采购内容</th><th>所属单位</th><th>计划时间</th><th>状态</th><th>操作</th></tr>
+                        <tr><th>所属计划</th><th>招采项</th><th>所属单位</th><th>计划时间</th><th>状态</th><th>操作</th></tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>PL-2026-0015</strong></td>
-                            <td>集团办公家具采购</td><td>集团总部</td><td>2026-03-01 ~ 2026-04-30</td>
+                            <td><span class="text-sm text-muted">2026年度集团总部采购计划</span></td>
+                            <td><strong>集团办公家具采购</strong></td><td>集团总部</td><td>2026-03-01 ~ 2026-04-30</td>
                             <td><span class="tag tag-red"><span class="led led-red"></span>红灯 · 逾期</span></td>
-                            <td><button class="btn btn-sm btn-danger" onclick="if(confirm('确认推进该逾期项处理？'))showAlert('已标记，请前往计划列表调整。')">处理</button></td>
+                            <td><button class="btn btn-sm btn-danger" onclick="navTo('plans','plans/view.html')">处理</button></td>
                         </tr>
                         <tr>
-                            <td><strong>PL-2026-0022</strong></td>
-                            <td>物业服务招标</td><td>成员企业A</td><td>2026-04-15 ~ 2026-05-15</td>
+                            <td><span class="text-sm text-muted">2026年度成员企业A采购计划</span></td>
+                            <td><strong>物业服务招标</strong></td><td>成员企业A</td><td>2026-04-15 ~ 2026-05-15</td>
                             <td><span class="tag tag-red"><span class="led led-red"></span>红灯 · 逾期</span></td>
-                            <td><button class="btn btn-sm btn-danger" onclick="if(confirm('确认推进该逾期项处理？'))showAlert('已标记，请前往计划列表调整。')">处理</button></td>
+                            <td><button class="btn btn-sm btn-danger" onclick="navTo('plans','plans/view.html')">处理</button></td>
                         </tr>
                         <tr>
-                            <td><strong>PL-2026-0031</strong></td>
-                            <td>IT设备采购</td><td>成员企业B</td><td>2026-05-01 ~ 2026-05-31</td>
+                            <td><span class="text-sm text-muted">2026年度成员企业B采购计划</span></td>
+                            <td><strong>IT设备采购</strong></td><td>成员企业B</td><td>2026-05-01 ~ 2026-05-31</td>
                             <td><span class="tag tag-yellow"><span class="led led-yellow"></span>黄灯 · 进行中</span></td>
-                            <td><button class="btn btn-sm btn-outline">查看</button></td>
+                            <td><button class="btn btn-sm btn-outline" onclick="navTo('plans','plans/view.html')">查看</button></td>
                         </tr>
                         <tr>
-                            <td><strong>PL-2026-0008</strong></td>
-                            <td>法律咨询服务</td><td>集团总部</td><td>2026-02-01 ~ 2026-03-31</td>
+                            <td><span class="text-sm text-muted">2026年度成员企业A采购计划</span></td>
+                            <td><strong>年度培训服务</strong></td><td>成员企业A</td><td>2026-02-01 ~ 2026-03-31</td>
                             <td><span class="tag tag-green"><span class="led led-green"></span>绿灯 · 正常</span></td>
-                            <td><button class="btn btn-sm btn-outline">查看</button></td>
+                            <td><button class="btn btn-sm btn-outline" onclick="navTo('plans','plans/view.html')">查看</button></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="mt-8 text-muted text-sm">💡 红灯项需限期完成调整或启动采购，超期未处置纳入管理台账。</div>
+            <div class="mt-8 text-muted text-sm">💡 红灯项需在计划详情页中调整或启动采购，超期未处置纳入管理台账。</div>
         </div>
     </div>
 
-    <!-- 最近采购 -->
     <div class="card">
         <div class="card-header">
             <h3>📌 近期采购动态</h3>
-            <div class="actions"><button class="btn btn-sm btn-outline">查看全部</button></div>
+            <div class="actions"><button class="btn btn-sm btn-outline" onclick="navTo('procurement','procurement/list.html')">查看全部</button></div>
         </div>
         <div class="card-body">
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr><th>采购编号</th><th>项目名称</th><th>方式</th><th>金额</th><th>状态</th><th>时间</th></tr>
+                        <tr><th>关联计划</th><th>采购编号</th><th>项目名称</th><th>方式</th><th>金额</th><th>状态</th><th>时间</th></tr>
                     </thead>
                     <tbody>
                         <tr>
+                            <td class="text-sm text-muted">2026年度集团总部采购计划</td>
                             <td>ZB-2026-003</td><td>集团年度物业服务</td>
                             <td><span class="tag tag-blue">公开招标</span></td><td><span class="money">¥186.5万</span></td>
                             <td><span class="tag tag-yellow">评标中</span></td><td>2026-06-18</td>
                         </tr>
                         <tr>
+                            <td class="text-sm text-muted">2026年度成员企业B采购计划</td>
                             <td>ZB-2026-005</td><td>办公设备集中采购</td>
                             <td><span class="tag tag-purple">询比采购</span></td><td><span class="money">¥45.2万</span></td>
                             <td><span class="tag tag-green">已定标</span></td><td>2026-06-15</td>
                         </tr>
                         <tr>
+                            <td class="text-sm text-muted">2026年度成员企业A采购计划</td>
                             <td>ZB-2026-006</td><td>法律顾问服务</td>
                             <td><span class="tag tag-orange">直接采购</span></td><td><span class="money">¥8.5万</span></td>
                             <td><span class="tag tag-blue">审批中</span></td><td>2026-06-14</td>
