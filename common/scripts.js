@@ -301,38 +301,38 @@ function recommendProcurementMethod(category, amount) {
     var isGoods = (category === '货物类');
     var results = [];
 
-    // <= 各方式最低门槛（元）===
-    var publicMin = isGoods ? 2000000 : 1000000;
-    var inviteMin = isGoods ? 1000000 : 500000;
-    var rfqMin = 100000;
+    // <= 各方式阈值（元）===
+    var publicMin = isGoods ? 2000000 : 1000000;    // 公开招标下限
+    var inviteMax = publicMin;                       // 邀请招标上限 = 公开招标下限
+    var rfqMax = isGoods ? 1000000 : 500000;         // 询比采购上限 = 邀请招标下限
 
-    // --- 询比采购 ---
-    var rfqOk = amount >= rfqMin;
+    // --- 询比采购（0 ≤ amount < rfqMax，即不满足邀请招标）---
+    var rfqOk = amount < rfqMax;
     results.push({
         method: '询比采购',
         priority: 3,
         compliant: rfqOk,
-        isBest: rfqOk && amount < inviteMin,
+        isBest: rfqOk,
         reason: rfqOk
-            ? '合同估算价≥' + fmtWan(rfqMin) + '万元，可采用询比采购'
-            : '合同估算价＜' + fmtWan(rfqMin) + '万元，不满足询比采购门槛（≥' + fmtWan(rfqMin) + '万元）',
+            ? '合同估算价＜' + fmtWan(rfqMax) + '万元，可采用询比采购'
+            : '合同估算价≥' + fmtWan(rfqMax) + '万元，不满足询比采购门槛（＜' + fmtWan(rfqMax) + '万元）',
         tag: rfqOk ? '✅ 合规' : '⚠ 不满足门槛'
     });
 
-    // --- 邀请招标（向下兼容：≥邀请门槛即合规）---
-    var invOk = amount >= inviteMin;
+    // --- 邀请招标（0 ≤ amount < publicMin）---
+    var invOk = amount < inviteMax;
     results.push({
         method: '邀请招标',
         priority: 2,
         compliant: invOk,
-        isBest: invOk && amount < publicMin,
+        isBest: invOk && !rfqOk,
         reason: invOk
-            ? '合同估算价≥' + fmtWan(inviteMin) + '万元，可采用邀请招标'
-            : '合同估算价＜' + fmtWan(inviteMin) + '万元，不满足邀请招标门槛（≥' + fmtWan(inviteMin) + '万元）',
+            ? '合同估算价＜' + fmtWan(inviteMax) + '万元，可采用邀请招标'
+            : '合同估算价≥' + fmtWan(inviteMax) + '万元，不满足邀请招标门槛（＜' + fmtWan(inviteMax) + '万元）',
         tag: invOk ? '✅ 合规' : '⚠ 不满足门槛'
     });
 
-    // --- 公开招标 ---
+    // --- 公开招标（≥ publicMin）---
     var publicOk = amount >= publicMin;
     results.push({
         method: '公开招标',
