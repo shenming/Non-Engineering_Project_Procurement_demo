@@ -394,6 +394,50 @@ function validateItemMethod(category, amount, method) {
 }
 
 /**
+ * 根据采购方式生成采购项说明下拉选项 HTML
+ * @param {string} method - 采购方式
+ * @param {string} [selectedVal] - 当前已选值
+ * @returns {string} HTML
+ */
+function noteOptionsHTML(method, selectedVal) {
+    var html = '<option value="">—</option>';
+    if (method === '谈判采购') {
+        NEGOTIATION_CONDITIONS.forEach(function(c) {
+            html += '<option value="' + c.label + '"' + (selectedVal === c.label ? ' selected' : '') + '>' + c.label + '</option>';
+        });
+    } else if (method === '直接采购') {
+        DIRECT_PURCHASE_CONDITIONS.forEach(function(c) {
+            html += '<option value="' + c.label + '"' + (selectedVal === c.label ? ' selected' : '') + '>' + c.label + '</option>';
+        });
+    }
+    return html;
+}
+
+/**
+ * 校验采购项说明是否已选择 + 直接采购D1金额校验
+ * @param {string} method - 采购方式
+ * @param {string} note  - 采购项说明
+ * @param {number} amount - 采购金额（元）
+ * @returns {{ valid: boolean, reason: string }}
+ */
+function validateItemNote(method, note, amount) {
+    if (method === '谈判采购') {
+        if (!note) return { valid: false, reason: '谈判采购必须选择采购项说明（技术复杂/多种实施方案/仅2家供应商）' };
+        var found = NEGOTIATION_CONDITIONS.some(function(c) { return c.label === note; });
+        if (!found) return { valid: false, reason: '请从谈判采购适用情形中选择采购项说明' };
+    } else if (method === '直接采购') {
+        if (!note) return { valid: false, reason: '直接采购必须选择采购项说明（7种情形之一）' };
+        var found = DIRECT_PURCHASE_CONDITIONS.some(function(c) { return c.label === note; });
+        if (!found) return { valid: false, reason: '请从直接采购适用情形中选择采购项说明' };
+        // D1 特殊校验：金额必须 < 100,000
+        if (note === '合同估算价＜100,000.00元' && amount >= 100000) {
+            return { valid: false, reason: '采购项说明选择「合同估算价＜100,000.00元」，但采购金额为 ' + amount.toFixed(2) + ' 元，不满足＜100,000.00元的条件' };
+        }
+    }
+    return { valid: true, reason: '' };
+}
+
+/**
  * 智能更新采购方式下拉框 UI
  * 在子页面中调用，自动高亮推荐项、标注合规状态
  * @param {string} categorySelectId   - 采购类别 <select> 的 id

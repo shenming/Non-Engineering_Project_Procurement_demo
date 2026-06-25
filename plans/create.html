@@ -26,8 +26,8 @@
 <div class="card">
     <div class="card-header"><h3>📋 招采项明细</h3><div class="flex gap-8"><button class="btn btn-sm btn-outline" onclick="addNewItem()">＋ 新增招采项</button></div></div>
     <div class="card-body" style="padding:0;"><div class="table-wrap"><table>
-        <thead><tr><th style="width:40px;">#</th><th>采购内容</th><th>类别</th><th>采购方式</th><th>采购金额含税（元）</th><th>计划时间</th><th>需求部门</th><th>经办人</th><th style="width:140px;">操作</th></tr></thead>
-        <tbody id="itemTableBody"><tr class="text-muted text-sm" style="text-align:center;"><td colspan="9" style="padding:30px;">暂无招采项</td></tr></tbody>
+        <thead><tr><th style="width:40px;">#</th><th>采购内容</th><th>类别</th><th>采购方式</th><th>采购项说明</th><th>采购金额含税（元）</th><th>计划时间</th><th>需求部门</th><th>经办人</th><th style="width:140px;">操作</th></tr></thead>
+        <tbody id="itemTableBody"><tr class="text-muted text-sm" style="text-align:center;"><td colspan="10" style="padding:30px;">暂无招采项</td></tr></tbody>
     </table></div></div>
      <div class="card-header" style="border-top:1px solid var(--gray-200);"><span class="text-muted text-sm" id="totalInfo">限价合计：<span class="money">¥0.00元</span></span><span></span></div>
 </div>
@@ -67,7 +67,8 @@ function addNewItem() {
     row.innerHTML = '<td class="text-muted">'+itemCounter+'</td>' +
         '<td data-field="name" data-orig=""><input class="form-control form-control-sm" placeholder="采购内容" style="min-width:100px;"></td>' +
         '<td data-field="cat" data-orig=""><select class="form-control form-control-sm" style="width:130px;">'+categoryOptionsHTML('')+'</select></td>' +
-        '<td data-field="method" data-orig=""><select class="form-control form-control-sm" style="width:90px;"><option value="">请选择</option><option value="公开招标">公开招标</option><option value="邀请招标">邀请招标</option><option value="询比采购">询比采购</option><option value="谈判采购">谈判采购</option><option value="直接采购">直接采购</option></select></td>' +
+        '<td data-field="method" data-orig=""><select class="form-control form-control-sm" style="width:90px;" onchange="onNewMethodChange(this)"><option value="">请选择</option><option value="公开招标">公开招标</option><option value="邀请招标">邀请招标</option><option value="询比采购">询比采购</option><option value="谈判采购">谈判采购</option><option value="直接采购">直接采购</option></select></td>' +
+        '<td data-field="note" data-orig=""><select class="form-control form-control-sm" style="width:160px;"><option value="">—</option></select></td>' +
         '<td data-field="limit" data-orig=""><input class="form-control form-control-sm" type="number" placeholder="金额（元）" style="width:90px;"></td>' +
         '<td data-field="time" data-orig=""><input class="form-control form-control-sm" placeholder="如 2026-01 ~ 2026-12" style="min-width:120px;"></td>' +
         '<td data-field="dept" data-orig=""><input class="form-control form-control-sm" placeholder="需求部门" style="min-width:70px;"></td>' +
@@ -78,22 +79,28 @@ function addNewItem() {
     if (firstInput) firstInput.focus();
 }
 
+function onNewMethodChange(sel) {
+    var row = sel.closest('tr'), method = sel.value;
+    var noteTd = row.querySelector('[data-field="note"]');
+    if (noteTd) noteTd.querySelector('select').innerHTML = noteOptionsHTML(method);
+}
+
 function saveNewItem(btn) {
     var row = btn.closest('tr');
-    var fields = ['name','cat','method','limit','time','dept','user'];
-    // 收集值做校验
+    var fields = ['name','cat','method','note','limit','time','dept','user'];
     var vals = {};
     fields.forEach(function(f) { var td = row.querySelector('[data-field="'+f+'"]'); if(!td)return; var inp = td.querySelector('input, select'); vals[f] = inp ? inp.value : ''; });
     var cat = vals['cat'] || '', method = vals['method'] || '', limit = parseFloat(vals['limit']) || 0;
     var vld = validateItemMethod(extractParentCategory(cat), limit, method);
     if (!vld.valid) { showAlert('⚠️ ' + vld.reason); return; }
+    var nv = validateItemNote(method, vals['note'] || '', limit);
+    if (!nv.valid) { showAlert('⚠️ ' + nv.reason); return; }
 
     var allFilled = true;
     fields.forEach(function(f) {
         var td = row.querySelector('[data-field="'+f+'"]');
         if (!td) return;
-        var input = td.querySelector('input, select');
-        var val = input ? input.value : '';
+        var val = vals[f];
         if (!val) allFilled = false;
         td.setAttribute('data-orig', val);
         var display = val || '—';
@@ -111,17 +118,25 @@ function saveNewItem(btn) {
 
 function editSavedItem(btn) {
     var row = btn.closest('tr');
-    ['name','cat','method','limit','time','dept','user'].forEach(function(f) {
+    ['name','cat','method','note','limit','time','dept','user'].forEach(function(f) {
         var td = row.querySelector('[data-field="'+f+'"]');
         if (!td) return;
         var orig = td.getAttribute('data-orig') || '';
         var html = '';
         if (f === 'cat') html = '<select class="form-control form-control-sm" style="width:130px;">'+categoryOptionsHTML(orig)+'</select>';
-        else if (f === 'method') { html = '<select class="form-control form-control-sm" style="width:90px;"><option value=""'+(!orig?' selected':'')+'>请选择</option>'; ['公开招标','邀请招标','询比采购','谈判采购','直接采购'].forEach(function(m){ html += '<option value="'+m+'"'+(orig===m?' selected':'')+'>'+m+'</option>'; }); html += '</select>'; }
+        else if (f === 'method') { html = '<select class="form-control form-control-sm" style="width:90px;" onchange="onNewMethodChange(this)"><option value=""'+(!orig?' selected':'')+'>请选择</option>'; ['公开招标','邀请招标','询比采购','谈判采购','直接采购'].forEach(function(m){ html += '<option value="'+m+'"'+(orig===m?' selected':'')+'>'+m+'</option>'; }); html += '</select>'; }
+        else if (f === 'note') html = '<select class="form-control form-control-sm" style="width:160px;">'+noteOptionsHTML(orig==='2'?'谈判采购':orig==='3'?'直接采购':'', orig)+'</select>';
         else if (f === 'limit') html = '<input class="form-control form-control-sm" type="number" value="'+orig+'" style="width:90px;">';
         else { var w = f === 'name'?'100px':f==='time'?'120px':f==='dept'?'70px':'60px'; html = '<input class="form-control form-control-sm" value="'+orig.replace(/"/g,'"')+'" style="min-width:'+w+';">'; }
         td.innerHTML = html;
     });
+    // refresh note dropdown based on current method
+    var methodTd = row.querySelector('[data-field="method"] select');
+    if (methodTd) {
+        var m = methodTd.value;
+        var noteTd = row.querySelector('[data-field="note"] select');
+        if (noteTd) noteTd.innerHTML = noteOptionsHTML(m, row.querySelector('[data-field="note"]').getAttribute('data-orig'));
+    }
     row.cells[row.cells.length - 1].innerHTML = '<div class="inline-actions"><button class="btn btn-xs btn-primary" onclick="saveNewItem(this)">💾 保存</button><button class="btn btn-xs btn-danger" onclick="removeNewItem(this)">删除</button></div>';
 }
 
@@ -129,7 +144,7 @@ function removeNewItem(btn) { btn.closest('tr').remove(); updateTotal(); renumbe
 function renumber() {
     var rows = document.querySelectorAll('#itemTableBody tr:not(.text-muted)');
     rows.forEach(function(r,i){ r.cells[0].innerHTML = '<span class="text-muted">'+(i+1)+'</span>'; r.setAttribute('data-id','new-'+(i+1)); });
-    if (rows.length === 0) document.getElementById('itemTableBody').innerHTML = '<tr class="text-muted text-sm" style="text-align:center;"><td colspan="9" style="padding:30px;">暂无招采项，点击「＋ 新增招采项」添加</td></tr>';
+    if (rows.length === 0) document.getElementById('itemTableBody').innerHTML = '<tr class="text-muted text-sm" style="text-align:center;"><td colspan="10" style="padding:30px;">暂无招采项，点击「＋ 新增招采项」添加</td></tr>';
      document.getElementById('totalInfo').innerHTML = '限价合计：<span class="money">¥0.00元</span>';
 }
 
