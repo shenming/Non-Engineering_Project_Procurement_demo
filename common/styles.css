@@ -968,7 +968,21 @@ body.content-page {
     border-left: 3px solid var(--warning);
 }
 
-/* ===== 情形选择 Modal 内样式 ===== */
+ /* ===== Tab 页签布局 ===== */
+ .tab-card { border: 1px solid var(--gray-200); border-radius: var(--radius); background: #fff; margin-bottom: 20px; overflow: hidden; }
+ .tab-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid var(--gray-200); background: #fff; }
+ .tab-header .tab-title { display: flex; align-items: center; gap: 8px; }
+ .tab-header .tab-title h3 { margin: 0; font-size: 15px; }
+ .tab-nav { display: flex; gap: 0; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); padding: 0 20px; }
+ .tab-nav .tab-btn { padding: 10px 20px; border: none; background: none; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--gray-500); border-bottom: 2px solid transparent; transition: all 0.15s; position: relative; bottom: -1px; }
+ .tab-nav .tab-btn:hover { color: var(--gray-800); }
+ .tab-nav .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+ .tab-body { display: none; padding: 20px; }
+ .tab-body.active { display: block; }
+ .tab-body .plan-header-info { margin-bottom: 0; }
+ .tab-body .info-split { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200); }
+
+ /* ===== 情形选择 Modal 内样式 ===== */
 .condition-modal label {
     display: flex;
     align-items: flex-start;
