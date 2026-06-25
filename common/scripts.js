@@ -282,7 +282,7 @@ var NEGOTIATION_CONDITIONS = [
  * 直接采购适用的 7 种情形
  */
 var DIRECT_PURCHASE_CONDITIONS = [
-    { id: 'D1', label: '合同估算价＜10万元', desc: '合同估算价＜10 万元', isAmount: true },
+    { id: 'D1', label: '合同估算价＜100,000.00元', desc: '合同估算价＜100,000.00 元', isAmount: true },
     { id: 'D2', label: '涉密/商业秘密', desc: '涉及国家秘密、国家安全或企业重大商业秘密，且不适宜竞争性采购' },
     { id: 'D3', label: '不可替代专利/专有技术', desc: '需采用不可替代的专利或者专有技术' },
     { id: 'D4', label: '原供应商配套', desc: '需向原供应商采购，否则将影响施工或者功能配套要求' },
@@ -294,7 +294,7 @@ var DIRECT_PURCHASE_CONDITIONS = [
 /**
  * 根据采购类别和金额，返回所有采购方式的合规性判断及推荐。
  * @param {string} category - "货物类" 或 "服务类"
- * @param {number} amount  - 合同估算价/采购限价（万元）
+ * @param {number} amount  - 合同估算价/采购金额含税（元）
  * @returns {Array<{method: string, priority: number, compliant: boolean, isBest: boolean, reason: string, tag: string}>}
  */
 function recommendProcurementMethod(category, amount) {
@@ -302,7 +302,7 @@ function recommendProcurementMethod(category, amount) {
     var results = [];
 
     // --- 公开招标 ---
-    var publicBidMin = isGoods ? 200 : 100;
+    var publicBidMin = isGoods ? 2000000 : 1000000;
     var publicOk = amount >= publicBidMin;
     results.push({
         method: '公开招标',
@@ -310,14 +310,14 @@ function recommendProcurementMethod(category, amount) {
         compliant: publicOk,
         isBest: publicOk,
         reason: publicOk
-            ? '合同估算价≥' + publicBidMin + '万元，应采用公开招标'
-            : '合同估算价＜' + publicBidMin + '万元，不满足公开招标门槛（≥' + publicBidMin + '万元）',
+            ? '合同估算价≥' + (publicBidMin/10000).toFixed(2) + '万元，应采用公开招标'
+            : '合同估算价＜' + (publicBidMin/10000).toFixed(2) + '万元，不满足公开招标门槛（≥' + (publicBidMin/10000).toFixed(2) + '万元）',
         tag: publicOk ? '✅ 推荐' : '⚠ 不满足门槛'
     });
 
     // --- 邀请招标 ---
-    var invLow = isGoods ? 100 : 50;
-    var invHigh = isGoods ? 200 : 100;
+    var invLow = isGoods ? 1000000 : 500000;
+    var invHigh = isGoods ? 2000000 : 1000000;
     var invOk = amount >= invLow && amount < invHigh;
     results.push({
         method: '邀请招标',
@@ -325,16 +325,16 @@ function recommendProcurementMethod(category, amount) {
         compliant: invOk,
         isBest: false,
         reason: invOk
-            ? '合同估算价 ' + invLow + '万元 ≤ ' + amount + '万元 ＜ ' + invHigh + '万元，可采用邀请招标'
+            ? '合同估算价 ' + (invLow/10000).toFixed(2) + '万元 ≤ ' + (amount/10000).toFixed(2) + '万元 ＜ ' + (invHigh/10000).toFixed(2) + '万元，可采用邀请招标'
             : (amount >= invHigh
-                ? '合同估算价≥' + invHigh + '万元，应优先采用公开招标'
-                : '合同估算价＜' + invLow + '万元，不满足邀请招标门槛（≥' + invLow + '万元）'),
+                ? '合同估算价≥' + (invHigh/10000).toFixed(2) + '万元，应优先采用公开招标'
+                : '合同估算价＜' + (invLow/10000).toFixed(2) + '万元，不满足邀请招标门槛（≥' + (invLow/10000).toFixed(2) + '万元）'),
         tag: invOk ? '✅ 合规' : (amount >= invHigh ? '⚠ 非首选' : '⚠ 不满足门槛')
     });
 
     // --- 询比采购 ---
-    var rfqLow = 10;
-    var rfqHigh = isGoods ? 100 : 50;
+    var rfqLow = 100000;
+    var rfqHigh = isGoods ? 1000000 : 500000;
     var rfqOk = amount >= rfqLow && amount < rfqHigh;
     results.push({
         method: '询比采购',
@@ -342,10 +342,10 @@ function recommendProcurementMethod(category, amount) {
         compliant: rfqOk,
         isBest: false,
         reason: rfqOk
-            ? '合同估算价 ' + rfqLow + '万元 ≤ ' + amount + '万元 ＜ ' + rfqHigh + '万元，可采用询比采购'
+            ? '合同估算价 ' + (rfqLow/10000).toFixed(2) + '万元 ≤ ' + (amount/10000).toFixed(2) + '万元 ＜ ' + (rfqHigh/10000).toFixed(2) + '万元，可采用询比采购'
             : (amount >= rfqHigh
-                ? '合同估算价≥' + rfqHigh + '万元，应采用招标方式'
-                : '合同估算价＜' + rfqLow + '万元，询比不适用，可考虑直接采购'),
+                ? '合同估算价≥' + (rfqHigh/10000).toFixed(2) + '万元，应采用招标方式'
+                : '合同估算价＜' + (rfqLow/10000).toFixed(2) + '万元，询比不适用，可考虑直接采购'),
         tag: rfqOk ? '✅ 合规' : '⚠ 不适用'
     });
 
@@ -360,14 +360,14 @@ function recommendProcurementMethod(category, amount) {
     });
 
     // --- 直接采购 ---
-    var dpOk = amount < 10;
+    var dpOk = amount < 100000;
     results.push({
         method: '直接采购',
         priority: 5,
         compliant: dpOk,
         isBest: false,
-        reason: '合同估算价＜10万元可适用直接采购。另外6种情形（涉密、专利、原供应商、仅1家、紧急、政策文件）也可选用',
-        tag: dpOk ? '✅ 金额合规' : '📋 情形适用（金额不满足＜10万门槛）'
+        reason: '合同估算价＜100,000.00元可适用直接采购。另外6种情形（涉密、专利、原供应商、仅1家、紧急、政策文件）也可选用',
+        tag: dpOk ? '✅ 金额合规' : '📋 情形适用（金额不满足＜100,000.00元门槛）'
     });
 
     return results;
@@ -501,7 +501,7 @@ function getDirectPurchaseConditionsHTML(currentAmount) {
     var html = '<p class="text-muted" style="margin-bottom:12px;">请选择适用的情形：</p>';
     for (var i = 0; i < DIRECT_PURCHASE_CONDITIONS.length; i++) {
         var c = DIRECT_PURCHASE_CONDITIONS[i];
-        var satisfied = c.isAmount && currentAmount < 10;
+        var satisfied = c.isAmount && currentAmount < 100000;
         var icon = satisfied ? '✅' : (c.isAmount ? '❌' : '');
         html += '<label style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;cursor:pointer;">';
         html += '<input type="radio" name="dpCond" value="' + c.id + '">';

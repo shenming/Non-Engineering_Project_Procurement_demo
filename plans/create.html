@@ -3,93 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../common/styles.css">
-    <style>
-        .inline-actions { display: flex; gap: 4px; }
-        .inline-actions button { font-size: 11px; padding: 2px 8px; }
-        .inline-actions button:disabled { opacity: 0.35; cursor: not-allowed; background: var(--gray-100); color: var(--gray-400); border-color: var(--gray-200); }
-    </style>
+    <style>.inline-actions { display: flex; gap: 4px; } .inline-actions button { font-size: 11px; padding: 2px 8px; } .inline-actions button:disabled { opacity: 0.35; cursor: not-allowed; background: var(--gray-100); color: var(--gray-400); border-color: var(--gray-200); }</style>
 </head>
 <body class="content-page">
 
-<div class="sub-navbar">
-    <button class="btn btn-sm btn-outline" onclick="navTo('plans')" style="margin-right:8px;">← 返回列表</button>
-    <span class="sub-nav-title">📋 新建采购计划</span>
-    <span class="breadcrumb"><a onclick="navTo('plans')">采购计划</a><span> › </span>新建</span>
-</div>
-
-<div class="alert alert-info">
-    <span>💡</span>
-    <div>新建计划将生成 <strong>v1</strong> 版本。填写计划基本信息并添加招采项后，可保存草稿或直接提交审批。</div>
-</div>
+<div class="sub-navbar"><button class="btn btn-sm btn-outline" onclick="navTo('plans')" style="margin-right:8px;">← 返回列表</button><span class="sub-nav-title">📋 新建采购计划</span><span class="breadcrumb"><a onclick="navTo('plans')">采购计划</a><span> › </span>新建</span></div>
+<div class="alert alert-info"><span>💡</span><div>新建计划将生成 <strong>v1</strong> 版本。填写计划基本信息并添加招采项后，可保存草稿或直接提交审批。</div></div>
 
 <div class="card">
-    <div class="card-header">
-        <h3>📝 计划信息</h3>
-        <div class="flex gap-8">
-            <button class="btn btn-sm btn-outline" onclick="navTo('plans')">取消</button>
-            <button class="btn btn-sm btn-outline" onclick="showAlert('✅ 草稿已保存，可稍后继续编辑。')">💾 保存草稿</button>
-            <button class="btn btn-sm btn-primary" onclick="submitCreate()">🚀 提交审批</button>
-        </div>
-    </div>
+    <div class="card-header"><h3>📝 计划信息</h3><div class="flex gap-8"><button class="btn btn-sm btn-outline" onclick="navTo('plans')">取消</button><button class="btn btn-sm btn-outline" onclick="showAlert('✅ 草稿已保存，可稍后继续编辑。')">💾 保存草稿</button><button class="btn btn-sm btn-primary" onclick="submitCreate()">🚀 提交审批</button></div></div>
     <div class="card-body">
-        <div class="form-group"><label>计划名称 <span class="required">*</span></label><input class="form-control" value="2026年度成员企业A采购计划" placeholder="例：2026年度成员企业A采购计划 / 某展会专项采购计划"></div>
-        <div class="form-row">
-            <div class="form-group"><label>计划类型 <span class="required">*</span></label><select class="form-control" id="planType" onchange="togglePlanType()"><option value="annual" selected>📅 按年度</option><option value="event">📌 按事项</option></select></div>
-            <div class="form-group" id="yearGroup"><label>计划年度 <span class="required">*</span></label><select class="form-control"><option>2025</option><option selected>2026</option><option>2027</option></select></div>
-            <div class="form-group" id="eventNameGroup" style="display:none;"><label>事项名称 <span class="required">*</span></label><input class="form-control" placeholder="例：进博会专项采购"></div>
-        </div>
-        <div class="form-row">
-            <div class="form-group"><label>所属单位 <span class="required">*</span></label><select class="form-control"><option>集团总部</option><option selected>成员企业A</option><option>成员企业B</option></select></div>
-            <div class="form-group"><label>计划总预算（万元）<span class="required">*</span></label><input class="form-control" type="number" value="200.0"><span class="text-xs text-muted">招采项预估合计不得超过此预算</span></div>
-        </div>
-        <div class="form-row">
-            <div class="form-group"><label>计划生效开始 <span class="required">*</span></label><input class="form-control" type="date" value="2026-01-01"></div>
-            <div class="form-group"><label>计划生效结束 <span class="required">*</span></label><input class="form-control" type="date" value="2026-12-31"></div>
-        </div>
-        <div class="form-row">
-            <div class="form-group"><label>编制部门 <span class="required">*</span></label><input class="form-control" value="采购部"></div>
-            <div class="form-group"><label>编制人 <span class="required">*</span></label><input class="form-control" value="张明"></div>
-        </div>
+        <div class="form-group"><label>计划名称 <span class="required">*</span></label><input class="form-control" value="2026年度成员企业A采购计划"></div>
+        <div class="form-row"><div class="form-group"><label>计划类型 <span class="required">*</span></label><select class="form-control" id="planType" onchange="togglePlanType()"><option value="annual" selected>📅 按年度</option><option value="event">📌 按事项</option></select></div><div class="form-group" id="yearGroup"><label>计划年度 <span class="required">*</span></label><select class="form-control"><option>2025</option><option selected>2026</option><option>2027</option></select></div><div class="form-group" id="eventNameGroup" style="display:none;"><label>事项名称 <span class="required">*</span></label><input class="form-control" placeholder="例：进博会专项采购"></div></div>
+        <div class="form-row"><div class="form-group"><label>所属单位 <span class="required">*</span></label><select class="form-control"><option>集团总部</option><option selected>成员企业A</option><option>成员企业B</option></select></div><div class="form-group"><label>计划总预算（元）<span class="required">*</span></label><input class="form-control" type="number" value="2000000.00"><span class="text-xs text-muted">招采项限价合计不得超过此预算</span></div></div>
+        <div class="form-row"><div class="form-group"><label>计划生效开始 <span class="required">*</span></label><input class="form-control" type="date" value="2026-01-01"></div><div class="form-group"><label>计划生效结束 <span class="required">*</span></label><input class="form-control" type="date" value="2026-12-31"></div></div>
+        <div class="form-row"><div class="form-group"><label>编制部门 <span class="required">*</span></label><input class="form-control" value="采购部"></div><div class="form-group"><label>编制人 <span class="required">*</span></label><input class="form-control" value="张明"></div></div>
         <div class="form-group"><label>计划说明</label><textarea class="form-control" rows="2" placeholder="对该采购计划的整体说明、编制依据等"></textarea></div>
-        <div class="form-group"><label>附件（调整依据文件）</label><input class="form-control" type="file" multiple><span class="text-xs text-muted">支持上传预算调整批复、需求变更说明等佐证材料</span></div>
+        <div class="form-group"><label>附件</label><input class="form-control" type="file" multiple><span class="text-xs text-muted">支持上传预算调整批复、需求变更说明等佐证材料</span></div>
     </div>
 </div>
 
 <div class="card">
     <div class="card-header"><h3>📋 招采项明细</h3><div class="flex gap-8"><button class="btn btn-sm btn-outline" onclick="addNewItem()">＋ 新增招采项</button></div></div>
-    <div class="card-body" style="padding:0;">
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width:40px;">#</th><th>采购内容</th><th>类别</th><th>采购方式</th>
-                        <th>预估金额(万)</th><th>限价(万)</th><th>计划时间</th>
-                        <th>需求部门</th><th>经办人</th>
-                        <th style="width:140px;">操作</th>
-                    </tr>
-                </thead>
-                <tbody id="itemTableBody">
-                    <tr class="text-muted text-sm" style="text-align:center;"><td colspan="10" style="padding:30px;">暂无招采项，点击「＋ 新增招采项」添加</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="card-header" style="border-top:1px solid var(--gray-200);">
-        <span class="text-muted text-sm" id="totalInfo">预估合计：<span class="money">¥0.0万</span></span>
-        <span></span>
-    </div>
-</div>
-
-<div class="alert alert-info">
-    <span>💡</span>
-    <div>
-        <strong>操作说明：</strong>
-        <ul style="margin:6px 0 0 16px;padding:0;font-size:12px;">
-            <li>点击「＋ 新增招采项」添加一条空白招采项，填入信息后保存；</li>
-            <li>所有招采项默认状态为「编制中」，提交审批后进入审批流程；</li>
-            <li>审批通过后，计划即进入「已生效」状态，可在列表页进行后续操作。</li>
-        </ul>
-    </div>
+    <div class="card-body" style="padding:0;"><div class="table-wrap"><table>
+        <thead><tr><th style="width:40px;">#</th><th>采购内容</th><th>类别</th><th>采购方式</th><th>采购金额含税（元）</th><th>计划时间</th><th>需求部门</th><th>经办人</th><th style="width:140px;">操作</th></tr></thead>
+        <tbody id="itemTableBody"><tr class="text-muted text-sm" style="text-align:center;"><td colspan="9" style="padding:30px;">暂无招采项</td></tr></tbody>
+    </table></div></div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><span class="text-muted text-sm" id="totalInfo">限价合计：<span class="money">¥0.00</span></span><span></span></div>
 </div>
 
 <script src="../common/scripts.js"></script>
@@ -99,18 +39,15 @@ var tagClasses = { method:{'公开招标':'tag tag-blue','邀请招标':'tag tag
 
 function categoryOptionsHTML(selectedVal) {
     var html = '<option value=""'+(!selectedVal?' selected':'')+'>请选择</option>';
-    var keys = Object.keys(CATEGORY_TREE);
-    for (var i = 0; i < keys.length; i++) {
-        var parent = keys[i];
+    Object.keys(CATEGORY_TREE).forEach(function(parent) {
         html += '<optgroup label="'+parent+'">';
         html += '<option value="'+parent+'"'+(selectedVal===parent?' selected':'')+'>'+parent+'（一级）</option>';
-        var subs = CATEGORY_TREE[parent];
-        for (var j = 0; j < subs.length; j++) {
-            var val = parent + ' · ' + subs[j];
-            html += '<option value="'+val+'"'+(selectedVal===val?' selected':'')+'>'+subs[j]+'</option>';
-        }
+        CATEGORY_TREE[parent].forEach(function(sub) {
+            var val = parent + ' · ' + sub;
+            html += '<option value="'+val+'"'+(selectedVal===val?' selected':'')+'>'+sub+'</option>';
+        });
         html += '</optgroup>';
-    }
+    });
     return html;
 }
 
@@ -124,7 +61,6 @@ function addNewItem() {
     itemCounter++;
     var emptyRow = document.querySelector('#itemTableBody tr.text-muted');
     if (emptyRow) emptyRow.remove();
-
     var row = document.createElement('tr');
     row.setAttribute('data-id', 'new-'+itemCounter);
     row.setAttribute('data-new', 'true');
@@ -132,8 +68,7 @@ function addNewItem() {
         '<td data-field="name" data-orig=""><input class="form-control form-control-sm" placeholder="采购内容" style="min-width:100px;"></td>' +
         '<td data-field="cat" data-orig=""><select class="form-control form-control-sm" style="width:130px;">'+categoryOptionsHTML('')+'</select></td>' +
         '<td data-field="method" data-orig=""><select class="form-control form-control-sm" style="width:90px;"><option value="">请选择</option><option value="公开招标">公开招标</option><option value="邀请招标">邀请招标</option><option value="询比采购">询比采购</option><option value="谈判采购">谈判采购</option><option value="直接采购">直接采购</option></select></td>' +
-        '<td data-field="amount" data-orig=""><input class="form-control form-control-sm" type="number" placeholder="金额" style="width:70px;"></td>' +
-        '<td data-field="limit" data-orig=""><input class="form-control form-control-sm" type="number" placeholder="限价" style="width:70px;"></td>' +
+        '<td data-field="limit" data-orig=""><input class="form-control form-control-sm" type="number" placeholder="金额（元）" style="width:90px;"></td>' +
         '<td data-field="time" data-orig=""><input class="form-control form-control-sm" placeholder="如 2026-01 ~ 2026-12" style="min-width:120px;"></td>' +
         '<td data-field="dept" data-orig=""><input class="form-control form-control-sm" placeholder="需求部门" style="min-width:70px;"></td>' +
         '<td data-field="user" data-orig=""><input class="form-control form-control-sm" placeholder="经办人" style="min-width:60px;"></td>' +
@@ -145,9 +80,8 @@ function addNewItem() {
 
 function saveNewItem(btn) {
     var row = btn.closest('tr');
-    var fields = ['name','cat','method','amount','limit','time','dept','user'];
+    var fields = ['name','cat','method','limit','time','dept','user'];
     var allFilled = true;
-
     fields.forEach(function(f) {
         var td = row.querySelector('[data-field="'+f+'"]');
         if (!td) return;
@@ -155,84 +89,58 @@ function saveNewItem(btn) {
         var val = input ? input.value : '';
         if (!val) allFilled = false;
         td.setAttribute('data-orig', val);
-
         var display = val || '—';
         if (f === 'name') display = val ? '<strong>'+val+'</strong>' : '<span class="text-muted">—</span>';
         else if (f === 'cat' && val) display = renderCategoryTag(val);
         else if (f === 'method' && val) display = '<span class="'+(tagClasses.method[val]||'tag tag-gray')+'">'+val+'</span>';
-        else if (f === 'amount' && val) display = '<span class="money">'+val+'</span>';
+        else if (f === 'limit' && val) display = '<span class="money">¥'+parseFloat(val).toFixed(2)+'</span>';
         td.innerHTML = display;
     });
-
     var actionTd = row.cells[row.cells.length - 1];
     actionTd.innerHTML = '<div class="inline-actions"><button class="btn btn-xs btn-outline" onclick="editSavedItem(this)">编辑</button><button class="btn btn-xs btn-danger" onclick="removeNewItem(this)">删除</button></div>';
-
     if (!allFilled) showAlert('⚠️ 部分字段未填写，请完善后保存。');
     updateTotal();
 }
 
 function editSavedItem(btn) {
     var row = btn.closest('tr');
-    var fields = ['name','cat','method','amount','limit','time','dept','user'];
-    fields.forEach(function(f) {
+    ['name','cat','method','limit','time','dept','user'].forEach(function(f) {
         var td = row.querySelector('[data-field="'+f+'"]');
         if (!td) return;
         var orig = td.getAttribute('data-orig') || '';
         var html = '';
-        if (f === 'cat') {
-            html = '<select class="form-control form-control-sm" style="width:130px;">'+categoryOptionsHTML(orig)+'</select>';
-        } else if (f === 'method') {
-            var methods = ['公开招标','邀请招标','询比采购','谈判采购','直接采购'];
-            html = '<select class="form-control form-control-sm" style="width:90px;"><option value=""'+(!orig?' selected':'')+'>请选择</option>';
-            methods.forEach(function(m){ html += '<option value="'+m+'"'+(orig===m?' selected':'')+'>'+m+'</option>'; });
-            html += '</select>';
-        } else if (f === 'amount' || f === 'limit') {
-            html = '<input class="form-control form-control-sm" type="number" value="'+orig+'" style="width:70px;">';
-        } else {
-            var w = f === 'name' ? '100px' : f === 'time' ? '120px' : f === 'dept' ? '70px' : '60px';
-            html = '<input class="form-control form-control-sm" value="'+orig.replace(/"/g,'"')+'" style="min-width:'+w+';">';
-        }
+        if (f === 'cat') html = '<select class="form-control form-control-sm" style="width:130px;">'+categoryOptionsHTML(orig)+'</select>';
+        else if (f === 'method') { html = '<select class="form-control form-control-sm" style="width:90px;"><option value=""'+(!orig?' selected':'')+'>请选择</option>'; ['公开招标','邀请招标','询比采购','谈判采购','直接采购'].forEach(function(m){ html += '<option value="'+m+'"'+(orig===m?' selected':'')+'>'+m+'</option>'; }); html += '</select>'; }
+        else if (f === 'limit') html = '<input class="form-control form-control-sm" type="number" value="'+orig+'" style="width:90px;">';
+        else { var w = f === 'name'?'100px':f==='time'?'120px':f==='dept'?'70px':'60px'; html = '<input class="form-control form-control-sm" value="'+orig.replace(/"/g,'"')+'" style="min-width:'+w+';">'; }
         td.innerHTML = html;
     });
-    var actionTd = row.cells[row.cells.length - 1];
-    actionTd.innerHTML = '<div class="inline-actions"><button class="btn btn-xs btn-primary" onclick="saveNewItem(this)">💾 保存</button><button class="btn btn-xs btn-danger" onclick="removeNewItem(this)">删除</button></div>';
+    row.cells[row.cells.length - 1].innerHTML = '<div class="inline-actions"><button class="btn btn-xs btn-primary" onclick="saveNewItem(this)">💾 保存</button><button class="btn btn-xs btn-danger" onclick="removeNewItem(this)">删除</button></div>';
 }
 
-function removeNewItem(btn) {
-    var row = btn.closest('tr');
-    row.remove();
-    updateTotal();
+function removeNewItem(btn) { btn.closest('tr').remove(); updateTotal(); renumber(); }
+function renumber() {
     var rows = document.querySelectorAll('#itemTableBody tr:not(.text-muted)');
-    rows.forEach(function(r, i) {
-        r.cells[0].innerHTML = '<span class="text-muted">'+(i+1)+'</span>';
-        r.setAttribute('data-id', 'new-'+(i+1));
-    });
-    if (rows.length === 0) {
-        document.getElementById('itemTableBody').innerHTML = '<tr class="text-muted text-sm" style="text-align:center;"><td colspan="10" style="padding:30px;">暂无招采项，点击「＋ 新增招采项」添加</td></tr>';
-    }
-    document.getElementById('totalInfo').innerHTML = '预估合计：<span class="money">¥0.0万</span>';
+    rows.forEach(function(r,i){ r.cells[0].innerHTML = '<span class="text-muted">'+(i+1)+'</span>'; r.setAttribute('data-id','new-'+(i+1)); });
+    if (rows.length === 0) document.getElementById('itemTableBody').innerHTML = '<tr class="text-muted text-sm" style="text-align:center;"><td colspan="9" style="padding:30px;">暂无招采项，点击「＋ 新增招采项」添加</td></tr>';
+    document.getElementById('totalInfo').innerHTML = '限价合计：<span class="money">¥0.00</span>';
 }
 
 function updateTotal() {
     var total = 0;
     document.querySelectorAll('#itemTableBody tr:not(.text-muted)').forEach(function(row) {
-        var td = row.querySelector('[data-field="amount"]');
+        var td = row.querySelector('[data-field="limit"]');
         if (!td) return;
-        var origVal = td.getAttribute('data-orig');
-        var input = td.querySelector('input');
-        var val = input ? input.value : origVal;
+        var origVal = td.getAttribute('data-orig'), input = td.querySelector('input'), val = input ? input.value : origVal;
         if (val && !isNaN(parseFloat(val))) total += parseFloat(val);
     });
-    document.getElementById('totalInfo').innerHTML = '预估合计：<span class="money">¥'+total.toFixed(1)+'万</span>';
+    document.getElementById('totalInfo').innerHTML = '限价合计：<span class="money">¥'+total.toFixed(2)+'</span>';
 }
 
 function submitCreate() {
     var rows = document.querySelectorAll('#itemTableBody tr:not(.text-muted)');
     if (rows.length === 0) { showAlert('⚠️ 请至少添加一条招采项后再提交。'); return; }
-    if (confirm('确认提交审批？提交后将生成 v1 版本，计划状态变为"审批中"，不可再编辑。')) {
-        showAlert('✅ 采购计划已提交审批，审批流将在OA中流转。');
-        navTo('plans');
-    }
+    if (confirm('确认提交审批？提交后将生成 v1 版本，计划状态变为"审批中"，不可再编辑。')) { showAlert('✅ 采购计划已提交审批，审批流将在OA中流转。'); navTo('plans'); }
 }
 </script>
 </body>

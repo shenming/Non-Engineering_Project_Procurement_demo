@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../common/styles.css">
     <style>
-        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
         .summary-item { background: var(--gray-50); border-radius: var(--radius); padding: 14px 16px; border: 1px solid var(--gray-200); }
         .summary-item .num { font-size: 22px; font-weight: 700; color: var(--gray-800); }
         .summary-item .label { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
@@ -20,6 +20,8 @@
         th .th-filter .range-input { display: flex; gap: 2px; align-items: center; }
         th .th-filter .range-input input { width: 44px; }
         th .th-filter .range-input span { font-size: 10px; color: var(--gray-400); }
+        .adj-log-item { padding: 6px 0; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+        .adj-log-item:last-child { border-bottom: none; }
     </style>
 </head>
 <body class="content-page">
@@ -27,10 +29,7 @@
 <div class="sub-navbar">
     <button class="btn btn-sm btn-outline" onclick="navTo('plans')" style="margin-right:8px;">← 返回列表</button>
     <span class="sub-nav-title">📋 计划详情</span>
-    <span class="breadcrumb">
-        <a onclick="navTo('plans')">采购计划</a><span> › </span>
-        2026年度成员企业A采购计划
-    </span>
+    <span class="breadcrumb"><a onclick="navTo('plans')">采购计划</a><span> › </span>2026年度成员企业A采购计划</span>
 </div>
 
 <!-- 计划概要卡片 -->
@@ -49,7 +48,7 @@
             <div class="info-item"><div class="info-label">计划年度</div><div class="info-value">2026</div></div>
             <div class="info-item"><div class="info-label">所属单位</div><div class="info-value">成员企业A</div></div>
             <div class="info-item"><div class="info-label">生效日期</div><div class="info-value">2026-01-01 ~ 2026-12-31</div></div>
-            <div class="info-item"><div class="info-label">计划总预算</div><div class="info-value"><span class="money">¥200.0万</span></div></div>
+            <div class="info-item"><div class="info-label">计划总预算</div><div class="info-value"><span class="money">¥2,000,000.00</span></div></div>
             <div class="info-item"><div class="info-label">编制部门 / 编制人</div><div class="info-value">采购部 / 张明</div></div>
             <div class="info-item"><div class="info-label">审批状态</div><div class="info-value"><span class="tag tag-green">已生效</span></div></div>
             <div class="info-item"><div class="info-label">执行状态</div><div class="info-value"><span class="tag tag-yellow">执行中</span></div></div>
@@ -57,134 +56,78 @@
         <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--gray-200);">
             <div class="info-item"><div class="info-label">计划说明</div><div class="info-value text-sm" style="margin-top:4px;">涵盖2026年度办公用品、IT设备、法律咨询等货物及服务采购需求。</div></div>
         </div>
-        <div style="margin-top:8px;">
-            <div class="info-item"><div class="info-label">📎 附件</div><div class="info-value text-sm" style="margin-top:4px;"><a onclick="showAlert('正在下载附件...')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">预算调整批复.pdf</a></div></div>
-        </div>
-        <div style="margin-top:8px;">
-            <div class="info-item"><div class="info-label">🔗 OA审批单号</div><div class="info-value text-sm" style="margin-top:4px;"><a onclick="showAlert('正在跳转OA审批案件 PL-2026-0001...')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">PL-2026-0001</a></div></div>
-        </div>
+        <div style="margin-top:8px;"><div class="info-item"><div class="info-label">📎 附件</div><div class="info-value text-sm" style="margin-top:4px;"><a onclick="showAlert('正在下载附件...')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">预算调整批复.pdf</a></div></div></div>
+        <div style="margin-top:8px;"><div class="info-item"><div class="info-label">🔗 OA审批单号</div><div class="info-value text-sm" style="margin-top:4px;"><a onclick="showAlert('正在跳转OA审批案件 PL-2026-0001...')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">PL-2026-0001</a></div></div></div>
     </div>
 </div>
 
 <!-- 招采项汇总 -->
 <div class="summary-grid">
     <div class="summary-item"><div class="num">6 <span class="text-xs text-muted" style="font-weight:400;">项</span></div><div class="label">招采项总数</div></div>
-    <div class="summary-item"><div class="num">¥185.0 <span class="text-xs text-muted" style="font-weight:400;">万</span></div><div class="label">预估总金额</div></div>
-    <div class="summary-item"><div class="num">¥72.0 <span class="text-xs text-muted" style="font-weight:400;">万</span></div><div class="label">已执行金额</div></div>
-    <div class="summary-item"><div class="num" style="color:var(--success);">92.5%</div><div class="label">预算使用率</div></div>
+    <div class="summary-item"><div class="num">¥1,850,000.00</div><div class="label">限价合计</div></div>
+    <div class="summary-item"><div class="num" style="color:var(--success);">¥150,000.00</div><div class="label">计划总预算剩余</div></div>
 </div>
 
 <!-- 招采项列表（只读） -->
 <div class="card">
     <div class="card-header"><h3>📋 招采项明细</h3><div class="flex gap-8"><button class="btn btn-sm btn-outline" onclick="exportItems()">📥 导出</button></div></div>
     <div class="card-body" style="padding:0;">
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width:40px;">#</th>
-                        <th>采购内容</th>
-                        <th>类别<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="2"><option value="all">全部</option><option value="货物类">货物类</option><option value="办公用品类">　办公用品类</option><option value="设备类">　设备类</option><option value="IT类">　IT类</option><option value="家具类">　家具类</option><option value="服务类">服务类</option><option value="物业服务">　物业服务</option><option value="咨询服务">　咨询服务</option><option value="培训服务">　培训服务</option><option value="法律服务">　法律服务</option><option value="维护服务">　维护服务</option></select></div></th>
-                        <th>采购方式<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="3"><option value="all">全部</option><option value="公开招标">公开招标</option><option value="邀请招标">邀请招标</option><option value="询比采购">询比采购</option><option value="谈判采购">谈判采购</option><option value="直接采购">直接采购</option></select></div></th>
-                        <th>预估金额(万)<div class="th-filter"><div class="range-input"><input class="form-control form-control-sm" type="number" placeholder="起" onchange="filterAll()" data-col="4" data-type="range-min"><span>~</span><input class="form-control form-control-sm" type="number" placeholder="止" onchange="filterAll()" data-col="4" data-type="range-max"></div></div></th>
-                        <th>限价(万)<div class="th-filter"><div class="range-input"><input class="form-control form-control-sm" type="number" placeholder="起" onchange="filterAll()" data-col="5" data-type="range-min"><span>~</span><input class="form-control form-control-sm" type="number" placeholder="止" onchange="filterAll()" data-col="5" data-type="range-max"></div></div></th>
-                        <th>计划时间<div class="th-filter"><div class="range-input"><input class="form-control form-control-sm" type="date" onchange="filterAll()" data-col="6" data-type="range-min"><span>~</span><input class="form-control form-control-sm" type="date" onchange="filterAll()" data-col="6" data-type="range-max"></div></div></th>
-                        <th>需求部门<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="7"><option value="all">全部</option><option value="法务部">法务部</option><option value="行政部">行政部</option><option value="信息部">信息部</option><option value="人力资源部">人力资源部</option><option value="生产部">生产部</option></select></div></th>
-                        <th>经办人<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="8"><option value="all">全部</option><option value="张明">张明</option><option value="李华">李华</option><option value="王磊">王磊</option><option value="陈芳">陈芳</option><option value="赵岩">赵岩</option></select></div></th>
-                        <th>引用状态<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="9"><option value="all">全部</option><option value="已引用">已引用</option><option value="未引用">未引用</option></select></div></th>
-                        <th>状态<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="10"><option value="all">全部</option><option value="已生效">已生效</option><option value="执行中">执行中</option><option value="已完成">已完成</option><option value="草稿">草稿</option></select></div></th>
-                    </tr>
-                </thead>
-                <tbody id="itemTableBody">
-                    <tr data-id="1">
-                        <td class="text-muted">1</td>
-                        <td><strong>年度法律顾问服务</strong></td>
-                        <td><span class="tag tag-blue">服务类 · 法律服务</span></td>
-                        <td><span class="tag tag-orange">直接采购</span></td>
-                        <td><span class="money">15.0</span></td><td>12.0</td>
-                        <td class="text-sm">2026-01 ~ 2026-12</td><td>法务部</td><td>张明</td>
-                        <td><span class="ref-tag-ref">已引用</span></td><td><span class="tag tag-green">已完成</span></td>
-                    </tr>
-                    <tr data-id="2">
-                        <td class="text-muted">2</td>
-                        <td><strong>办公家具采购</strong> <span class="tag tag-red" style="font-size:10px;">集团管控</span></td>
-                        <td><span class="tag tag-green">货物类 · 家具类</span></td>
-                        <td><span class="tag tag-blue">公开招标</span></td>
-                        <td><span class="money">89.0</span></td><td>80.0</td>
-                        <td class="text-sm">2026-03 ~ 2026-05</td><td>行政部</td><td>李华</td>
-                        <td><span class="ref-tag-ref">已引用</span></td><td><span class="tag tag-yellow">执行中</span></td>
-                    </tr>
-                    <tr data-id="3">
-                        <td class="text-muted">3</td>
-                        <td><strong>IT设备采购</strong></td>
-                        <td><span class="tag tag-green">货物类 · IT类</span></td>
-                        <td><span class="tag tag-purple">询比采购</span></td>
-                        <td><span class="money">45.0</span></td><td>42.0</td>
-                        <td class="text-sm">2026-04 ~ 2026-06</td><td>信息部</td><td>王磊</td>
-                        <td><span class="ref-tag-unref">未引用</span></td><td><span class="tag tag-green">已生效</span></td>
-                    </tr>
-                    <tr data-id="4">
-                        <td class="text-muted">4</td>
-                        <td><strong>物业服务招标</strong> <span class="tag tag-red" style="font-size:10px;">集团管控</span></td>
-                        <td><span class="tag tag-blue">服务类 · 物业服务</span></td>
-                        <td><span class="tag tag-blue">公开招标</span></td>
-                        <td><span class="money">120.0</span></td><td>110.0</td>
-                        <td class="text-sm">2026-02 ~ 2026-04</td><td>行政部</td><td>李华</td>
-                        <td><span class="ref-tag-ref">已引用</span></td><td><span class="tag tag-yellow">执行中</span></td>
-                    </tr>
-                    <tr data-id="5">
-                        <td class="text-muted">5</td>
-                        <td><strong>年度培训服务</strong></td>
-                        <td><span class="tag tag-blue">服务类 · 培训服务</span></td>
-                        <td><span class="tag tag-yellow">谈判采购</span></td>
-                        <td><span class="money">28.0</span></td><td>25.0</td>
-                        <td class="text-sm">2026-05 ~ 2026-11</td><td>人力资源部</td><td>陈芳</td>
-                        <td><span class="ref-tag-unref">未引用</span></td><td><span class="tag tag-green">已生效</span></td>
-                    </tr>
-                    <tr data-id="6">
-                        <td class="text-muted">6</td>
-                        <td><strong>生产设备维护</strong></td>
-                        <td><span class="tag tag-blue">服务类 · 维护服务</span></td>
-                        <td><span class="tag tag-blue">邀请招标</span></td>
-                        <td><span class="money">67.0</span></td><td>60.0</td>
-                        <td class="text-sm">2026-07 ~ 2026-09</td><td>生产部</td><td>赵岩</td>
-                        <td><span class="ref-tag-unref">未引用</span></td><td><span class="tag tag-gray">草稿</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <div class="table-wrap"><table>
+            <thead><tr>
+                <th style="width:40px;">#</th><th>采购内容</th>
+                <th>类别<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="2"><option value="all">全部</option><option value="货物类">货物类</option><option value="办公用品类">　办公用品类</option><option value="设备类">　设备类</option><option value="IT类">　IT类</option><option value="家具类">　家具类</option><option value="服务类">服务类</option><option value="物业服务">　物业服务</option><option value="咨询服务">　咨询服务</option><option value="培训服务">　培训服务</option><option value="法律服务">　法律服务</option><option value="维护服务">　维护服务</option></select></div></th>
+                <th>采购方式<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="3"><option value="all">全部</option><option value="公开招标">公开招标</option><option value="邀请招标">邀请招标</option><option value="询比采购">询比采购</option><option value="谈判采购">谈判采购</option><option value="直接采购">直接采购</option></select></div></th>
+                <th>采购金额含税（元）<div class="th-filter"><div class="range-input"><input class="form-control form-control-sm" type="number" placeholder="起" onchange="filterAll()" data-col="4" data-type="range-min"><span>~</span><input class="form-control form-control-sm" type="number" placeholder="止" onchange="filterAll()" data-col="4" data-type="range-max"></div></div></th>
+                <th>计划时间<div class="th-filter"><div class="range-input"><input class="form-control form-control-sm" type="date" onchange="filterAll()" data-col="5" data-type="range-min"><span>~</span><input class="form-control form-control-sm" type="date" onchange="filterAll()" data-col="5" data-type="range-max"></div></div></th>
+                <th>需求部门<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="6"><option value="all">全部</option><option value="法务部">法务部</option><option value="行政部">行政部</option><option value="信息部">信息部</option><option value="人力资源部">人力资源部</option><option value="生产部">生产部</option></select></div></th>
+                <th>经办人<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="7"><option value="all">全部</option><option value="张明">张明</option><option value="李华">李华</option><option value="王磊">王磊</option><option value="陈芳">陈芳</option><option value="赵岩">赵岩</option></select></div></th>
+                <th>引用状态<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="8"><option value="all">全部</option><option value="已引用">已引用</option><option value="未引用">未引用</option></select></div></th>
+                <th>状态<div class="th-filter"><select class="form-control form-control-sm" onchange="filterAll()" data-col="9"><option value="all">全部</option><option value="已生效">已生效</option><option value="执行中">执行中</option><option value="已完成">已完成</option><option value="草稿">草稿</option></select></div></th>
+            </tr></thead>
+            <tbody id="itemTableBody">
+                <tr data-id="1"><td class="text-muted">1</td><td><strong>年度法律顾问服务</strong></td><td><span class="tag tag-blue">服务类 · 法律服务</span></td><td><span class="tag tag-orange">直接采购</span></td><td><span class="money">¥120,000.00</span></td><td class="text-sm">2026-01 ~ 2026-12</td><td>法务部</td><td>张明</td><td><span class="ref-tag-ref">已引用</span></td><td><span class="tag tag-green">已完成</span></td></tr>
+                <tr data-id="2"><td class="text-muted">2</td><td><strong>办公家具采购</strong> <span class="tag tag-red" style="font-size:10px;">集团管控</span></td><td><span class="tag tag-green">货物类 · 家具类</span></td><td><span class="tag tag-blue">公开招标</span></td><td><span class="money">¥800,000.00</span></td><td class="text-sm">2026-03 ~ 2026-05</td><td>行政部</td><td>李华</td><td><span class="ref-tag-ref">已引用</span></td><td><span class="tag tag-yellow">执行中</span></td></tr>
+                <tr data-id="3"><td class="text-muted">3</td><td><strong>IT设备采购</strong></td><td><span class="tag tag-green">货物类 · IT类</span></td><td><span class="tag tag-purple">询比采购</span></td><td><span class="money">¥420,000.00</span></td><td class="text-sm">2026-04 ~ 2026-06</td><td>信息部</td><td>王磊</td><td><span class="ref-tag-unref">未引用</span></td><td><span class="tag tag-green">已生效</span></td></tr>
+                <tr data-id="4"><td class="text-muted">4</td><td><strong>物业服务招标</strong> <span class="tag tag-red" style="font-size:10px;">集团管控</span></td><td><span class="tag tag-blue">服务类 · 物业服务</span></td><td><span class="tag tag-blue">公开招标</span></td><td><span class="money">¥1,100,000.00</span></td><td class="text-sm">2026-02 ~ 2026-04</td><td>行政部</td><td>李华</td><td><span class="ref-tag-ref">已引用</span></td><td><span class="tag tag-yellow">执行中</span></td></tr>
+                <tr data-id="5"><td class="text-muted">5</td><td><strong>年度培训服务</strong></td><td><span class="tag tag-blue">服务类 · 培训服务</span></td><td><span class="tag tag-yellow">谈判采购</span></td><td><span class="money">¥250,000.00</span></td><td class="text-sm">2026-05 ~ 2026-11</td><td>人力资源部</td><td>陈芳</td><td><span class="ref-tag-unref">未引用</span></td><td><span class="tag tag-green">已生效</span></td></tr>
+                <tr data-id="6"><td class="text-muted">6</td><td><strong>生产设备维护</strong></td><td><span class="tag tag-blue">服务类 · 维护服务</span></td><td><span class="tag tag-blue">邀请招标</span></td><td><span class="money">¥600,000.00</span></td><td class="text-sm">2026-07 ~ 2026-09</td><td>生产部</td><td>赵岩</td><td><span class="ref-tag-unref">未引用</span></td><td><span class="tag tag-gray">草稿</span></td></tr>
+            </tbody>
+        </table></div>
     </div>
-    <div class="card-header" style="border-top:1px solid var(--gray-200);">
-        <span class="text-muted text-sm">预估合计：<span class="money">¥364.0万</span>｜计划总预算：<span class="money">¥200.0万</span><span class="tag tag-red" style="margin-left:8px;">⚠ 超出预算 ¥164.0万</span></span>
-        <span></span>
-    </div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><span class="text-muted text-sm">限价合计：<span class="money">¥3,290,000.00</span>｜计划总预算：<span class="money">¥2,000,000.00</span><span class="tag tag-red" style="margin-left:8px;">超出 ¥1,290,000.00</span></span><span></span></div>
 </div>
 
-<!-- 历史版本 -->
+<!-- 版本卡片 -->
 <div class="card">
-    <div class="card-header"><h3>📜 历史版本</h3></div>
+    <div class="card-header"><h3>📜 版本</h3></div>
     <div class="card-body" style="padding:0;">
-        <div class="table-wrap">
-            <table>
+        <!-- 当前版本 -->
+        <div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);">
+            <div class="flex-between">
+                <div><strong>当前版本：</strong><span class="ver-badge">v2</span> <span class="tag tag-green">已生效</span></div>
+                <div class="text-sm text-muted">2026-01-01 ~ 2026-12-31</div>
+            </div>
+        </div>
+        <!-- 调整日志（本版本内通过 edit.html 调整的记录） -->
+        <div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);">
+            <div class="fw-600 mb-8 text-sm">📝 调整日志（本版本内调整记录）</div>
+            <div class="adj-log-item"><span class="text-muted">2026-06-15</span> 调整生效日期延长至2026-12-31，追加限额至¥67.0万</div>
+            <div class="adj-log-item"><span class="text-muted">2026-03-20</span> 调整采购内容，新增IT设备采购项，限额¥42.0万</div>
+        </div>
+        <!-- 历史版本 -->
+        <div style="padding:16px 20px;">
+            <div class="fw-600 mb-8 text-sm">📜 历史版本</div>
+            <div class="table-wrap"><table>
                 <thead><tr><th>版本号</th><th>生效日期</th><th>创建时间</th><th>状态</th><th>操作</th></tr></thead>
                 <tbody>
-                    <tr>
-                        <td><span class="ver-badge">v1</span></td>
-                        <td>2026-01-01 ~ 2026-06-30</td>
-                        <td class="text-sm">2025-12-15</td>
-                        <td><span class="tag tag-gray">已归档</span></td>
-                        <td><a onclick="navTo('plans','plans/version-view.html')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">查看详情</a></td>
-                    </tr>
+                    <tr><td><span class="ver-badge">v1</span></td><td>2026-01-01 ~ 2026-06-30</td><td class="text-sm">2025-12-15</td><td><span class="tag tag-gray">已归档</span></td><td><a onclick="navTo('plans','plans/version-view.html')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">查看详情</a></td></tr>
                 </tbody>
-            </table>
+            </table></div>
         </div>
     </div>
 </div>
 
-<div class="alert alert-warning">
-    <span>📌</span>
-    <div><strong>集团管控说明：</strong>部分招采项名称旁标有<span class="tag tag-red" style="font-size:10px;">集团管控</span>标签，在升版流程中不可删除。</div>
-</div>
+<div class="alert alert-warning"><span>📌</span><div><strong>集团管控说明：</strong>部分招采项名称旁标有<span class="tag tag-red" style="font-size:10px;">集团管控</span>标签，在升版流程中不可删除。</div></div>
 
 <script>
 function voidPlan() {
@@ -195,66 +138,22 @@ function voidPlan() {
         showAlert('✅ 作废申请已提交OA审批，请联系部门负责人及分管领导审批。');
     }
 }
-
 function exportItems() {
     var visible = 0;
     document.querySelectorAll('#itemTableBody tr').forEach(function(r){ if(r.style.display !== 'none') visible++; });
-    var hasFilter = false;
-    document.querySelectorAll('thead .th-filter select').forEach(function(s){ if(s.value !== 'all') hasFilter = true; });
-    document.querySelectorAll('thead .th-filter input').forEach(function(i){ if(i.value) hasFilter = true; });
-    if (hasFilter) {
-        showAlert('正在导出当前筛选结果（共 ' + visible + ' 条）...');
-    } else {
-        showAlert('正在导出招采项明细...');
-    }
+    showAlert('正在导出招采项明细（共 ' + visible + ' 条）...');
 }
-
 function filterAll() {
-    var rows = document.querySelectorAll('#itemTableBody tr');
-    var filters = [];
-    document.querySelectorAll('thead .th-filter select').forEach(function(s) {
-        var col = parseInt(s.getAttribute('data-col'));
-        filters.push({ col: col, type: 'select', value: s.value });
-    });
+    var rows = document.querySelectorAll('#itemTableBody tr'), filters = [];
+    document.querySelectorAll('thead .th-filter select').forEach(function(s) { filters.push({ col: parseInt(s.getAttribute('data-col')), type: 'select', value: s.value }); });
     document.querySelectorAll('thead .th-filter input[data-type="range-min"]').forEach(function(inp) {
-        var col = parseInt(inp.getAttribute('data-col'));
-        var maxInp = inp.parentElement.querySelector('input[data-type="range-max"]');
+        var col = parseInt(inp.getAttribute('data-col')), maxInp = inp.parentElement.querySelector('input[data-type="range-max"]');
         filters.push({ col: col, type: 'range', min: inp.value, max: maxInp ? maxInp.value : '' });
     });
-
-    rows.forEach(function(row) {
-        var cells = row.cells;
-        var show = true;
-        for (var i = 0; i < filters.length; i++) {
-            var f = filters[i];
-            if (!cells[f.col]) continue;
-            if (f.type === 'select' && f.value !== 'all') {
-                var cell = cells[f.col];
-                var text = cell.textContent.replace('¥','').replace('~',' ').trim();
-                var tags = cell.querySelectorAll('.tag');
-                var match = false;
-                if (tags.length > 0) {
-                    tags.forEach(function(t) { if (t.textContent.trim() === f.value) match = true; });
-                }
-                if (!match && text === f.value) match = true;
-                if (!match) { show = false; break; }
-            }
-            if (f.type === 'range') {
-                var cell = cells[f.col];
-                var cellText = cell.textContent.replace('¥','').replace(/,/g,'').trim();
-                if (f.col === 6) {
-                    var parts = cellText.split(/[~～\s]+/);
-                    var cellStart = parts[0] ? parts[0].trim() : '';
-                    var cellEnd = parts[1] ? parts[1].trim() : '';
-                    if (f.min && (!cellEnd || cellEnd < f.min)) { show = false; break; }
-                    if (f.max && (!cellStart || cellStart > f.max)) { show = false; break; }
-                } else {
-                    var num = parseFloat(cellText);
-                    if (isNaN(num)) { show = false; break; }
-                    if (f.min && num < parseFloat(f.min)) { show = false; break; }
-                    if (f.max && num > parseFloat(f.max)) { show = false; break; }
-                }
-            }
+    rows.forEach(function(row) { var cells = row.cells, show = true;
+        for (var i = 0; i < filters.length; i++) { var f = filters[i]; if (!cells[f.col]) continue;
+            if (f.type === 'select' && f.value !== 'all') { var text = cells[f.col].textContent.replace('¥','').replace(',','').trim(), tags = cells[f.col].querySelectorAll('.tag'), match = false; if (tags.length > 0) tags.forEach(function(t) { if (t.textContent.trim().includes(f.value)) match = true; }); if (!match) { show = false; break; } }
+            if (f.type === 'range') { var ct = cells[f.col].textContent.replace('¥','').replace(/,/g,'').trim(), num = parseFloat(ct); if (isNaN(num)) { show = false; break; } if (f.min && num < parseFloat(f.min)) { show = false; break; } if (f.max && num > parseFloat(f.max)) { show = false; break; } }
         }
         row.style.display = show ? '' : 'none';
     });
