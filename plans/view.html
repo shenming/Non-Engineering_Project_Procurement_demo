@@ -22,6 +22,19 @@
         th .th-filter .range-input span { font-size: 10px; color: var(--gray-400); }
         .adj-log-item { padding: 6px 0; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
         .adj-log-item:last-child { border-bottom: none; }
+        /* Tab 样式 */
+        .tab-card { border: 1px solid var(--gray-200); border-radius: var(--radius); background: #fff; margin-bottom: 20px; overflow: hidden; }
+        .tab-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid var(--gray-200); background: #fff; }
+        .tab-header .tab-title { display: flex; align-items: center; gap: 8px; }
+        .tab-header .tab-title h3 { margin: 0; font-size: 15px; }
+        .tab-nav { display: flex; gap: 0; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); padding: 0 20px; }
+        .tab-nav .tab-btn { padding: 10px 20px; border: none; background: none; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--gray-500); border-bottom: 2px solid transparent; transition: all 0.15s; position: relative; bottom: -1px; }
+        .tab-nav .tab-btn:hover { color: var(--gray-800); }
+        .tab-nav .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-body { display: none; padding: 20px; }
+        .tab-body.active { display: block; }
+        .tab-body .plan-header-info { margin-bottom: 0; }
+        .tab-body .info-split { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200); }
     </style>
 </head>
 <body class="content-page">
@@ -32,40 +45,100 @@
     <span class="breadcrumb"><a onclick="navTo('plans')">采购计划</a><span> › </span>2026年度成员企业A采购计划</span>
 </div>
 
-<!-- 计划概要卡片 -->
-<div class="card">
-    <div class="card-header">
-        <h3>📄 2026年度成员企业A采购计划 <span class="tag tag-green" style="margin-left:8px;">已生效</span> <span class="ver-badge" style="margin-left:6px;">v2</span></h3>
+<!-- Tab 卡片: 基本信息 / 版本管理 / 附件与审批 -->
+<div class="tab-card">
+    <div class="tab-header">
+        <div class="tab-title">
+            <h3>📄 2026年度成员企业A采购计划</h3>
+            <span class="ver-badge">v2</span>
+        </div>
         <div class="flex gap-8">
             <button class="btn btn-sm btn-danger" onclick="voidPlan()">🗑️ 作废</button>
             <button class="btn btn-sm btn-primary" onclick="navTo('plans','plans/edit.html')">✏️ 编辑</button>
         </div>
     </div>
-    <div class="card-body">
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('tab-info', this)">📋 基本信息</button>
+        <button class="tab-btn" onclick="switchTab('tab-version', this)">📜 版本管理</button>
+        <button class="tab-btn" onclick="switchTab('tab-attach', this)">📎 附件与审批</button>
+    </div>
+
+    <!-- Tab1: 基本信息 -->
+    <div class="tab-body active" id="tab-info">
         <div class="plan-header-info">
             <div class="info-item"><div class="info-label">计划编号</div><div class="info-value">PL-2026-0001</div></div>
             <div class="info-item"><div class="info-label">计划类型</div><div class="info-value"><span class="tag tag-blue">按年度</span></div></div>
             <div class="info-item"><div class="info-label">计划年度</div><div class="info-value">2026</div></div>
             <div class="info-item"><div class="info-label">所属单位</div><div class="info-value">成员企业A</div></div>
             <div class="info-item"><div class="info-label">生效日期</div><div class="info-value">2026-01-01 ~ 2026-12-31</div></div>
-             <div class="info-item"><div class="info-label">计划总预算</div><div class="info-value"><span class="money">¥2,000,000.00元</span></div></div>
+            <div class="info-item"><div class="info-label">计划总预算</div><div class="info-value"><span class="money">¥2,000,000.00元</span></div></div>
             <div class="info-item"><div class="info-label">编制部门 / 编制人</div><div class="info-value">采购部 / 张明</div></div>
             <div class="info-item"><div class="info-label">审批状态</div><div class="info-value"><span class="tag tag-green">已生效</span></div></div>
             <div class="info-item"><div class="info-label">执行状态</div><div class="info-value"><span class="tag tag-yellow">执行中</span></div></div>
         </div>
-        <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--gray-200);">
+        <div class="info-split">
             <div class="info-item"><div class="info-label">计划说明</div><div class="info-value text-sm" style="margin-top:4px;">涵盖2026年度办公用品、IT设备、法律咨询等货物及服务采购需求。</div></div>
         </div>
-        <div style="margin-top:8px;"><div class="info-item"><div class="info-label">📎 附件</div><div class="info-value text-sm" style="margin-top:4px;"><a onclick="showAlert('正在下载附件...')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">预算调整批复.pdf</a></div></div></div>
-        <div style="margin-top:8px;"><div class="info-item"><div class="info-label">🔗 OA审批单号</div><div class="info-value text-sm" style="margin-top:4px;"><a onclick="showAlert('正在跳转OA审批案件 PL-2026-0001...')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">PL-2026-0001</a></div></div></div>
+    </div>
+
+    <!-- Tab2: 版本管理 -->
+    <div class="tab-body" id="tab-version" style="padding:0;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);">
+            <div class="flex-between">
+                <div><strong>当前版本：</strong><span class="ver-badge">v2</span> <span class="tag tag-green">已生效</span></div>
+                <div class="text-sm text-muted">2026-01-01 ~ 2026-12-31</div>
+            </div>
+        </div>
+        <div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);">
+            <div class="fw-600 mb-8 text-sm">📝 调整日志（本版本内调整记录）</div>
+            <div class="adj-log-item"><span class="text-muted">2026-06-15</span> 调整生效日期延长至2026-12-31，追加限额至¥670,000.00元</div>
+            <div class="adj-log-item"><span class="text-muted">2026-03-20</span> 调整采购内容，新增IT设备采购项，限额¥420,000.00元</div>
+        </div>
+        <div style="padding:16px 20px;">
+            <div class="fw-600 mb-8 text-sm">📜 历史版本</div>
+            <div class="table-wrap"><table>
+                <thead><tr><th>版本号</th><th>生效日期</th><th>创建时间</th><th>状态</th><th>调整日志</th><th>操作</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><span class="ver-badge">v1</span></td>
+                        <td>2026-01-01 ~ 2026-06-30</td>
+                        <td class="text-sm">2025-12-15</td>
+                        <td><span class="tag tag-gray">已归档</span></td>
+                        <td class="text-sm">
+                            <div class="adj-log-item"><span class="text-muted">2025-12-15</span> 初始创建，编制4项招采项，总预算¥1,500,000.00元</div>
+                        </td>
+                        <td><a onclick="navTo('plans','plans/version-view.html')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">查看详情</a></td>
+                    </tr>
+                </tbody>
+            </table></div>
+        </div>
+    </div>
+
+    <!-- Tab3: 附件与审批 -->
+    <div class="tab-body" id="tab-attach">
+        <div class="plan-header-info">
+            <div class="info-item"><div class="info-label">审批状态</div><div class="info-value"><span class="tag tag-green">已生效</span></div></div>
+            <div class="info-item"><div class="info-label">执行状态</div><div class="info-value"><span class="tag tag-yellow">执行中</span></div></div>
+            <div class="info-item"><div class="info-label">OA审批单号</div><div class="info-value text-sm"><a onclick="showAlert('正在跳转OA审批案件 PL-2026-0001...')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">PL-2026-0001</a></div></div>
+            <div></div>
+        </div>
+        <div class="info-split">
+            <div class="info-item"><div class="info-label">📎 附件</div></div>
+            <div style="margin-top:8px;">
+                <div class="flex gap-8" style="flex-wrap:wrap;">
+                    <span class="tag tag-blue" style="cursor:pointer;" onclick="showAlert('正在下载附件: 预算调整批复.pdf')">📄 预算调整批复.pdf</span>
+                    <span class="tag tag-blue" style="cursor:pointer;" onclick="showAlert('正在下载附件: 需求变更说明.docx')">📄 需求变更说明.docx</span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- 招采项汇总 -->
 <div class="summary-grid">
     <div class="summary-item"><div class="num">6 <span class="text-xs text-muted" style="font-weight:400;">项</span></div><div class="label">招采项总数</div></div>
-     <div class="summary-item"><div class="num">¥3,290,000.00元</div><div class="label">限价合计</div></div>
-     <div class="summary-item"><div class="num" style="color:var(--danger);">-¥1,290,000.00元</div><div class="label">计划总预算剩余</div></div>
+    <div class="summary-item"><div class="num">¥3,290,000.00元</div><div class="label">限价合计</div></div>
+    <div class="summary-item"><div class="num" style="color:var(--danger);">-¥1,290,000.00元</div><div class="label">计划总预算剩余</div></div>
 </div>
 
 <!-- 招采项列表（只读） -->
@@ -94,51 +167,16 @@
             </tbody>
         </table></div>
     </div>
-     <div class="card-header" style="border-top:1px solid var(--gray-200);"><span class="text-muted text-sm">限价合计：<span class="money">¥3,290,000.00元</span>｜计划总预算：<span class="money">¥2,000,000.00元</span><span class="tag tag-red" style="margin-left:8px;">超出 ¥1,290,000.00元</span></span><span></span></div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><span class="text-muted text-sm">限价合计：<span class="money">¥3,290,000.00元</span>｜计划总预算：<span class="money">¥2,000,000.00元</span><span class="tag tag-red" style="margin-left:8px;">超出 ¥1,290,000.00元</span></span><span></span></div>
 </div>
-
-<!-- 版本卡片 -->
-<div class="card">
-    <div class="card-header"><h3>📜 版本</h3></div>
-    <div class="card-body" style="padding:0;">
-        <!-- 当前版本 -->
-        <div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);">
-            <div class="flex-between">
-                <div><strong>当前版本：</strong><span class="ver-badge">v2</span> <span class="tag tag-green">已生效</span></div>
-                <div class="text-sm text-muted">2026-01-01 ~ 2026-12-31</div>
-            </div>
-        </div>
-        <!-- 调整日志（本版本内通过 edit.html 调整的记录） -->
-        <div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);">
-            <div class="fw-600 mb-8 text-sm">📝 调整日志（本版本内调整记录）</div>
-             <div class="adj-log-item"><span class="text-muted">2026-06-15</span> 调整生效日期延长至2026-12-31，追加限额至¥670,000.00元</div>
-             <div class="adj-log-item"><span class="text-muted">2026-03-20</span> 调整采购内容，新增IT设备采购项，限额¥420,000.00元</div>
-        </div>
-         <!-- 历史版本 -->
-         <div style="padding:16px 20px;">
-             <div class="fw-600 mb-8 text-sm">📜 历史版本</div>
-             <div class="table-wrap"><table>
-                 <thead><tr><th>版本号</th><th>生效日期</th><th>创建时间</th><th>状态</th><th>调整日志</th><th>操作</th></tr></thead>
-                 <tbody>
-                     <tr>
-                         <td><span class="ver-badge">v1</span></td>
-                         <td>2026-01-01 ~ 2026-06-30</td>
-                         <td class="text-sm">2025-12-15</td>
-                         <td><span class="tag tag-gray">已归档</span></td>
-                         <td class="text-sm">
-                             <div class="adj-log-item"><span class="text-muted">2025-12-15</span> 初始创建，编制4项招采项，总预算¥1,500,000.00元</div>
-                         </td>
-                         <td><a onclick="navTo('plans','plans/version-view.html')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">查看详情</a></td>
-                     </tr>
-                 </tbody>
-             </table></div>
-         </div>
-    </div>
-</div>
-
-
 
 <script>
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.tab-body').forEach(function(t){ t.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+}
 function voidPlan() {
     var el = document.querySelector('#itemTableBody .tag-yellow');
     var hasExecuting = el && el.textContent.trim() === '执行中';
