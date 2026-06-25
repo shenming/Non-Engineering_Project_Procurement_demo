@@ -81,6 +81,13 @@ function addNewItem() {
 function saveNewItem(btn) {
     var row = btn.closest('tr');
     var fields = ['name','cat','method','limit','time','dept','user'];
+    // 收集值做校验
+    var vals = {};
+    fields.forEach(function(f) { var td = row.querySelector('[data-field="'+f+'"]'); if(!td)return; var inp = td.querySelector('input, select'); vals[f] = inp ? inp.value : ''; });
+    var cat = vals['cat'] || '', method = vals['method'] || '', limit = parseFloat(vals['limit']) || 0;
+    var vld = validateItemMethod(extractParentCategory(cat), limit, method);
+    if (!vld.valid) { showAlert('⚠️ ' + vld.reason); return; }
+
     var allFilled = true;
     fields.forEach(function(f) {
         var td = row.querySelector('[data-field="'+f+'"]');

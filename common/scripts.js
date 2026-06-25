@@ -374,6 +374,26 @@ function recommendProcurementMethod(category, amount) {
 function fmtWan(yuan) { return (yuan / 10000).toFixed(2); }
 
 /**
+ * 校验招采项的类别+金额是否满足所选采购方式的最低门槛
+ * @param {string} category - "货物类" 或 "服务类"
+ * @param {number} amount   - 采购金额（元）
+ * @param {string} method   - 采购方式
+ * @returns {{ valid: boolean, reason: string }}
+ */
+function validateItemMethod(category, amount, method) {
+    if (!category || !method) return { valid: false, reason: '请先选择采购类别和采购方式' };
+    // 谈判采购、直接采购不受金额门槛限制（情形适用）
+    if (method === '谈判采购' || method === '直接采购') return { valid: true, reason: '' };
+    var recs = recommendProcurementMethod(category, amount);
+    for (var i = 0; i < recs.length; i++) {
+        if (recs[i].method === method) {
+            return { valid: recs[i].compliant, reason: recs[i].compliant ? '' : recs[i].reason };
+        }
+    }
+    return { valid: false, reason: '未知采购方式：' + method };
+}
+
+/**
  * 智能更新采购方式下拉框 UI
  * 在子页面中调用，自动高亮推荐项、标注合规状态
  * @param {string} categorySelectId   - 采购类别 <select> 的 id
