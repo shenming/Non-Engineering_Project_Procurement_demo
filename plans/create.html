@@ -29,7 +29,7 @@
         <thead><tr><th style="width:40px;">#</th><th>采购内容</th><th>类别</th><th>采购方式</th><th>采购金额含税（元）</th><th>计划时间</th><th>需求部门</th><th>经办人</th><th style="width:140px;">操作</th></tr></thead>
         <tbody id="itemTableBody"><tr class="text-muted text-sm" style="text-align:center;"><td colspan="9" style="padding:30px;">暂无招采项</td></tr></tbody>
     </table></div></div>
-    <div class="card-header" style="border-top:1px solid var(--gray-200);"><span class="text-muted text-sm" id="totalInfo">限价合计：<span class="money">¥0.00</span></span><span></span></div>
+     <div class="card-header" style="border-top:1px solid var(--gray-200);"><span class="text-muted text-sm" id="totalInfo">限价合计：<span class="money">¥0.00元</span></span><span></span></div>
 </div>
 
 <script src="../common/scripts.js"></script>
@@ -93,7 +93,7 @@ function saveNewItem(btn) {
         if (f === 'name') display = val ? '<strong>'+val+'</strong>' : '<span class="text-muted">—</span>';
         else if (f === 'cat' && val) display = renderCategoryTag(val);
         else if (f === 'method' && val) display = '<span class="'+(tagClasses.method[val]||'tag tag-gray')+'">'+val+'</span>';
-        else if (f === 'limit' && val) display = '<span class="money">¥'+parseFloat(val).toFixed(2)+'</span>';
+        else if (f === 'limit' && val) display = '<span class="money">¥'+parseFloat(val).toFixed(2)+'元</span>';
         td.innerHTML = display;
     });
     var actionTd = row.cells[row.cells.length - 1];
@@ -123,7 +123,7 @@ function renumber() {
     var rows = document.querySelectorAll('#itemTableBody tr:not(.text-muted)');
     rows.forEach(function(r,i){ r.cells[0].innerHTML = '<span class="text-muted">'+(i+1)+'</span>'; r.setAttribute('data-id','new-'+(i+1)); });
     if (rows.length === 0) document.getElementById('itemTableBody').innerHTML = '<tr class="text-muted text-sm" style="text-align:center;"><td colspan="9" style="padding:30px;">暂无招采项，点击「＋ 新增招采项」添加</td></tr>';
-    document.getElementById('totalInfo').innerHTML = '限价合计：<span class="money">¥0.00</span>';
+     document.getElementById('totalInfo').innerHTML = '限价合计：<span class="money">¥0.00元</span>';
 }
 
 function updateTotal() {
@@ -134,7 +134,7 @@ function updateTotal() {
         var origVal = td.getAttribute('data-orig'), input = td.querySelector('input'), val = input ? input.value : origVal;
         if (val && !isNaN(parseFloat(val))) total += parseFloat(val);
     });
-    document.getElementById('totalInfo').innerHTML = '限价合计：<span class="money">¥'+total.toFixed(2)+'</span>';
+     document.getElementById('totalInfo').innerHTML = '限价合计：<span class="money">¥'+total.toFixed(2)+'元</span>';
 }
 
 function submitCreate() {
