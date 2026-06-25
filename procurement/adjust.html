@@ -39,16 +39,38 @@
                 <option>PL-2026-0042 · 年度培训服务 · 成员企业A · ¥28.0万</option>
             </select>
         </div>
-        <div class="form-group">
-            <label>采购方式 <span class="required">*</span></label>
-            <select class="form-control">
-                <option selected>公开招标</option>
-                <option>邀请招标</option>
-                <option>询比采购</option>
-                <option>谈判采购</option>
-                <option>直接采购</option>
-            </select>
+
+        <!-- 采购类别（两级联动） -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>采购类别 <span class="required">*</span></label>
+                <select class="form-control" id="adjCatParent" onchange="populateSubCategory('adjCatParent','adjCatSub')">
+                    <option value="">— 请选择 —</option>
+                    <option value="货物类">货物类</option>
+                    <option value="服务类" selected>服务类</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>二级品类</label>
+                <select class="form-control" id="adjCatSub">
+                    <option value="">— 请先选择一级类别 —</option>
+                </select>
+            </div>
         </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>采购方式 <span class="required">*</span></label>
+                <select class="form-control" id="adjMethod">
+                    <option selected>公开招标</option>
+                    <option>邀请招标</option>
+                    <option>询比采购</option>
+                    <option>谈判采购</option>
+                    <option>直接采购</option>
+                </select>
+            </div>
+        </div>
+
         <div class="form-group">
             <label>项目名称 <span class="required">*</span></label>
             <input class="form-control" value="集团年度物业服务">
@@ -56,13 +78,16 @@
         <div class="form-row">
             <div class="form-group">
                 <label>采购限价 (万元) <span class="required">*</span></label>
-                <input class="form-control" type="number" value="186.5">
+                <input class="form-control" type="number" id="adjAmount" value="186.5">
             </div>
             <div class="form-group">
                 <label>计划定标时间</label>
                 <input class="form-control" type="date" value="2026-07-15">
             </div>
         </div>
+
+        <div class="method-hints" id="adjMethodHints" style="display:none;"></div>
+
         <div class="form-group">
             <label>附件（招标文件/采购需求等）</label>
             <input class="form-control" type="file" multiple>
@@ -82,5 +107,37 @@
 </div>
 
 <script src="../common/scripts.js"></script>
+<script>
+populateSubCategory('adjCatParent', 'adjCatSub', '物业服务');
+bindMethodRecommendation('adjCatParent', 'adjAmount', 'adjMethod', null, 'adjMethodHints');
+
+document.getElementById('adjMethod').addEventListener('change', function() {
+    var method = this.value;
+    var amt = parseFloat(document.getElementById('adjAmount').value) || 0;
+    if (method === '谈判采购') {
+        window.parent.postMessage({ type: 'modal', title: '📋 谈判采购 · 请选择适用情形', body: getNegotiationConditionsHTML(), onConfirm: 'negoSelected' }, '*');
+    } else if (method === '直接采购') {
+        window.parent.postMessage({ type: 'modal', title: '📌 直接采购 · 请选择适用情形', body: getDirectPurchaseConditionsHTML(amt), onConfirm: 'dpSelected' }, '*');
+    }
+});
+
+window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'modalConfirm' && e.data.payload) {
+        if (e.data.payload === 'negoSelected') {
+            var checked = window.parent.document.querySelector('input[name="negoCond"]:checked');
+            if (checked) {
+                var label = ''; if (checked.value === 'N1') label = '技术复杂/性质特殊'; else if (checked.value === 'N2') label = '多种实施方案'; else if (checked.value === 'N3') label = '仅2家合格供应商';
+                showAlert('✅ 已选择谈判采购情形：' + label);
+            }
+        } else if (e.data.payload === 'dpSelected') {
+            var checked = window.parent.document.querySelector('input[name="dpCond"]:checked');
+            if (checked) {
+                var dpMap = { 'D1': '合同估算价＜10万元', 'D2': '涉密/商业秘密', 'D3': '不可替代专利/专有技术', 'D4': '原供应商配套', 'D5': '仅1家有效供应商', 'D6': '抢险救灾/紧急采购', 'D7': '政策文件规定' };
+                showAlert('✅ 已选择直接采购情形：' + (dpMap[checked.value] || checked.value));
+            }
+        }
+    }
+});
+</script>
 </body>
 </html>

@@ -37,20 +37,23 @@
     </div>
 </div>
 
-<!-- 流程进度 -->
+<!-- 流程进度（可点击环节） -->
 <div class="card">
-    <div class="card-header"><h3>📌 流程进度 · 公开招标</h3></div>
+    <div class="card-header"><h3 id="viewProcTitle">📌 流程进度 · 公开招标</h3></div>
     <div class="card-body">
-        <div class="steps">
-            <span class="step done"><span class="num">1</span> 招标申请</span><span class="arrow">→</span>
-            <span class="step done"><span class="num">2</span> 公告发布</span><span class="arrow">→</span>
-            <span class="step done"><span class="num">3</span> 开标</span><span class="arrow">→</span>
-            <span class="step active"><span class="num">4</span> 评标&公示</span><span class="arrow">→</span>
-            <span class="step"><span class="num">5</span> 中标结果</span><span class="arrow">→</span>
-            <span class="step"><span class="num">6</span> 中标公告</span>
+        <div class="steps" id="viewProcSteps">
+            <span class="step done" onclick="showStepDetail('公开招标', 0)" style="cursor:pointer;"><span class="num">1</span> 招标申请&公告发布</span><span class="arrow">→</span>
+            <span class="step done" onclick="showStepDetail('公开招标', 1)" style="cursor:pointer;"><span class="num">2</span> 开标</span><span class="arrow">→</span>
+            <span class="step active" onclick="showStepDetail('公开招标', 2)" style="cursor:pointer;"><span class="num">3</span> 评标&公示</span><span class="arrow">→</span>
+            <span class="step future"><span class="num">4</span> 中标结果</span><span class="arrow">→</span>
+            <span class="step future"><span class="num">5</span> 中标公告</span>
         </div>
+
+        <!-- 环节详情面板 -->
+        <div id="stepDetailPanel" style="display:none;"></div>
+
         <div class="flex gap-8 mt-12">
-            <button class="btn btn-sm btn-primary">推进审批</button>
+            <button class="btn btn-sm btn-primary" onclick="showAlert('推进审批 — 进入下一环节')">推进审批</button>
             <button class="btn btn-sm btn-outline">节点操作</button>
             <button class="btn btn-sm btn-danger" onclick="if(confirm('确认执行流标/弃标操作？'))showAlert('已提交流标/弃标审批')">流标/弃标</button>
         </div>
@@ -59,10 +62,7 @@
 
 <!-- 附件 -->
 <div class="card">
-    <div class="card-header">
-        <h3>📎 附件清单</h3>
-        <button class="btn btn-sm btn-outline">上传附件</button>
-    </div>
+    <div class="card-header"><h3>📎 附件清单</h3><button class="btn btn-sm btn-outline">上传附件</button></div>
     <div class="card-body">
         <div style="display:flex;flex-wrap:wrap;gap:10px;">
             <span class="tag tag-gray" style="padding:6px 14px;font-size:13px;">📄 招标文件.pdf</span>
@@ -80,18 +80,9 @@
     <div class="card-header"><h3>🔄 审批信息</h3></div>
     <div class="card-body">
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-            <div class="info-item">
-                <div class="info-label" style="color:var(--gray-500);font-size:12px;">审批状态</div>
-                <div class="info-value"><span class="tag tag-yellow">OA审批中</span></div>
-            </div>
-            <div class="info-item">
-                <div class="info-label" style="color:var(--gray-500);font-size:12px;">当前审批节点</div>
-                <div class="info-value">部门经理审批</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label" style="color:var(--gray-500);font-size:12px;">审批单号</div>
-                <div class="info-value">OA-2026-00893</div>
-            </div>
+            <div class="info-item"><div class="info-label" style="color:var(--gray-500);font-size:12px;">审批状态</div><div class="info-value"><span class="tag tag-yellow">OA审批中</span></div></div>
+            <div class="info-item"><div class="info-label" style="color:var(--gray-500);font-size:12px;">当前审批节点</div><div class="info-value">部门经理审批</div></div>
+            <div class="info-item"><div class="info-label" style="color:var(--gray-500);font-size:12px;">审批单号</div><div class="info-value">OA-2026-00893</div></div>
         </div>
         <div class="mt-16">
             <button class="btn btn-sm btn-outline">查看审批单</button>
@@ -120,5 +111,9 @@
 </div>
 
 <script src="../common/scripts.js"></script>
+<script>
+// 初始展开当前环节（评标&公示 = index 2）
+showStepDetail('公开招标', 2);
+</script>
 </body>
 </html>

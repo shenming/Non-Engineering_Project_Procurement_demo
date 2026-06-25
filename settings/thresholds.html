@@ -1,11 +1,165 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><link rel="stylesheet" href="../common/styles.css"></head><body class="content-page">
 <div class="sub-navbar"><span class="sub-nav-title">💰 采购方式阈值配置</span><span class="breadcrumb"><a onclick="navTo('settings')">配置管理</a> > 采购阈值</span></div>
-<div class="card"><div class="card-header"><h3>采购方式阈值规则</h3><div class="actions"><button class="btn btn-sm btn-primary">保存配置</button></div></div><div class="card-body"><div class="table-wrap"><table><thead><tr><th>采购方式</th><th>货物类阈值 (万元)</th><th>服务类阈值 (万元)</th><th>最低供应商数</th><th>状态</th></tr></thead><tbody>
-<tr><td><span class="tag tag-blue">公开招标</span></td><td><input class="form-control form-control-sm" value="200" style="width:90px;"></td><td><input class="form-control form-control-sm" value="100" style="width:90px;"></td><td>3</td><td><span class="tag tag-green">启用</span></td></tr>
-<tr><td><span class="tag tag-blue">邀请招标</span></td><td><input class="form-control form-control-sm" value="100" style="width:90px;"></td><td><input class="form-control form-control-sm" value="50" style="width:90px;"></td><td>3</td><td><span class="tag tag-green">启用</span></td></tr>
-<tr><td><span class="tag tag-purple">询比采购</span></td><td><input class="form-control form-control-sm" value="10" style="width:90px;"></td><td><input class="form-control form-control-sm" value="10" style="width:90px;"></td><td>3</td><td><span class="tag tag-green">启用</span></td></tr>
-<tr><td><span class="tag tag-yellow">谈判采购</span></td><td><input class="form-control form-control-sm" value="10" style="width:90px;"></td><td><input class="form-control form-control-sm" value="10" style="width:90px;"></td><td>2</td><td><span class="tag tag-green">启用</span></td></tr>
-<tr><td><span class="tag tag-orange">直接采购</span></td><td><input class="form-control form-control-sm" value="10" style="width:90px;"></td><td><input class="form-control form-control-sm" value="10" style="width:90px;"></td><td>1</td><td><span class="tag tag-green">启用</span></td></tr>
-</tbody></table></div></div></div>
+
+<!-- 招标方式 -->
+<div class="card">
+    <div class="card-header"><h3>📢 招标方式 — 货物类 & 服务类阈值</h3><div class="actions"><button class="btn btn-sm btn-primary">保存配置</button></div></div>
+    <div class="card-body">
+        <div class="alert alert-info"><span>📌</span><div>招标方式按合同估算价区间划分，满足门槛即应采用对应方式。</div></div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>采购方式</th>
+                        <th>货物类门槛</th>
+                        <th>服务类门槛</th>
+                        <th>最低供应商</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="tag tag-blue">公开招标</span></td>
+                        <td><strong>≥ 200 万元</strong>
+                            <br><span class="text-xs text-muted">合同估算价 ≥ <input class="form-control form-control-sm" value="200" style="width:70px;display:inline-block;"> 万元</span>
+                        </td>
+                        <td><strong>≥ 100 万元</strong>
+                            <br><span class="text-xs text-muted">合同估算价 ≥ <input class="form-control form-control-sm" value="100" style="width:70px;display:inline-block;"> 万元</span>
+                        </td>
+                        <td>≥ 3</td>
+                        <td><span class="tag tag-green">启用</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="tag tag-blue">邀请招标</span></td>
+                        <td><strong>100 万元 ≤ 金额 ＜ 200 万元</strong>
+                            <br><span class="text-xs text-muted">下限 <input class="form-control form-control-sm" value="100" style="width:70px;display:inline-block;"> / 上限 <input class="form-control form-control-sm" value="200" style="width:70px;display:inline-block;"> 万元</span>
+                        </td>
+                        <td><strong>50 万元 ≤ 金额 ＜ 100 万元</strong>
+                            <br><span class="text-xs text-muted">下限 <input class="form-control form-control-sm" value="50" style="width:70px;display:inline-block;"> / 上限 <input class="form-control form-control-sm" value="100" style="width:70px;display:inline-block;"> 万元</span>
+                        </td>
+                        <td>≥ 3</td>
+                        <td><span class="tag tag-green">启用</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 非招标方式（金额门槛） -->
+<div class="card">
+    <div class="card-header"><h3>📊 非招标方式 — 货物类 & 服务类阈值</h3></div>
+    <div class="card-body">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>采购方式</th>
+                        <th>货物类门槛</th>
+                        <th>服务类门槛</th>
+                        <th>最低供应商</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="tag tag-purple">询比采购</span></td>
+                        <td><strong>10 万元 ≤ 金额 ＜ 100 万元</strong>
+                            <br><span class="text-xs text-muted">下限 <input class="form-control form-control-sm" value="10" style="width:70px;display:inline-block;"> / 上限 <input class="form-control form-control-sm" value="100" style="width:70px;display:inline-block;"> 万元</span>
+                        </td>
+                        <td><strong>10 万元 ≤ 金额 ＜ 50 万元</strong>
+                            <br><span class="text-xs text-muted">下限 <input class="form-control form-control-sm" value="10" style="width:70px;display:inline-block;"> / 上限 <input class="form-control form-control-sm" value="50" style="width:70px;display:inline-block;"> 万元</span>
+                        </td>
+                        <td>≥ 3</td>
+                        <td><span class="tag tag-green">启用</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 谈判采购（条件适用） -->
+<div class="card">
+    <div class="card-header"><h3>🤝 谈判采购 — 适用情形</h3></div>
+    <div class="card-body">
+        <div class="alert alert-info"><span>📋</span><div><strong>无固定金额门槛</strong>，满足以下任一情形即可选用。最终由采购人判断并承担合规责任。</div></div>
+        <table>
+            <thead><tr><th style="width:40px;">#</th><th>适用情形</th><th>详细说明</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td>①</td>
+                    <td><strong>技术复杂 / 性质特殊</strong></td>
+                    <td>采购标的物技术复杂或性质特殊，不能准确提出采购需求，需与供应商谈判后研究确定</td>
+                </tr>
+                <tr>
+                    <td>②</td>
+                    <td><strong>多种实施方案可选</strong></td>
+                    <td>采购需求明确，但有多种实施方案可供选择，需通过与供应商谈判确定实施方案</td>
+                </tr>
+                <tr>
+                    <td>③</td>
+                    <td><strong>市场供应缺乏（仅2家）</strong></td>
+                    <td>市场供应资源缺乏，符合资格条件供应商只有 2 家</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 直接采购（7种情形） -->
+<div class="card">
+    <div class="card-header"><h3>📌 直接采购 — 适用情形（7种）</h3></div>
+    <div class="card-body">
+        <table>
+            <thead><tr><th style="width:40px;">#</th><th>适用情形</th><th>详细说明</th><th>触发条件</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td>①</td>
+                    <td><strong>合同估算价 ＜ 10 万元</strong></td>
+                    <td>合同估算价低于10万元</td>
+                    <td><span class="tag tag-green">金额触发</span></td>
+                </tr>
+                <tr>
+                    <td>②</td>
+                    <td><strong>涉密 / 商业秘密</strong></td>
+                    <td>涉及国家秘密、国家安全或企业重大商业秘密，且不适宜竞争性（招标、询比、谈判）采购</td>
+                    <td><span class="tag tag-red">人工判定</span></td>
+                </tr>
+                <tr>
+                    <td>③</td>
+                    <td><strong>不可替代专利 / 专有技术</strong></td>
+                    <td>需采用不可替代的专利或者专有技术</td>
+                    <td><span class="tag tag-red">人工判定</span></td>
+                </tr>
+                <tr>
+                    <td>④</td>
+                    <td><strong>原供应商配套</strong></td>
+                    <td>需向原供应商采购，否则将影响施工或者功能配套要求</td>
+                    <td><span class="tag tag-red">人工判定</span></td>
+                </tr>
+                <tr>
+                    <td>⑤</td>
+                    <td><strong>有效供应商仅 1 家</strong></td>
+                    <td>有效供应商有且仅有 1 家</td>
+                    <td><span class="tag tag-red">人工判定</span></td>
+                </tr>
+                <tr>
+                    <td>⑥</td>
+                    <td><strong>抢险救灾 / 紧急采购</strong></td>
+                    <td>因抢险救灾、事故抢修等不可预见的特殊情况需要紧急采购</td>
+                    <td><span class="tag tag-orange">紧急触发</span></td>
+                </tr>
+                <tr>
+                    <td>⑦</td>
+                    <td><strong>政策文件规定</strong></td>
+                    <td>国家及上海市有关部门文件明确的其他情形</td>
+                    <td><span class="tag tag-gray">政策触发</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <button class="btn btn-outline mt-12" onclick="navTo('settings')">← 返回配置</button>
 <script src="../common/scripts.js"></script></body></html>

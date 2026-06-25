@@ -16,7 +16,7 @@
     </div>
     <div class="flex gap-8">
         <button class="btn btn-sm btn-outline">📥 导出</button>
-        <button class="btn btn-sm btn-primary" onclick="navTo('procurement','procurement/create.html')">＋ 发起申请</button>
+        <button class="btn btn-sm btn-primary" onclick="openPlanSelectionModal()">＋ 发起申请</button>
     </div>
 </div>
 
@@ -157,5 +157,112 @@
 </div>
 
 <script src="../common/scripts.js"></script>
+
+<!-- ========== 招采项选择弹框 ========== -->
+<div id="planSelectModal" class="modal-overlay" style="display:none;">
+    <div class="modal" style="max-width:900px;">
+        <div class="modal-header">
+            <h2>📋 请选择对应的招采项</h2>
+            <button class="close" onclick="closePlanModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="flex gap-12 mb-12" style="flex-wrap:wrap;">
+                <input class="form-control form-control-sm" id="searchPlanId" placeholder="采购计划编号模糊搜索..." style="width:200px;" oninput="filterPlanItems()">
+                <input class="form-control form-control-sm" id="searchContent" placeholder="采购内容模糊搜索..." style="width:200px;" oninput="filterPlanItems()">
+                <button class="btn btn-sm btn-outline" onclick="document.getElementById('searchPlanId').value='';document.getElementById('searchContent').value='';filterPlanItems();">重置</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:40px;">选择</th>
+                            <th>计划编号</th>
+                            <th>采购内容</th>
+                            <th>所属单位</th>
+                            <th>采购类别</th>
+                            <th>预选采购方式</th>
+                            <th>预估金额(万)</th>
+                            <th>采购限价(万)</th>
+                            <th>经办人</th>
+                        </tr>
+                    </thead>
+                    <tbody id="planItemTableBody"></tbody>
+                </table>
+            </div>
+            <div class="text-xs text-muted mt-8">仅显示已生效且未被引用的招采项。</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closePlanModal()">取消</button>
+            <button class="btn btn-primary" onclick="confirmPlanSelection()">确认</button>
+        </div>
+    </div>
+</div>
+
+<script>
+var PLAN_ITEMS = [
+    { id: 'PL-2026-0001-1', planId: 'PL-2026-0001', planName: '2026年度成员企业A采购计划', content: '年度法律顾问服务', unit: '成员企业A', cat: '服务类 · 法律服务', method: '直接采购', amount: 15.0, limit: 12.0, handler: '张明' },
+    { id: 'PL-2026-0002-1', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '集团年度物业服务', unit: '集团总部', cat: '服务类 · 物业服务', method: '公开招标', amount: 186.5, limit: 180.0, handler: '李经理' },
+    { id: 'PL-2026-0002-2', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '生产设备维护服务', unit: '集团总部', cat: '服务类 · 维护服务', method: '邀请招标', amount: 67.0, limit: 67.0, handler: '赵岩' },
+    { id: 'PL-2026-0010-1', planId: 'PL-2026-0010', planName: '2026年度成员企业B采购计划', content: 'IT设备采购', unit: '成员企业B', cat: '货物类 · IT类', method: '邀请招标', amount: 45.0, limit: 42.0, handler: '王磊' },
+    { id: 'PL-2026-0015-1', planId: 'PL-2026-0015', planName: '2026年度成员企业A采购计划', content: '年度培训服务', unit: '成员企业A', cat: '服务类 · 培训服务', method: '询比采购', amount: 28.0, limit: 25.0, handler: '陈芳' }
+];
+
+function openPlanSelectionModal() {
+    document.getElementById('planSelectModal').style.display = 'flex';
+    document.getElementById('searchPlanId').value = '';
+    document.getElementById('searchContent').value = '';
+    renderPlanItems(PLAN_ITEMS);
+}
+
+function closePlanModal() {
+    document.getElementById('planSelectModal').style.display = 'none';
+}
+
+function filterPlanItems() {
+    var kw1 = document.getElementById('searchPlanId').value.toLowerCase();
+    var kw2 = document.getElementById('searchContent').value.toLowerCase();
+    var filtered = PLAN_ITEMS.filter(function(item) {
+        var match1 = !kw1 || item.planId.toLowerCase().indexOf(kw1) !== -1;
+        var match2 = !kw2 || item.content.toLowerCase().indexOf(kw2) !== -1;
+        return match1 && match2;
+    });
+    renderPlanItems(filtered);
+}
+
+function renderPlanItems(items) {
+    var tbody = document.getElementById('planItemTableBody');
+    var html = '';
+    items.forEach(function(item, i) {
+        html += '<tr style="cursor:pointer;" onclick="selectPlanRow(this)" data-item="' + encodeURIComponent(JSON.stringify(item)) + '">';
+        html += '<td><input type="radio" name="planSelect" style="pointer-events:none;"></td>';
+        html += '<td><strong>' + item.planId + '</strong><br><span class="text-xs text-muted">' + item.planName + '</span></td>';
+        html += '<td>' + item.content + '</td>';
+        html += '<td>' + item.unit + '</td>';
+        html += '<td>' + renderCategoryTag(item.cat) + '</td>';
+        html += '<td><span class="tag tag-blue">' + item.method + '</span></td>';
+        html += '<td><span class="money">' + item.amount.toFixed(1) + '</span></td>';
+        html += '<td>' + item.limit.toFixed(1) + '</td>';
+        html += '<td>' + item.handler + '</td>';
+        html += '</tr>';
+    });
+    tbody.innerHTML = html || '<tr><td colspan="9" class="text-muted text-sm" style="text-align:center;padding:20px;">无匹配的记录</td></tr>';
+}
+
+function selectPlanRow(row) {
+    var allRows = document.querySelectorAll('#planItemTableBody tr');
+    allRows.forEach(function(r) { r.classList.remove('selected'); });
+    row.classList.add('selected');
+    row.querySelector('input[type="radio"]').checked = true;
+}
+
+function confirmPlanSelection() {
+    var checkedRow = document.querySelector('#planItemTableBody tr.selected');
+    if (!checkedRow) { showAlert('⚠️ 请先选择一条招采项。'); return; }
+    var itemData = JSON.parse(decodeURIComponent(checkedRow.getAttribute('data-item')));
+    sessionStorage.setItem('selectedPlanItem', JSON.stringify(itemData));
+    closePlanModal();
+    navTo('procurement', 'procurement/create.html');
+}
+</script>
 </body>
 </html>

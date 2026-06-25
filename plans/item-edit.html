@@ -30,14 +30,23 @@
         <div class="form-row">
             <div class="form-group">
                 <label>采购类别 <span class="required">*</span></label>
-                <select class="form-control">
+                <select class="form-control" id="itemCatParent" onchange="populateSubCategory('itemCatParent','itemCatSub')">
+                    <option value="">— 请选择 —</option>
                     <option value="货物类">货物类</option>
                     <option value="服务类" selected>服务类</option>
                 </select>
             </div>
             <div class="form-group">
+                <label>二级品类</label>
+                <select class="form-control" id="itemCatSub">
+                    <option value="">— 请先选择一级类别 —</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
                 <label>预选采购方式 <span class="required">*</span></label>
-                <select class="form-control">
+                <select class="form-control" id="itemMethod">
                     <option>公开招标</option>
                     <option>邀请招标</option>
                     <option>询比采购</option>
@@ -49,13 +58,17 @@
         <div class="form-row">
             <div class="form-group">
                 <label>预估金额 (万元) <span class="required">*</span></label>
-                <input class="form-control" type="number" value="15.0">
+                <input class="form-control" type="number" id="itemEstimated" value="15.0">
             </div>
             <div class="form-group">
                 <label>采购限价 (万元)</label>
-                <input class="form-control" type="number" value="12.0">
+                <input class="form-control" type="number" id="itemCeiling" value="12.0">
             </div>
         </div>
+
+        <!-- 采购方式智能推荐提示 -->
+        <div class="method-hints" id="itemMethodHints" style="display:none;"></div>
+
         <div class="form-row">
             <div class="form-group">
                 <label>计划开始 <span class="required">*</span></label>
@@ -77,6 +90,13 @@
             </div>
         </div>
         <div class="form-group">
+            <label>是否集团管控项</label>
+            <select class="form-control">
+                <option value="no" selected>否（自主管控）</option>
+                <option value="yes">是（集团重点管控）</option>
+            </select>
+        </div>
+        <div class="form-group">
             <label>附件</label>
             <input class="form-control" type="file" multiple>
             <div class="text-xs text-muted mt-8">已上传：合同草案.pdf、需求说明.docx</div>
@@ -92,5 +112,42 @@
 </div>
 
 <script src="../common/scripts.js"></script>
+<script>
+// 初始化二级品类联动（法律服务属于服务类）
+populateSubCategory('itemCatParent', 'itemCatSub', '法律服务');
+
+// 初始化采购方式智能推荐（用一级类别驱动）
+bindMethodRecommendation('itemCatParent', 'itemEstimated', 'itemMethod', 'itemCeiling', 'itemMethodHints');
+
+document.getElementById('itemMethod').addEventListener('change', function() {
+    var method = this.value;
+    var amt1 = parseFloat(document.getElementById('itemEstimated').value) || 0;
+    var amt2 = parseFloat(document.getElementById('itemCeiling').value) || 0;
+    var amt = Math.max(amt1, amt2);
+    if (method === '谈判采购') {
+        window.parent.postMessage({ type: 'modal', title: '📋 谈判采购 · 请选择适用情形', body: getNegotiationConditionsHTML(), onConfirm: 'negoSelected' }, '*');
+    } else if (method === '直接采购') {
+        window.parent.postMessage({ type: 'modal', title: '📌 直接采购 · 请选择适用情形', body: getDirectPurchaseConditionsHTML(amt), onConfirm: 'dpSelected' }, '*');
+    }
+});
+
+window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'modalConfirm' && e.data.payload) {
+        if (e.data.payload === 'negoSelected') {
+            var checked = window.parent.document.querySelector('input[name="negoCond"]:checked');
+            if (checked) {
+                var label = ''; if (checked.value === 'N1') label = '技术复杂/性质特殊'; else if (checked.value === 'N2') label = '多种实施方案'; else if (checked.value === 'N3') label = '仅2家合格供应商';
+                showAlert('✅ 已选择谈判采购情形：' + label);
+            }
+        } else if (e.data.payload === 'dpSelected') {
+            var checked = window.parent.document.querySelector('input[name="dpCond"]:checked');
+            if (checked) {
+                var dpMap = { 'D1': '合同估算价＜10万元', 'D2': '涉密/商业秘密', 'D3': '不可替代专利/专有技术', 'D4': '原供应商配套', 'D5': '仅1家有效供应商', 'D6': '抢险救灾/紧急采购', 'D7': '政策文件规定' };
+                showAlert('✅ 已选择直接采购情形：' + (dpMap[checked.value] || checked.value));
+            }
+        }
+    }
+});
+</script>
 </body>
 </html>

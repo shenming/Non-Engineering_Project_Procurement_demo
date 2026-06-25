@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../common/styles.css">
+    <style>
+        .field-locked { background: var(--gray-100); color: var(--gray-600); cursor: not-allowed; }
+        .limit-exceeded { border-color: var(--danger) !important; background: #fef2f2 !important; }
+    </style>
 </head>
 <body class="content-page">
 
@@ -13,62 +17,234 @@
     </span>
 </div>
 
-<div class="alert alert-warning">
-    <span>⚠️</span>
-    <div><strong>规则校验：</strong> 必须关联已生效的采购计划。无合规计划项则禁止发起。</div>
-</div>
-
 <div class="card">
     <div class="card-header"><h3>采购申请信息</h3></div>
     <div class="card-body">
-        <div class="form-group">
-            <label>关联计划 <span class="required">*</span></label>
-            <select class="form-control">
-                <option>— 请选择已生效计划 —</option>
-                <option>PL-2026-0031 · IT设备采购 · 成员企业B · ¥45.0万</option>
-                <option>PL-2026-0042 · 年度培训服务 · 成员企业A · ¥28.0万</option>
-                <option selected>PL-2026-0050 · 生产设备维护 · 成员企业B · ¥67.0万</option>
-            </select>
+
+        <!-- ===== 自动带出（置灰不可编辑）===== -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>关联招采计划编号 <span class="required">*</span></label>
+                <input class="form-control field-locked" id="planNo" disabled>
+            </div>
+            <div class="form-group">
+                <label>所属单位 <span class="required">*</span></label>
+                <input class="form-control field-locked" id="unit" disabled>
+            </div>
         </div>
         <div class="form-group">
-            <label>采购方式 <span class="required">*</span></label>
-            <select class="form-control">
-                <option>公开招标</option>
-                <option>邀请招标</option>
-                <option selected>询比采购</option>
-                <option>谈判采购</option>
-                <option>直接采购</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>项目名称 <span class="required">*</span></label>
-            <input class="form-control" value="生产设备维护服务采购">
+            <label>招标项目名称 <span class="required">*</span></label>
+            <input class="form-control field-locked" id="projectName" disabled>
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label>采购限价 (万元) <span class="required">*</span></label>
-                <input class="form-control" type="number" value="67.0">
+                <label>采购类别 <span class="required">*</span></label>
+                <select class="form-control field-locked" id="procCatParent" disabled onchange="populateSubCategory('procCatParent','procCatSub')">
+                    <option value="">—</option>
+                    <option value="货物类">货物类</option>
+                    <option value="服务类">服务类</option>
+                </select>
             </div>
             <div class="form-group">
-                <label>计划定标时间</label>
-                <input class="form-control" type="date" value="2026-07-15">
+                <label>二级品类</label>
+                <select class="form-control field-locked" id="procCatSub" disabled>
+                    <option value="">—</option>
+                </select>
             </div>
         </div>
         <div class="form-group">
+            <label>采购内容 <span class="required">*</span></label>
+            <input class="form-control field-locked" id="procContent" disabled>
+        </div>
+        <div class="form-group">
+            <label>采购方式 <span class="required">*</span></label>
+            <select class="form-control field-locked" id="procMethod" disabled>
+                <option>公开招标</option><option>邀请招标</option><option>询比采购</option><option>谈判采购</option><option>直接采购</option>
+            </select>
+        </div>
+
+        <!-- ===== 直接采购原因（仅直接采购时显示）===== -->
+        <div id="directPurchaseSection" style="display:none;">
+            <div class="card" style="margin-bottom:16px;border-color:var(--warning);">
+                <div class="card-header" style="background:#fffbeb;"><h3>📌 直接采购原因选择</h3></div>
+                <div class="card-body" id="dpConditionsBody"></div>
+            </div>
+        </div>
+
+        <!-- ===== 可编辑（有校验）===== -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>采购限价 (万元) <span class="required">*</span></label>
+                <input class="form-control" type="number" id="procAmount" oninput="validateLimit()">
+                <span class="text-xs" id="limitHint" style="color:var(--gray-500);">计划上限：<span id="limitMax"></span> 万元</span>
+            </div>
+        </div>
+
+        <!-- ===== 手动填写 ===== -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>拟发标时间</label>
+                <input class="form-control" type="date" id="bidIssueDate">
+            </div>
+            <div class="form-group">
+                <label>计划开标时间</label>
+                <input class="form-control" type="date" id="bidOpenDate">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>计划定标时间</label>
+                <input class="form-control" type="date" id="bidAwardDate">
+            </div>
+            <div class="form-group">
+                <label>公告发布时间</label>
+                <input class="form-control" type="date" id="announceDate">
+            </div>
+        </div>
+
+        <div class="form-group">
             <label>附件（招标文件/采购需求等）</label>
             <input class="form-control" type="file" multiple>
+            <span class="text-xs text-muted">支持上传招标文件、采购需求等佐证材料</span>
         </div>
-        <div class="text-xs text-muted mt-8">📌 审批通过后，流程将在OA中流转，用印文件回传系统。</div>
+
+        <!-- 直接采购原因说明文件（D2~D7时必传） -->
+        <div class="form-group" id="dpReasonFileGroup" style="display:none;">
+            <label>📎 直接采购原因说明文件 <span class="required">*</span></label>
+            <input class="form-control" type="file" id="dpReasonFile">
+            <span class="text-xs text-muted">请上传证明合理性的文件资料</span>
+        </div>
+
+        <div class="form-group">
+            <label>采购范围及说明</label>
+            <textarea class="form-control" rows="4" placeholder="请描述本次采购的具体范围、服务/货物要求、质量标准和补充说明等"></textarea>
+        </div>
+
+        <div class="text-xs text-muted mt-8" id="dpFlowHint" style="display:none;"></div>
+        <div class="text-xs text-muted mt-8" id="normalFlowHint">📌 审批通过后，流程将在OA中流转，用印文件回传系统。</div>
     </div>
     <div class="card-header" style="border-top:1px solid var(--gray-200);border-bottom:none;background:#fff;">
         <span></span>
         <div class="flex gap-8">
-            <button class="btn btn-outline" onclick="navTo('procurement','procurement/list.html')">取消</button>
-            <button class="btn btn-primary" onclick="showAlert('✅ 采购申请已提交，进入OA审批流程。');navTo('procurement','procurement/list.html')">提交审批</button>
+            <button class="btn btn-outline" onclick="navTo('procurement','procurement/list.html')">← 返回列表</button>
+            <button class="btn btn-primary" id="submitBtn" onclick="submitProcurement()">提交审批</button>
         </div>
     </div>
 </div>
 
 <script src="../common/scripts.js"></script>
+<script>
+var planLimit = 0;
+
+// 从 sessionStorage 读取选中的招采项
+(function initFromPlan() {
+    var raw = sessionStorage.getItem('selectedPlanItem');
+    if (!raw) {
+        showAlert('⚠️ 未选择关联招采项，请从列表页发起申请。');
+        return;
+    }
+    var item = JSON.parse(raw);
+
+    // 自动填充置灰字段
+    document.getElementById('planNo').value = item.planId + ' · ' + item.planName;
+    document.getElementById('unit').value = item.unit;
+    document.getElementById('projectName').value = item.content;
+    document.getElementById('procContent').value = item.content;
+
+    // 类别（两级联动回填）
+    var parent = extractParentCategory(item.cat);
+    var sub = extractSubCategory(item.cat);
+    document.getElementById('procCatParent').value = parent || '';
+    populateSubCategory('procCatParent', 'procCatSub', sub || '');
+
+    // 采购方式
+    document.getElementById('procMethod').value = item.method;
+
+    // 采购限价
+    planLimit = item.limit;
+    document.getElementById('procAmount').value = planLimit;
+    document.getElementById('limitMax').textContent = planLimit;
+
+    // Cleanup sessionStorage
+    sessionStorage.removeItem('selectedPlanItem');
+
+    // 直接采购：初始化原因选择
+    if (item.method === '直接采购') {
+        initDirectPurchaseSection();
+    }
+
+    // 初始化推荐引擎
+    bindMethodRecommendation('procCatParent', 'procAmount', 'procMethod', null, null);
+})();
+
+function initDirectPurchaseSection() {
+    var section = document.getElementById('directPurchaseSection');
+    var body = document.getElementById('dpConditionsBody');
+    if (!section || !body) return;
+    section.style.display = '';
+
+    var html = '';
+    DIRECT_PURCHASE_CONDITIONS.forEach(function(c) {
+        var checked = (c.id === 'D1') ? ' checked' : '';
+        html += '<label style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;cursor:pointer;">';
+        html += '<input type="radio" name="dpCond" value="' + c.id + '"' + checked + ' style="margin-top:3px;" onchange="onDpConditionChange()">';
+        html += '<div><strong>' + c.label + '</strong><br><span class="text-xs text-muted">' + c.desc + '</span></div>';
+        html += '</label>';
+    });
+    body.innerHTML = html;
+    onDpConditionChange();
+}
+
+function onDpConditionChange() {
+    var checked = document.querySelector('input[name="dpCond"]:checked');
+    if (!checked) return;
+    var isD1 = (checked.value === 'D1');
+    document.getElementById('dpReasonFileGroup').style.display = isD1 ? 'none' : '';
+    document.getElementById('normalFlowHint').style.display = 'none';
+    var hint = document.getElementById('dpFlowHint');
+    hint.style.display = '';
+    if (isD1) {
+        hint.innerHTML = '✅ <strong>流程合并说明：</strong>合同估算价＜10万元，采购申请与确定采购结果合并，审批通过后可直接填写采购结果。';
+        document.getElementById('submitBtn').textContent = '提交审批并进入采购结果';
+    } else {
+        hint.innerHTML = '📌 <strong>流程分开说明：</strong>该情形下采购申请审批通过后，需单独提交确定采购结果流程。';
+        document.getElementById('submitBtn').textContent = '提交审批';
+    }
+}
+
+function validateLimit() {
+    var input = document.getElementById('procAmount');
+    var val = parseFloat(input.value);
+    if (!isNaN(val) && val > planLimit) {
+        input.classList.add('limit-exceeded');
+        document.getElementById('limitHint').innerHTML = '<span style="color:var(--danger);">⚠ 超出计划限价（≤' + planLimit + ' 万元）</span>';
+    } else {
+        input.classList.remove('limit-exceeded');
+        document.getElementById('limitHint').innerHTML = '计划上限：<span>' + planLimit + '</span> 万元';
+    }
+}
+
+function submitProcurement() {
+    var limitVal = parseFloat(document.getElementById('procAmount').value);
+    if (limitVal > planLimit) {
+        showAlert('⚠️ 采购限价超出计划限价，请调整后提交。');
+        return;
+    }
+    var method = document.getElementById('procMethod').value;
+    if (method === '直接采购') {
+        var checked = document.querySelector('input[name="dpCond"]:checked');
+        if (!checked) { showAlert('⚠️ 请选择直接采购原因。'); return; }
+        var isD1 = (checked.value === 'D1');
+        if (!isD1) {
+            var fi = document.getElementById('dpReasonFile');
+            if (fi && !fi.files.length) { showAlert('⚠️ 请上传直接采购原因说明文件。'); return; }
+        }
+        showAlert(isD1 ? '✅ 采购申请已提交，请进入采购结果填写页面。' : '✅ 采购申请已提交，审批通过后请单独提交确定采购结果。');
+    } else {
+        showAlert('✅ 采购申请已提交，进入OA审批流程。');
+    }
+    navTo('procurement', 'procurement/list.html');
+}
+</script>
 </body>
 </html>

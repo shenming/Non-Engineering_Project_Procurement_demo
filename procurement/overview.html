@@ -22,33 +22,36 @@
 </div>
 
 <div class="method-grid">
-    <div class="method-card" onclick="showProcurementDetail('公开招标')"><span class="m-icon">📢</span><div class="m-name">公开招标</div><div class="m-desc">≥200万(货物) / ≥100万(服务)</div></div>
-    <div class="method-card" onclick="showProcurementDetail('邀请招标')"><span class="m-icon">📨</span><div class="m-name">邀请招标</div><div class="m-desc">≥100万(货物) / ≥50万(服务)</div></div>
-    <div class="method-card" onclick="showProcurementDetail('询比采购')"><span class="m-icon">📊</span><div class="m-name">询比采购</div><div class="m-desc">≥10万 · 3家以上供应商</div></div>
-    <div class="method-card" onclick="showProcurementDetail('谈判采购')"><span class="m-icon">🤝</span><div class="m-name">谈判采购</div><div class="m-desc">技术复杂 / 2家以上供应商</div></div>
-    <div class="method-card" onclick="showProcurementDetail('直接采购')"><span class="m-icon">📌</span><div class="m-name">直接采购</div><div class="m-desc"><10万 或 特殊情形</div></div>
+    <div class="method-card" onclick="showProcurementDetail('公开招标','ovSteps','ovTitle')"><span class="m-icon">📢</span><div class="m-name">公开招标</div><div class="m-desc">≥200万(货物) / ≥100万(服务)</div></div>
+    <div class="method-card" onclick="showProcurementDetail('邀请招标','ovSteps','ovTitle')"><span class="m-icon">📨</span><div class="m-name">邀请招标</div><div class="m-desc">≥100万(货物) / ≥50万(服务)</div></div>
+    <div class="method-card" onclick="showProcurementDetail('询比采购','ovSteps','ovTitle')"><span class="m-icon">📊</span><div class="m-name">询比采购</div><div class="m-desc">≥10万 · 3家以上供应商</div></div>
+    <div class="method-card" onclick="showProcurementDetail('谈判采购','ovSteps','ovTitle')"><span class="m-icon">🤝</span><div class="m-name">谈判采购</div><div class="m-desc">技术复杂 / 2家以上供应商</div></div>
+    <div class="method-card" onclick="showProcurementDetail('直接采购','ovSteps','ovTitle')"><span class="m-icon">📌</span><div class="m-name">直接采购</div><div class="m-desc"><10万 或 特殊情形</div></div>
 </div>
 
 <div class="card mt-16" id="procurementDetail">
     <div class="card-header">
-        <h3 id="procDetailTitle">📢 公开招标 · 流程示意</h3>
+        <h3 id="ovTitle">📢 公开招标 · 流程示意</h3>
         <div class="actions">
             <span class="tag tag-blue">进行中</span>
             <button class="btn btn-sm btn-primary" onclick="navTo('procurement','procurement/create.html')">＋ 发起申请</button>
         </div>
     </div>
     <div class="card-body">
-        <div class="steps" id="procSteps">
-            <span class="step done"><span class="num">1</span> 招标申请</span><span class="arrow">→</span>
-            <span class="step done"><span class="num">2</span> 公告发布</span><span class="arrow">→</span>
-            <span class="step active"><span class="num">3</span> 开标</span><span class="arrow">→</span>
-            <span class="step"><span class="num">4</span> 评标&公示</span><span class="arrow">→</span>
-            <span class="step"><span class="num">5</span> 中标结果</span><span class="arrow">→</span>
-            <span class="step"><span class="num">6</span> 中标公告</span>
+        <div class="steps" id="ovSteps">
+            <span class="step done" onclick="showStepDetail('公开招标', 0)" style="cursor:pointer;"><span class="num">1</span> 招标申请&公告发布</span><span class="arrow">→</span>
+            <span class="step done" onclick="showStepDetail('公开招标', 1)" style="cursor:pointer;"><span class="num">2</span> 开标</span><span class="arrow">→</span>
+            <span class="step active" onclick="showStepDetail('公开招标', 2)" style="cursor:pointer;"><span class="num">3</span> 评标&公示</span><span class="arrow">→</span>
+            <span class="step future"><span class="num">4</span> 中标结果</span><span class="arrow">→</span>
+            <span class="step future"><span class="num">5</span> 中标公告</span>
         </div>
+
+        <!-- 环节详情面板 -->
+        <div id="stepDetailPanel" style="display:none;"></div>
+
         <div class="alert alert-info" style="margin-top:8px;">
             <span>📌</span>
-            <div><strong>当前节点：开标</strong> <span class="text-muted" style="margin-left:12px;">开标时间：2026-06-20 09:30</span><span class="text-muted" style="margin-left:12px;">已上传：开标记录、现场资料</span></div>
+            <div><strong>当前节点：评标&公示</strong> <span class="text-muted" style="margin-left:12px;">评标时间：2026-06-22 14:00</span><span class="text-muted" style="margin-left:12px;">已上传：评标报告初稿</span></div>
         </div>
         <div style="margin-top:12px;">
             <div class="flex-between"><span class="fw-600 text-sm">📎 已归档附件</span><button class="btn btn-xs btn-outline">上传附件</button></div>
@@ -74,6 +77,5 @@
 </div>
 
 <script src="../common/scripts.js"></script>
-<script>document.addEventListener('DOMContentLoaded', function(){ showProcurementDetail('公开招标'); });</script>
 </body>
 </html>
