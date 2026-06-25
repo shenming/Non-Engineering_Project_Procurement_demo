@@ -333,16 +333,13 @@ function recommendProcurementMethod(category, amount) {
     });
 
     // --- 公开招标（≥ publicMin）---
-    var publicOk = amount >= publicMin;
     results.push({
         method: '公开招标',
         priority: 1,
-        compliant: publicOk,
-        isBest: publicOk,
-        reason: publicOk
-            ? '合同估算价≥' + fmtWan(publicMin) + '万元，可采用公开招标'
-            : '合同估算价＜' + fmtWan(publicMin) + '万元，不满足公开招标门槛（≥' + fmtWan(publicMin) + '万元）',
-        tag: publicOk ? '✅ 合规' : '⚠ 不满足门槛'
+        compliant: true,
+        isBest: amount >= publicMin,
+        reason: '公开招标不限金额门槛，企业可自主选择',
+        tag: '✅ 合规'
     });
 
     // --- 谈判采购（始终合规，需满足情形）---
