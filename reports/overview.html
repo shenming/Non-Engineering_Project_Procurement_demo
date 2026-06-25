@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head><meta charset="UTF-8"><link rel="stylesheet" href="../common/styles.css"></head>
+<head><meta charset="UTF-8"><link rel="stylesheet" href="../common/styles.css">
+<style>.sortable{cursor:pointer;user-select:none}.sortable:hover{color:var(--primary)}.sort-arrow{font-size:10px;margin-left:2px}.sort-arrow.asc::after{content:' ▲'}.sort-arrow.desc::after{content:' ▼'}</style>
+</head>
 <body class="content-page">
 
 <div class="sub-navbar"><span class="sub-nav-title">📈 报表管理</span></div>
@@ -25,7 +27,7 @@
 </div></div></div>
 
 <div class="card"><div class="card-header"><h3>📄 报表列表</h3><div class="actions"><button class="btn btn-sm btn-outline">📥 导出</button><button class="btn btn-sm btn-outline" onclick="navTo('reports','reports/custom.html')">自定义报表</button></div></div>
-<div class="card-body" style="padding:0;"><div class="table-wrap"><table><thead><tr><th>报表名称</th><th>类型</th><th>维度</th><th>更新时间</th><th>操作</th></tr></thead><tbody>
+<div class="card-body" style="padding:0;"><div class="table-wrap"><table><thead><tr><th class="sortable" onclick="sortTable(0)" data-col="0">报表名称 <span class="sort-arrow"></span></th><th class="sortable" onclick="sortTable(1)" data-col="1">类型 <span class="sort-arrow"></span></th><th class="sortable" onclick="sortTable(2)" data-col="2">维度 <span class="sort-arrow"></span></th><th class="sortable" onclick="sortTable(3)" data-col="3">更新时间 <span class="sort-arrow"></span></th><th>操作</th></tr></thead><tbody id="rptTableBody">
 <tr><td>采购计划执行统计（按计划）</td><td><span class="tag tag-green">计划</span></td><td>计划头</td><td>2026-06-01</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
 <tr><td>招采项明细统计表</td><td><span class="tag tag-green">计划</span></td><td>招采项</td><td>2026-06-01</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
 <tr><td>采购方式合规分析</td><td><span class="tag tag-blue">合规</span></td><td>招采项</td><td>2026-05-28</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
@@ -35,5 +37,20 @@
 <tr><td>年度预算执行偏差分析</td><td><span class="tag tag-green">计划</span></td><td>计划头</td><td>2026-06-10</td><td><button class="btn btn-xs btn-outline" onclick="navTo('reports','reports/preview.html')">预览</button> <button class="btn btn-xs btn-outline">下载</button></td></tr>
 </tbody></table></div></div></div>
 
+<script>
+var sortCol=-1,sortAsc=true;
+function sortTable(col){
+    var t=document.getElementById('rptTableBody'),rows=Array.from(t.querySelectorAll('tr'));
+    sortCol===col?sortAsc=!sortAsc:(sortCol=col,sortAsc=true);
+    document.querySelectorAll('.sort-arrow').forEach(function(a){a.className='sort-arrow'});
+    var th=document.querySelector('th[data-col="'+col+'"] .sort-arrow');
+    if(th)th.className='sort-arrow '+(sortAsc?'asc':'desc');
+    rows.sort(function(a,b){
+        var ca=(a.cells[col]||{}).textContent||'',cb=(b.cells[col]||{}).textContent||'';
+        return sortAsc?ca.localeCompare(cb,'zh-CN'):cb.localeCompare(ca,'zh-CN');
+    });
+    rows.forEach(function(r){t.appendChild(r)});
+}
+</script>
 <script src="../common/scripts.js"></script>
 </body></html>

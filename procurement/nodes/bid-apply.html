@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../common/styles.css">
+<style>
+.field-table { width: 100%; }
+.field-table td { padding: 5px 12px 5px 0; vertical-align: top; }
+.field-table .flabel { width: 140px; color: var(--gray-500); font-size: 12px; white-space: nowrap; }
+.field-table .fvalue { font-size: 13px; font-weight: 500; }
+.attach-section { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--gray-200); }
+</style>
+</head>
+<body class="content-page" style="padding:0;">
+
+<div class="card" style="margin:0;border:none;box-shadow:none;">
+  <div class="card-header"><h3>📌 招标申请 <span class="tag tag-green">已生效</span></h3></div>
+  <div class="card-body">
+    <table class="field-table"><tbody>
+      <tr><td class="flabel">招采申请编号</td><td class="fvalue">ZB-2026-003</td></tr>
+      <tr><td class="flabel">关联招采计划编号</td><td class="fvalue">PL-2026-0002 · 2026年度集团总部采购计划</td></tr>
+      <tr><td class="flabel">所属单位</td><td class="fvalue">集团总部</td></tr>
+      <tr><td class="flabel">招标项目名称</td><td class="fvalue">集团年度物业服务</td></tr>
+      <tr><td class="flabel">采购类别</td><td class="fvalue"><span class="tag tag-blue">服务类 · 物业服务</span></td></tr>
+      <tr><td class="flabel">采购内容</td><td class="fvalue">集团总部办公区域物业服务</td></tr>
+      <tr><td class="flabel">服务范围</td><td class="fvalue">总部大楼A/B座、园区绿化、安保</td></tr>
+      <tr><td class="flabel">采购限价</td><td class="fvalue"><span class="money">¥1,865,000.00元</span></td></tr>
+      <tr><td class="flabel">拟发标时间</td><td class="fvalue">2026-06-19</td></tr>
+      <tr><td class="flabel">计划开标时间</td><td class="fvalue">2026-07-10</td></tr>
+      <tr><td class="flabel">计划定标时间</td><td class="fvalue">2026-07-25</td></tr>
+      <tr><td class="flabel">公告发布时间</td><td class="fvalue">2026-06-20 09:00</td></tr>
+    </tbody></table>
+
+    <div class="attach-section">
+      <div class="text-sm fw-600 mb-4">📎 附件要求</div>
+      <div class="text-sm" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <span class="text-xs" style="color:var(--gray-500);">必选：</span>
+        <span class="tag tag-red" style="font-size:11px;">📄 招标文件</span>
+        <span class="tag tag-red" style="font-size:11px;">📄 招标公告</span>
+        <span class="text-xs" style="color:var(--gray-500);margin-left:12px;">可选：</span>
+        <span class="tag tag-gray" style="font-size:11px;">📄 图纸</span>
+        <span class="tag tag-gray" style="font-size:11px;">📄 限价文件</span>
+      </div>
+    </div>
+
+    <div class="flex gap-8 mt-12" style="border-top:1px solid var(--gray-200);padding-top:12px;">
+      <button class="btn btn-sm btn-outline" onclick="parent.showAlert('📎 招标文件、招标公告已用印归档')">查看用印文件</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../common/scripts.js"></script>
+</body>
+</html>

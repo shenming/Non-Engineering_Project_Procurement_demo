@@ -12,26 +12,26 @@
 
 <div class="flex-between mb-16">
     <div>
-        <span class="text-muted">共 <strong>8</strong> 条采购记录</span>
+        <span class="text-muted">共 <strong id="totalCount">8</strong> 条采购记录</span>
     </div>
     <div class="flex gap-8">
         <button class="btn btn-sm btn-outline">📥 导出</button>
-        <button class="btn btn-sm btn-primary" onclick="openPlanSelectionModal()">＋ 发起申请</button>
+        <button class="btn btn-sm btn-primary" onclick="navTo('procurement','procurement/apply.html')">＋ 发起申请</button>
     </div>
 </div>
 
 <div class="card" style="margin-bottom:16px;">
     <div class="card-body" style="padding:12px 20px;">
         <div class="flex gap-12" style="flex-wrap:wrap;">
-            <select class="form-control form-control-sm" style="width:auto;min-width:120px;">
-                <option>全部状态</option><option>审批中</option><option>进行中</option><option>已完成</option><option>已作废</option>
+            <select class="form-control form-control-sm" id="filterStatus" style="width:auto;min-width:120px;">
+                <option value="all">全部状态</option><option value="草稿">草稿</option><option value="审批中">审批中</option><option value="进行中">进行中</option><option value="已完成">已完成</option>
             </select>
-            <select class="form-control form-control-sm" style="width:auto;min-width:130px;">
-                <option>全部方式</option><option>公开招标</option><option>邀请招标</option><option>询比采购</option><option>谈判采购</option><option>直接采购</option>
+            <select class="form-control form-control-sm" id="filterMethod" style="width:auto;min-width:130px;">
+                <option value="all">全部方式</option><option value="公开招标">公开招标</option><option value="邀请招标">邀请招标</option><option value="询比采购">询比采购</option><option value="谈判采购">谈判采购</option><option value="直接采购">直接采购</option>
             </select>
-            <input class="form-control form-control-sm" placeholder="搜索申请编号/项目名称..." style="width:220px;">
-            <button class="btn btn-sm btn-primary">查询</button>
-            <button class="btn btn-sm btn-outline">重置</button>
+            <input class="form-control form-control-sm" id="filterKeyword" placeholder="搜索申请编号/项目名称..." style="width:220px;">
+            <button class="btn btn-sm btn-primary" onclick="filterTable()">查询</button>
+            <button class="btn btn-sm btn-outline" onclick="resetFilters()">重置</button>
         </div>
     </div>
 </div>
@@ -42,18 +42,18 @@
             <table>
                 <thead>
                     <tr>
-                        <th>申请编号</th>
-                        <th>项目名称</th>
-                        <th>采购方式</th>
-                        <th>金额</th>
-                        <th>所属单位</th>
-                        <th>当前节点</th>
-                        <th>状态</th>
+                        <th class="sortable" onclick="sortTable(0)" data-col="0">申请编号 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(1)" data-col="1">项目名称 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(2)" data-col="2">采购方式 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(3)" data-col="3">金额 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(4)" data-col="4">所属单位 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(5)" data-col="5">当前节点 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(6)" data-col="6">状态 <span class="sort-arrow"></span></th>
                         <th>操作</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
+                <tbody id="procTableBody">
+                    <tr data-id="ZB-2026-003" data-plan-item-id="PL-2026-0002-1" data-status="进行中" data-method="公开招标">
                         <td><strong>ZB-2026-003</strong></td>
                         <td>集团年度物业服务</td>
                         <td><span class="tag tag-blue">公开招标</span></td>
@@ -65,7 +65,7 @@
                             <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
                         </td>
                     </tr>
-                    <tr>
+                    <tr data-id="ZB-2026-005" data-plan-item-id="PL-2026-0010-1" data-status="已完成" data-method="询比采购">
                         <td><strong>ZB-2026-005</strong></td>
                         <td>办公设备集中采购</td>
                         <td><span class="tag tag-purple">询比采购</span></td>
@@ -75,10 +75,9 @@
                         <td><span class="tag tag-green">已完成</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
-                            <button class="btn btn-xs btn-outline">归档</button>
                         </td>
                     </tr>
-                    <tr>
+                    <tr data-id="ZB-2026-006" data-plan-item-id="PL-2026-0001-1" data-status="审批中" data-method="直接采购">
                         <td><strong>ZB-2026-006</strong></td>
                         <td>法律顾问服务</td>
                         <td><span class="tag tag-orange">直接采购</span></td>
@@ -88,10 +87,9 @@
                         <td><span class="tag tag-blue">审批中</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
-                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/adjust.html')">修改</button>
                         </td>
                     </tr>
-                    <tr>
+                    <tr data-id="ZB-2026-007" data-plan-item-id="PL-2026-0015-1" data-status="进行中" data-method="谈判采购">
                         <td><strong>ZB-2026-007</strong></td>
                         <td>IT运维服务</td>
                         <td><span class="tag tag-yellow">谈判采购</span></td>
@@ -101,10 +99,9 @@
                         <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
-                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/adjust.html')">修改</button>
                         </td>
                     </tr>
-                    <tr>
+                    <tr data-id="ZB-2026-008" data-plan-item-id="PL-2026-0003-1" data-status="进行中" data-method="公开招标">
                         <td><strong>ZB-2026-008</strong></td>
                         <td>办公家具采购</td>
                         <td><span class="tag tag-blue">公开招标</span></td>
@@ -116,7 +113,7 @@
                             <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
                         </td>
                     </tr>
-                    <tr>
+                    <tr data-id="ZB-2026-009" data-plan-item-id="PL-2026-0004-1" data-status="已完成" data-method="谈判采购">
                         <td><strong>ZB-2026-009</strong></td>
                         <td>年度培训服务</td>
                         <td><span class="tag tag-yellow">谈判采购</span></td>
@@ -128,7 +125,7 @@
                             <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
                         </td>
                     </tr>
-                    <tr>
+                    <tr data-id="ZB-2026-010" data-plan-item-id="PL-2026-0002-2" data-status="草稿" data-method="询比采购">
                         <td><strong>ZB-2026-010</strong></td>
                         <td>生产设备维护</td>
                         <td><span class="tag tag-purple">询比采购</span></td>
@@ -138,7 +135,7 @@
                         <td><span class="tag tag-gray">草稿</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
-                            <button class="btn btn-xs btn-primary" onclick="navTo('procurement','procurement/adjust.html')">编辑</button>
+                            <button class="btn btn-xs btn-danger" onclick="deleteProcurement(this)" data-proc-id="ZB-2026-010" data-plan-item-id="PL-2026-0002-2">删除</button>
                         </td>
                     </tr>
                 </tbody>
@@ -146,7 +143,7 @@
         </div>
     </div>
     <div class="card-header" style="border-top:1px solid var(--gray-200);">
-        <span class="text-muted text-sm">显示 1-7 / 共 8 条</span>
+        <span class="text-muted text-sm" id="pageInfo">显示 1-7 / 共 8 条</span>
         <div class="flex gap-8">
             <button class="btn btn-xs btn-outline" disabled>上一页</button>
             <button class="btn btn-xs btn-primary">1</button>
@@ -156,112 +153,105 @@
     </div>
 </div>
 
+<style>
+    .sortable { cursor: pointer; user-select: none; }
+    .sortable:hover { color: var(--primary); }
+    .sort-arrow { font-size: 10px; margin-left: 2px; }
+    .sort-arrow.asc::after { content: ' ▲'; }
+    .sort-arrow.desc::after { content: ' ▼'; }
+</style>
 <script src="../common/scripts.js"></script>
-
-<!-- ========== 招采项选择弹框 ========== -->
-<div id="planSelectModal" class="modal-overlay" style="display:none;">
-    <div class="modal" style="max-width:900px;">
-        <div class="modal-header">
-            <h2>📋 请选择对应的招采项</h2>
-            <button class="close" onclick="closePlanModal()">✕</button>
-        </div>
-        <div class="modal-body">
-            <div class="flex gap-12 mb-12" style="flex-wrap:wrap;">
-                <input class="form-control form-control-sm" id="searchPlanId" placeholder="采购计划编号模糊搜索..." style="width:200px;" oninput="filterPlanItems()">
-                <input class="form-control form-control-sm" id="searchContent" placeholder="采购内容模糊搜索..." style="width:200px;" oninput="filterPlanItems()">
-                <button class="btn btn-sm btn-outline" onclick="document.getElementById('searchPlanId').value='';document.getElementById('searchContent').value='';filterPlanItems();">重置</button>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width:40px;">选择</th>
-                            <th>计划编号</th>
-                            <th>采购内容</th>
-                            <th>所属单位</th>
-                            <th>采购类别</th>
-                            <th>预选采购方式</th>
-                            <th>预估金额(万)</th>
-                            <th>采购限价(万)</th>
-                            <th>经办人</th>
-                        </tr>
-                    </thead>
-                    <tbody id="planItemTableBody"></tbody>
-                </table>
-            </div>
-            <div class="text-xs text-muted mt-8">仅显示已生效且未被引用的招采项。</div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closePlanModal()">取消</button>
-            <button class="btn btn-primary" onclick="confirmPlanSelection()">确认</button>
-        </div>
-    </div>
-</div>
-
 <script>
-var PLAN_ITEMS = [
-    { id: 'PL-2026-0001-1', planId: 'PL-2026-0001', planName: '2026年度成员企业A采购计划', content: '年度法律顾问服务', unit: '成员企业A', cat: '服务类 · 法律服务', method: '直接采购', amount: 15.0, limit: 12.0, handler: '张明' },
-    { id: 'PL-2026-0002-1', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '集团年度物业服务', unit: '集团总部', cat: '服务类 · 物业服务', method: '公开招标', amount: 186.5, limit: 180.0, handler: '李经理' },
-    { id: 'PL-2026-0002-2', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '生产设备维护服务', unit: '集团总部', cat: '服务类 · 维护服务', method: '邀请招标', amount: 67.0, limit: 67.0, handler: '赵岩' },
-    { id: 'PL-2026-0010-1', planId: 'PL-2026-0010', planName: '2026年度成员企业B采购计划', content: 'IT设备采购', unit: '成员企业B', cat: '货物类 · IT类', method: '邀请招标', amount: 45.0, limit: 42.0, handler: '王磊' },
-    { id: 'PL-2026-0015-1', planId: 'PL-2026-0015', planName: '2026年度成员企业A采购计划', content: '年度培训服务', unit: '成员企业A', cat: '服务类 · 培训服务', method: '询比采购', amount: 28.0, limit: 25.0, handler: '陈芳' }
-];
+var sortCol = -1;
+var sortAsc = true;
 
-function openPlanSelectionModal() {
-    document.getElementById('planSelectModal').style.display = 'flex';
-    document.getElementById('searchPlanId').value = '';
-    document.getElementById('searchContent').value = '';
-    renderPlanItems(PLAN_ITEMS);
-}
+// ========== 列排序 ==========
+function sortTable(col) {
+    var tbody = document.getElementById('procTableBody');
+    var rows = Array.from(tbody.querySelectorAll('tr'));
 
-function closePlanModal() {
-    document.getElementById('planSelectModal').style.display = 'none';
-}
+    // 切换排序方向
+    if (sortCol === col) { sortAsc = !sortAsc; }
+    else { sortCol = col; sortAsc = true; }
 
-function filterPlanItems() {
-    var kw1 = document.getElementById('searchPlanId').value.toLowerCase();
-    var kw2 = document.getElementById('searchContent').value.toLowerCase();
-    var filtered = PLAN_ITEMS.filter(function(item) {
-        var match1 = !kw1 || item.planId.toLowerCase().indexOf(kw1) !== -1;
-        var match2 = !kw2 || item.content.toLowerCase().indexOf(kw2) !== -1;
-        return match1 && match2;
+    // 清除所有箭头
+    document.querySelectorAll('.sort-arrow').forEach(function(a) { a.className = 'sort-arrow'; });
+    // 设置当前箭头
+    var th = document.querySelector('th[data-col="' + col + '"] .sort-arrow');
+    if (th) th.className = 'sort-arrow ' + (sortAsc ? 'asc' : 'desc');
+
+    rows.sort(function(a, b) {
+        var cellA = (a.cells[col] || {}).textContent || '';
+        var cellB = (b.cells[col] || {}).textContent || '';
+        // 金额列：提取数字
+        if (col === 3) {
+            var na = parseFloat(cellA.replace(/[^0-9.]/g, '')) || 0;
+            var nb = parseFloat(cellB.replace(/[^0-9.]/g, '')) || 0;
+            return sortAsc ? na - nb : nb - na;
+        }
+        return sortAsc ? cellA.localeCompare(cellB, 'zh-CN') : cellB.localeCompare(cellA, 'zh-CN');
     });
-    renderPlanItems(filtered);
+
+    rows.forEach(function(row) { tbody.appendChild(row); });
 }
 
-function renderPlanItems(items) {
-    var tbody = document.getElementById('planItemTableBody');
-    var html = '';
-    items.forEach(function(item, i) {
-        html += '<tr style="cursor:pointer;" onclick="selectPlanRow(this)" data-item="' + encodeURIComponent(JSON.stringify(item)) + '">';
-        html += '<td><input type="radio" name="planSelect" style="pointer-events:none;"></td>';
-        html += '<td><strong>' + item.planId + '</strong><br><span class="text-xs text-muted">' + item.planName + '</span></td>';
-        html += '<td>' + item.content + '</td>';
-        html += '<td>' + item.unit + '</td>';
-        html += '<td>' + renderCategoryTag(item.cat) + '</td>';
-        html += '<td><span class="tag tag-blue">' + item.method + '</span></td>';
-        html += '<td><span class="money">' + item.amount.toFixed(1) + '</span></td>';
-        html += '<td>' + item.limit.toFixed(1) + '</td>';
-        html += '<td>' + item.handler + '</td>';
-        html += '</tr>';
+// ========== 表格筛选 ==========
+function filterTable() {
+    var statusFilter = document.getElementById('filterStatus').value;
+    var methodFilter = document.getElementById('filterMethod').value;
+    var keyword = document.getElementById('filterKeyword').value.toLowerCase();
+    var rows = document.querySelectorAll('#procTableBody tr');
+    var visibleCount = 0;
+
+    rows.forEach(function(row) {
+        var status = row.getAttribute('data-status');
+        var method = row.getAttribute('data-method');
+        var text = row.textContent.toLowerCase();
+        var show = true;
+        if (statusFilter !== 'all' && status !== statusFilter) show = false;
+        if (methodFilter !== 'all' && method !== methodFilter) show = false;
+        if (keyword && text.indexOf(keyword) === -1) show = false;
+        row.style.display = show ? '' : 'none';
+        if (show) visibleCount++;
     });
-    tbody.innerHTML = html || '<tr><td colspan="9" class="text-muted text-sm" style="text-align:center;padding:20px;">无匹配的记录</td></tr>';
+
+    document.getElementById('totalCount').textContent = visibleCount;
+    document.getElementById('pageInfo').textContent = '显示 ' + visibleCount + ' 条记录';
 }
 
-function selectPlanRow(row) {
-    var allRows = document.querySelectorAll('#planItemTableBody tr');
-    allRows.forEach(function(r) { r.classList.remove('selected'); });
-    row.classList.add('selected');
-    row.querySelector('input[type="radio"]').checked = true;
+function resetFilters() {
+    document.getElementById('filterStatus').value = 'all';
+    document.getElementById('filterMethod').value = 'all';
+    document.getElementById('filterKeyword').value = '';
+    filterTable();
 }
 
-function confirmPlanSelection() {
-    var checkedRow = document.querySelector('#planItemTableBody tr.selected');
-    if (!checkedRow) { showAlert('⚠️ 请先选择一条招采项。'); return; }
-    var itemData = JSON.parse(decodeURIComponent(checkedRow.getAttribute('data-item')));
-    sessionStorage.setItem('selectedPlanItem', JSON.stringify(itemData));
-    closePlanModal();
-    navTo('procurement', 'procurement/create.html');
+// ========== 共享引用状态 ==========
+function getRefStatusMap() {
+    try { return JSON.parse(sessionStorage.getItem('planItemRefStatus') || '{}'); } catch(e) { return {}; }
+}
+function setRefStatusMap(map) {
+    sessionStorage.setItem('planItemRefStatus', JSON.stringify(map));
+}
+
+// ========== 删除 ==========
+function deleteProcurement(btn) {
+    var procId = btn.getAttribute('data-proc-id');
+    var planItemId = btn.getAttribute('data-plan-item-id');
+
+    if (!confirm('确定删除采购记录 ' + procId + ' 吗？\n\n删除后，关联招采项将恢复为「未引用」状态，可重新发起申请。')) return;
+
+    // 移除该行
+    var row = btn.closest('tr');
+    if (row) row.remove();
+
+    // 更新招采项引用状态为「未引用」
+    var map = getRefStatusMap();
+    map[planItemId] = '未引用';
+    setRefStatusMap(map);
+
+    showAlert('🗑️ ' + procId + ' 已删除，关联招采项已恢复为未引用状态。');
+    filterTable();
 }
 </script>
 </body>

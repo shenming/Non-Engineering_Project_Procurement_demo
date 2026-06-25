@@ -65,15 +65,15 @@
                 <thead>
                     <tr>
                         <th class="radio-col"></th>
-                        <th>计划名称</th>
-                        <th>类型</th>
-                        <th>所属单位</th>
-                        <th>计划年度</th>
-                        <th>招采项数</th>
-                        <th>版本号</th>
-                        <th>限价合计</th>
-                        <th>审批状态</th>
-                        <th>执行状态</th>
+                        <th class="sortable" onclick="sortTable(1)" data-col="1">计划名称 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(2)" data-col="2">类型 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(3)" data-col="3">所属单位 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(4)" data-col="4">计划年度 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(5)" data-col="5">招采项数 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(6)" data-col="6">版本号 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(7)" data-col="7">限价合计 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(8)" data-col="8">审批状态 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(9)" data-col="9">执行状态 <span class="sort-arrow"></span></th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -203,7 +203,44 @@
     </div>
 </div>
 
+<style>
+    .sortable { cursor: pointer; user-select: none; }
+    .sortable:hover { color: var(--primary); }
+    .sort-arrow { font-size: 10px; margin-left: 2px; }
+    .sort-arrow.asc::after { content: ' ▲'; }
+    .sort-arrow.desc::after { content: ' ▼'; }
+</style>
 <script>
+var sortCol = -1;
+var sortAsc = true;
+
+// ========== 列排序 ==========
+function sortTable(col) {
+    var tbody = document.getElementById('planTableBody');
+    var rows = Array.from(tbody.querySelectorAll('tr'));
+
+    if (sortCol === col) { sortAsc = !sortAsc; }
+    else { sortCol = col; sortAsc = true; }
+
+    document.querySelectorAll('.sort-arrow').forEach(function(a) { a.className = 'sort-arrow'; });
+    var th = document.querySelector('th[data-col="' + col + '"] .sort-arrow');
+    if (th) th.className = 'sort-arrow ' + (sortAsc ? 'asc' : 'desc');
+
+    rows.sort(function(a, b) {
+        var cellA = (a.cells[col] || {}).textContent || '';
+        var cellB = (b.cells[col] || {}).textContent || '';
+        // 招采项数(5) / 计划年度(4) / 限价合计(7)：数值排序
+        if (col === 5 || col === 4 || col === 7) {
+            var na = parseFloat(cellA.replace(/[^0-9.]/g, '')) || 0;
+            var nb = parseFloat(cellB.replace(/[^0-9.]/g, '')) || 0;
+            return sortAsc ? na - nb : nb - na;
+        }
+        return sortAsc ? cellA.localeCompare(cellB, 'zh-CN') : cellB.localeCompare(cellA, 'zh-CN');
+    });
+
+    rows.forEach(function(row) { tbody.appendChild(row); });
+}
+
 // ===== 原型演示面板 =====
 function toggleDemoPanel() {
     var panel = document.getElementById('demoPanel');

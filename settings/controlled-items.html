@@ -1,10 +1,27 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><link rel="stylesheet" href="../common/styles.css"></head><body class="content-page">
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><link rel="stylesheet" href="../common/styles.css">
+<style>.sortable{cursor:pointer;user-select:none}.sortable:hover{color:var(--primary)}.sort-arrow{font-size:10px;margin-left:2px}.sort-arrow.asc::after{content:' ▲'}.sort-arrow.desc::after{content:' ▼'}</style>
+</head><body class="content-page">
 <div class="sub-navbar"><span class="sub-nav-title">🏢 集团管控项配置</span><span class="breadcrumb"><a onclick="navTo('settings')">配置管理</a> > 管控项</span></div>
-<div class="card"><div class="card-header"><h3>集团重点管控项清单</h3><div class="actions"><button class="btn btn-sm btn-primary">＋ 新增</button></div></div><div class="card-body" style="padding:0;"><div class="table-wrap"><table><thead><tr><th>管控项</th><th>适用单位</th><th>管控方式</th><th>生效日期</th><th>状态</th><th>操作</th></tr></thead><tbody>
+<div class="card"><div class="card-header"><h3>集团重点管控项清单</h3><div class="actions"><button class="btn btn-sm btn-primary">＋ 新增</button></div></div><div class="card-body" style="padding:0;"><div class="table-wrap"><table><thead><tr><th class="sortable" onclick="sortTable(0)" data-col="0">管控项 <span class="sort-arrow"></span></th><th class="sortable" onclick="sortTable(1)" data-col="1">适用单位 <span class="sort-arrow"></span></th><th class="sortable" onclick="sortTable(2)" data-col="2">管控方式 <span class="sort-arrow"></span></th><th class="sortable" onclick="sortTable(3)" data-col="3">生效日期 <span class="sort-arrow"></span></th><th class="sortable" onclick="sortTable(4)" data-col="4">状态 <span class="sort-arrow"></span></th><th>操作</th></tr></thead><tbody id="ctrlTableBody">
 <tr><td>办公家具</td><td>集团总部</td><td><span class="tag tag-red">禁止拆分</span></td><td>2026-01-01</td><td><span class="tag tag-green">生效</span></td><td><button class="btn btn-xs btn-outline">编辑</button></td></tr>
 <tr><td>物业服务</td><td>集团总部、A、B</td><td><span class="tag tag-yellow">集团管控</span></td><td>2026-03-15</td><td><span class="tag tag-green">生效</span></td><td><button class="btn btn-xs btn-outline">编辑</button></td></tr>
 <tr><td>IT设备（服务器）</td><td>全部</td><td><span class="tag tag-yellow">集团管控</span></td><td>2026-04-01</td><td><span class="tag tag-green">生效</span></td><td><button class="btn btn-xs btn-outline">编辑</button></td></tr>
 <tr><td>法律顾问</td><td>集团总部、A</td><td><span class="tag tag-blue">统采分签</span></td><td>2026-05-01</td><td><span class="tag tag-yellow">待生效</span></td><td><button class="btn btn-xs btn-outline">编辑</button></td></tr>
 </tbody></table></div></div></div>
 <button class="btn btn-outline mt-12" onclick="navTo('settings')">← 返回配置</button>
+<script>
+var sortCol=-1,sortAsc=true;
+function sortTable(col){
+    var t=document.getElementById('ctrlTableBody'),rows=Array.from(t.querySelectorAll('tr'));
+    sortCol===col?sortAsc=!sortAsc:(sortCol=col,sortAsc=true);
+    document.querySelectorAll('.sort-arrow').forEach(function(a){a.className='sort-arrow'});
+    var th=document.querySelector('th[data-col="'+col+'"] .sort-arrow');
+    if(th)th.className='sort-arrow '+(sortAsc?'asc':'desc');
+    rows.sort(function(a,b){
+        var ca=(a.cells[col]||{}).textContent||'',cb=(b.cells[col]||{}).textContent||'';
+        return sortAsc?ca.localeCompare(cb,'zh-CN'):cb.localeCompare(ca,'zh-CN');
+    });
+    rows.forEach(function(r){t.appendChild(r)});
+}
+</script>
 <script src="../common/scripts.js"></script></body></html>

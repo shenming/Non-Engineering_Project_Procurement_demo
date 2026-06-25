@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../common/styles.css">
+<style>
+.field-table { width: 100%; }
+.field-table td { padding: 5px 12px 5px 0; vertical-align: top; }
+.field-table .flabel { width: 140px; color: var(--gray-500); font-size: 12px; white-space: nowrap; }
+.field-table .fvalue { font-size: 13px; font-weight: 500; }
+.attach-section { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--gray-200); }
+</style>
+</head>
+<body class="content-page" style="padding:0;">
+
+<div class="card" style="margin:0;border:none;box-shadow:none;">
+  <div class="card-header"><h3>🔓 开标 <span class="tag tag-green">已完成</span></h3></div>
+  <div class="card-body">
+    <div class="alert alert-info" style="margin-bottom:12px;">
+      <span>📌</span>
+      <div>开标时间：2026-06-20 09:30 | 投标单位：3家 | 已解密：3家</div>
+    </div>
+    <table class="field-table"><tbody>
+      <tr><td class="flabel">关联招采申请编号</td><td class="fvalue">ZB-2026-003</td></tr>
+      <tr><td class="flabel">情况说明</td><td class="fvalue">3家投标单位完成解密，报价有效</td></tr>
+      <tr><td class="flabel">审批状态</td><td class="fvalue"><span class="tag tag-green">已生效</span></td></tr>
+    </tbody></table>
+
+    <div style="margin-top:12px;">
+      <div class="text-sm fw-600 mb-4">🏢 投标单位报价</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>投标单位</th><th>投标报价</th><th>解密状态</th><th>备注</th></tr></thead>
+          <tbody>
+            <tr><td>供应商A</td><td><span class="money">¥1,780,000.00元</span></td><td><span class="tag tag-green">已解密</span></td><td>—</td></tr>
+            <tr><td>供应商B</td><td><span class="money">¥1,825,000.00元</span></td><td><span class="tag tag-green">已解密</span></td><td>—</td></tr>
+            <tr><td>供应商C</td><td><span class="money">¥1,865,000.00元</span></td><td><span class="tag tag-green">已解密</span></td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="attach-section">
+      <div class="text-sm fw-600 mb-4">📎 附件要求</div>
+      <div class="text-sm" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <span class="text-xs" style="color:var(--gray-500);">必选：</span>
+        <span class="tag tag-red" style="font-size:11px;">📄 开标记录</span>
+        <span class="text-xs" style="color:var(--gray-500);margin-left:12px;">可选：</span>
+        <span class="tag tag-gray" style="font-size:11px;">📄 开标现场资料</span>
+        <span class="tag tag-gray" style="font-size:11px;">📄 过程说明</span>
+      </div>
+    </div>
+
+    <div class="flex gap-8 mt-12" style="border-top:1px solid var(--gray-200);padding-top:12px;">
+      <button class="btn btn-sm btn-outline" onclick="parent.showAlert('📋 开标详情')">查看开标详情</button>
+      <button class="btn btn-sm btn-primary" onclick="parent.showAlert('✅ 开标结果已确认')">确认开标结果</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../common/scripts.js"></script>
+</body>
+</html>
