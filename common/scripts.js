@@ -301,77 +301,77 @@ function recommendProcurementMethod(category, amount) {
     var isGoods = (category === '货物类');
     var results = [];
 
+    // <= 各方式最低门槛（元）===
+    var thresholds = {
+        '公开招标': isGoods ? 2000000 : 1000000,
+        '邀请招标': isGoods ? 1000000 : 500000,
+        '询比采购': 100000 // 货物/服务 统一
+    };
+
     // --- 公开招标 ---
-    var publicBidMin = isGoods ? 2000000 : 1000000;
-    var publicOk = amount >= publicBidMin;
+    var publicOk = amount >= thresholds['公开招标'];
     results.push({
         method: '公开招标',
         priority: 1,
         compliant: publicOk,
         isBest: publicOk,
         reason: publicOk
-            ? '合同估算价≥' + (publicBidMin/10000).toFixed(2) + '万元，应采用公开招标'
-            : '合同估算价＜' + (publicBidMin/10000).toFixed(2) + '万元，不满足公开招标门槛（≥' + (publicBidMin/10000).toFixed(2) + '万元）',
-        tag: publicOk ? '✅ 推荐' : '⚠ 不满足门槛'
+            ? '合同估算价≥' + fmtWan(thresholds['公开招标']) + '万元，可采用公开招标'
+            : '合同估算价＜' + fmtWan(thresholds['公开招标']) + '万元，不满足公开招标门槛（≥' + fmtWan(thresholds['公开招标']) + '万元）',
+        tag: publicOk ? '✅ 合规' : '⚠ 不满足门槛'
     });
 
     // --- 邀请招标 ---
-    var invLow = isGoods ? 1000000 : 500000;
-    var invHigh = isGoods ? 2000000 : 1000000;
-    var invOk = amount >= invLow && amount < invHigh;
+    var invOk = amount >= thresholds['邀请招标'];
     results.push({
         method: '邀请招标',
         priority: 2,
         compliant: invOk,
-        isBest: false,
+        isBest: !publicOk && invOk,
         reason: invOk
-            ? '合同估算价 ' + (invLow/10000).toFixed(2) + '万元 ≤ ' + (amount/10000).toFixed(2) + '万元 ＜ ' + (invHigh/10000).toFixed(2) + '万元，可采用邀请招标'
-            : (amount >= invHigh
-                ? '合同估算价≥' + (invHigh/10000).toFixed(2) + '万元，应优先采用公开招标'
-                : '合同估算价＜' + (invLow/10000).toFixed(2) + '万元，不满足邀请招标门槛（≥' + (invLow/10000).toFixed(2) + '万元）'),
-        tag: invOk ? '✅ 合规' : (amount >= invHigh ? '⚠ 非首选' : '⚠ 不满足门槛')
+            ? '合同估算价≥' + fmtWan(thresholds['邀请招标']) + '万元，可采用邀请招标'
+            : '合同估算价＜' + fmtWan(thresholds['邀请招标']) + '万元，不满足邀请招标门槛（≥' + fmtWan(thresholds['邀请招标']) + '万元）',
+        tag: invOk ? '✅ 合规' : '⚠ 不满足门槛'
     });
 
     // --- 询比采购 ---
-    var rfqLow = 100000;
-    var rfqHigh = isGoods ? 1000000 : 500000;
-    var rfqOk = amount >= rfqLow && amount < rfqHigh;
+    var rfqOk = amount >= thresholds['询比采购'];
     results.push({
         method: '询比采购',
         priority: 3,
         compliant: rfqOk,
-        isBest: false,
+        isBest: !publicOk && !invOk && rfqOk,
         reason: rfqOk
-            ? '合同估算价 ' + (rfqLow/10000).toFixed(2) + '万元 ≤ ' + (amount/10000).toFixed(2) + '万元 ＜ ' + (rfqHigh/10000).toFixed(2) + '万元，可采用询比采购'
-            : (amount >= rfqHigh
-                ? '合同估算价≥' + (rfqHigh/10000).toFixed(2) + '万元，应采用招标方式'
-                : '合同估算价＜' + (rfqLow/10000).toFixed(2) + '万元，询比不适用，可考虑直接采购'),
-        tag: rfqOk ? '✅ 合规' : '⚠ 不适用'
+            ? '合同估算价≥' + fmtWan(thresholds['询比采购']) + '万元，可采用询比采购'
+            : '合同估算价＜' + fmtWan(thresholds['询比采购']) + '万元，不满足询比采购门槛（≥' + fmtWan(thresholds['询比采购']) + '万元）',
+        tag: rfqOk ? '✅ 合规' : '⚠ 不满足门槛'
     });
 
-    // --- 谈判采购（条件适用，不按金额区分）---
+    // --- 谈判采购（始终合规，需满足情形）---
     results.push({
         method: '谈判采购',
         priority: 4,
-        compliant: true,  // 始终可选，但需要满足情形
+        compliant: true,
         isBest: false,
         reason: '无固定金额门槛，满足以下任一情形即可选用：①技术复杂/性质特殊 ②多种实施方案可选 ③仅2家合格供应商',
-        tag: '📋 条件适用'
+        tag: '📋 情形适用'
     });
 
-    // --- 直接采购 ---
-    var dpOk = amount < 100000;
+    // --- 直接采购（始终合规，需满足情形）---
     results.push({
         method: '直接采购',
         priority: 5,
-        compliant: dpOk,
+        compliant: true,
         isBest: false,
-        reason: '合同估算价＜100,000.00元可适用直接采购。另外6种情形（涉密、专利、原供应商、仅1家、紧急、政策文件）也可选用',
-        tag: dpOk ? '✅ 金额合规' : '📋 情形适用（金额不满足＜100,000.00元门槛）'
+        reason: '7种情形可选用：①金额＜100,000元 ②涉密 ③专利/专有技术 ④原供应商配套 ⑤仅1家供应商 ⑥抢险救灾/紧急 ⑦政策文件规定',
+        tag: '📋 情形适用'
     });
 
     return results;
 }
+
+// 金额转万元格式
+function fmtWan(yuan) { return (yuan / 10000).toFixed(2); }
 
 /**
  * 智能更新采购方式下拉框 UI
