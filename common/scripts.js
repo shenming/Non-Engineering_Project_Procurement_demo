@@ -302,49 +302,47 @@ function recommendProcurementMethod(category, amount) {
     var results = [];
 
     // <= 各方式最低门槛（元）===
-    var thresholds = {
-        '公开招标': isGoods ? 2000000 : 1000000,
-        '邀请招标': isGoods ? 1000000 : 500000,
-        '询比采购': 100000 // 货物/服务 统一
-    };
+    var publicMin = isGoods ? 2000000 : 1000000;
+    var inviteMin = isGoods ? 1000000 : 500000;
+    var rfqMin = 100000;
+
+    // --- 询比采购 ---
+    var rfqOk = amount >= rfqMin;
+    results.push({
+        method: '询比采购',
+        priority: 3,
+        compliant: rfqOk,
+        isBest: rfqOk && amount < inviteMin,
+        reason: rfqOk
+            ? '合同估算价≥' + fmtWan(rfqMin) + '万元，可采用询比采购'
+            : '合同估算价＜' + fmtWan(rfqMin) + '万元，不满足询比采购门槛（≥' + fmtWan(rfqMin) + '万元）',
+        tag: rfqOk ? '✅ 合规' : '⚠ 不满足门槛'
+    });
+
+    // --- 邀请招标（向下兼容：≥邀请门槛即合规）---
+    var invOk = amount >= inviteMin;
+    results.push({
+        method: '邀请招标',
+        priority: 2,
+        compliant: invOk,
+        isBest: invOk && amount < publicMin,
+        reason: invOk
+            ? '合同估算价≥' + fmtWan(inviteMin) + '万元，可采用邀请招标'
+            : '合同估算价＜' + fmtWan(inviteMin) + '万元，不满足邀请招标门槛（≥' + fmtWan(inviteMin) + '万元）',
+        tag: invOk ? '✅ 合规' : '⚠ 不满足门槛'
+    });
 
     // --- 公开招标 ---
-    var publicOk = amount >= thresholds['公开招标'];
+    var publicOk = amount >= publicMin;
     results.push({
         method: '公开招标',
         priority: 1,
         compliant: publicOk,
         isBest: publicOk,
         reason: publicOk
-            ? '合同估算价≥' + fmtWan(thresholds['公开招标']) + '万元，可采用公开招标'
-            : '合同估算价＜' + fmtWan(thresholds['公开招标']) + '万元，不满足公开招标门槛（≥' + fmtWan(thresholds['公开招标']) + '万元）',
+            ? '合同估算价≥' + fmtWan(publicMin) + '万元，可采用公开招标'
+            : '合同估算价＜' + fmtWan(publicMin) + '万元，不满足公开招标门槛（≥' + fmtWan(publicMin) + '万元）',
         tag: publicOk ? '✅ 合规' : '⚠ 不满足门槛'
-    });
-
-    // --- 邀请招标 ---
-    var invOk = amount >= thresholds['邀请招标'];
-    results.push({
-        method: '邀请招标',
-        priority: 2,
-        compliant: invOk,
-        isBest: !publicOk && invOk,
-        reason: invOk
-            ? '合同估算价≥' + fmtWan(thresholds['邀请招标']) + '万元，可采用邀请招标'
-            : '合同估算价＜' + fmtWan(thresholds['邀请招标']) + '万元，不满足邀请招标门槛（≥' + fmtWan(thresholds['邀请招标']) + '万元）',
-        tag: invOk ? '✅ 合规' : '⚠ 不满足门槛'
-    });
-
-    // --- 询比采购 ---
-    var rfqOk = amount >= thresholds['询比采购'];
-    results.push({
-        method: '询比采购',
-        priority: 3,
-        compliant: rfqOk,
-        isBest: !publicOk && !invOk && rfqOk,
-        reason: rfqOk
-            ? '合同估算价≥' + fmtWan(thresholds['询比采购']) + '万元，可采用询比采购'
-            : '合同估算价＜' + fmtWan(thresholds['询比采购']) + '万元，不满足询比采购门槛（≥' + fmtWan(thresholds['询比采购']) + '万元）',
-        tag: rfqOk ? '✅ 合规' : '⚠ 不满足门槛'
     });
 
     // --- 谈判采购（始终合规，需满足情形）---
