@@ -162,13 +162,25 @@
 
 <script src="../common/scripts.js"></script>
 <script>
-// ========== 招采项数据（含状态与引用状态） ==========
+// ========== 招采项数据（含5种采购方式演示数据） ==========
 var PLAN_ITEMS = [
-    { id: 'PL-2026-0001-1', planId: 'PL-2026-0001', planName: '2026年度成员企业A采购计划', content: '年度法律顾问服务', unit: '成员企业A', cat: '服务类 · 法律服务', method: '直接采购', note: '涉密/商业秘密', schedule: '2026-01 ~ 2026-12', amount: 15.0, limit: 12.0, handler: '张明', status: '已完成', refStatus: '已引用' },
-    { id: 'PL-2026-0002-1', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '集团年度物业服务', unit: '集团总部', cat: '服务类 · 物业服务', method: '公开招标', note: '', schedule: '2026-02 ~ 2026-04', amount: 186.5, limit: 180.0, handler: '李经理', status: '执行中', refStatus: '已引用' },
-    { id: 'PL-2026-0002-2', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '生产设备维护服务', unit: '集团总部', cat: '服务类 · 维护服务', method: '邀请招标', note: '', schedule: '2026-07 ~ 2026-09', amount: 67.0, limit: 67.0, handler: '赵岩', status: '草稿', refStatus: '未引用' },
-    { id: 'PL-2026-0010-1', planId: 'PL-2026-0010', planName: '2026年度成员企业B采购计划', content: 'IT设备采购', unit: '成员企业B', cat: '货物类 · IT类', method: '邀请招标', note: '', schedule: '2026-04 ~ 2026-06', amount: 45.0, limit: 42.0, handler: '王磊', status: '已生效', refStatus: '未引用' },
-    { id: 'PL-2026-0015-1', planId: 'PL-2026-0015', planName: '2026年度成员企业A采购计划', content: '年度培训服务', unit: '成员企业A', cat: '服务类 · 培训服务', method: '询比采购', note: '多种实施方案', schedule: '2026-05 ~ 2026-11', amount: 28.0, limit: 25.0, handler: '陈芳', status: '已生效', refStatus: '未引用' }
+    // --- 公开招标（货物类，金额≥200万）---
+    { id: 'PL-2026-0020-1', planId: 'PL-2026-0020', planName: '2026年度成员企业A采购计划', content: '办公家具批量采购', unit: '成员企业A', cat: '货物类 · 家具类', method: '公开招标', note: '', schedule: '2026-03 ~ 2026-05', amount: 280.0, limit: 260.0, handler: '李华', status: '已生效', refStatus: '未引用' },
+
+    // --- 邀请招标（服务类，金额＜100万）---
+    { id: 'PL-2026-0021-1', planId: 'PL-2026-0021', planName: '2026年度集团总部采购计划', content: '弱电系统维保服务', unit: '集团总部', cat: '服务类 · 维护服务', method: '邀请招标', note: '', schedule: '2026-04 ~ 2026-12', amount: 85.0, limit: 80.0, handler: '王工', status: '已生效', refStatus: '未引用' },
+
+    // --- 询比采购（货物类，金额＜100万）---
+    { id: 'PL-2026-0022-1', planId: 'PL-2026-0022', planName: '2026年度成员企业B采购计划', content: '台式计算机采购', unit: '成员企业B', cat: '货物类 · IT类', method: '询比采购', note: '', schedule: '2026-05 ~ 2026-06', amount: 60.0, limit: 58.0, handler: '刘工', status: '已生效', refStatus: '未引用' },
+
+    // --- 谈判采购（服务类，需选择情形）---
+    { id: 'PL-2026-0023-1', planId: 'PL-2026-0023', planName: '2026年度成员企业A采购计划', content: '信息化建设咨询服务', unit: '成员企业A', cat: '服务类 · 咨询服务', method: '谈判采购', note: '技术复杂/性质特殊', schedule: '2026-06 ~ 2026-08', amount: 120.0, limit: 110.0, handler: '张明', status: '已生效', refStatus: '未引用' },
+
+    // --- 直接采购（非D1，涉密情形）---
+    { id: 'PL-2026-0024-1', planId: 'PL-2026-0024', planName: '2026年度成员企业A采购计划', content: '数据安全审计服务', unit: '成员企业A', cat: '服务类 · 咨询服务', method: '直接采购', note: '涉密/商业秘密', schedule: '2026-07 ~ 2026-09', amount: 50.0, limit: 48.0, handler: '陈芳', status: '已生效', refStatus: '未引用' },
+
+    // --- 直接采购（D1，金额＜10万元）---
+    { id: 'PL-2026-0025-1', planId: 'PL-2026-0025', planName: '2026年度集团总部采购计划', content: '办公用品零星采购', unit: '集团总部', cat: '货物类 · 办公用品类', method: '直接采购', note: '合同估算价＜100,000.00元', schedule: '2026-08 ~ 2026-09', amount: 8.0, limit: 8.0, handler: '赵岩', status: '已生效', refStatus: '未引用' }
 ];
 
 var sortState = { field: '', asc: true };
