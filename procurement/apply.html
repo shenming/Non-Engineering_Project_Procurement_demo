@@ -18,6 +18,11 @@
         .method-hint-best { color: #059669; }
         .method-hint-ok { color: var(--gray-600); }
         .method-hint-warn { color: var(--gray-400); }
+        th .th-filter { margin-top: 3px; }
+        th .th-filter select { font-size: 11px; padding: 2px 4px; height: 24px; }
+        th.sorter { cursor: pointer; user-select: none; }
+        th.sorter:hover { color: var(--primary); }
+        th.sorter .sort-icon { font-size: 10px; margin-left: 2px; color: var(--gray-400); }
     </style>
 </head>
 <body class="content-page">
@@ -46,7 +51,7 @@
     <div class="card">
         <div class="card-body">
             <div class="flex gap-12 mb-12" style="flex-wrap:wrap;">
-                <input class="form-control form-control-sm" id="searchPlanId" placeholder="采购计划编号模糊搜索..." style="width:200px;" oninput="filterPlanItems()">
+                <input class="form-control form-control-sm" id="searchPlanId" placeholder="采购计划名称模糊搜索..." style="width:200px;" oninput="filterPlanItems()">
                 <input class="form-control form-control-sm" id="searchContent" placeholder="采购内容模糊搜索..." style="width:200px;" oninput="filterPlanItems()">
                 <button class="btn btn-sm btn-outline" onclick="resetStep1Filter()">重置</button>
             </div>
@@ -55,20 +60,20 @@
                     <thead>
                         <tr>
                             <th style="width:40px;">选择</th>
-                            <th>计划编号</th>
-                            <th>采购内容</th>
-                            <th>所属单位</th>
-                            <th>采购类别</th>
-                            <th>预选采购方式</th>
-                            <th>预估金额(万)</th>
-                            <th>采购限价(万)</th>
-                            <th>经办人</th>
+                            <th class="sorter" onclick="sortPlanItems('planName')">采购计划名称 <span class="sort-icon" id="sortIcon-planName">↕</span></th>
+                            <th class="sorter" onclick="sortPlanItems('content')">采购内容 <span class="sort-icon" id="sortIcon-content">↕</span></th>
+                            <th>采购类别<div class="th-filter"><select class="form-control form-control-sm" onchange="filterPlanItems()" id="thFilterCat"><option value="all">全部</option><option value="货物类">货物类</option><option value="服务类">服务类</option></select></div></th>
+                            <th>采购方式<div class="th-filter"><select class="form-control form-control-sm" onchange="filterPlanItems()" id="thFilterMethod"><option value="all">全部</option><option value="公开招标">公开招标</option><option value="邀请招标">邀请招标</option><option value="询比采购">询比采购</option><option value="谈判采购">谈判采购</option><option value="直接采购">直接采购</option></select></div></th>
+                            <th class="sorter" onclick="sortPlanItems('note')">采购项说明 <span class="sort-icon" id="sortIcon-note">↕</span></th>
+                            <th class="sorter" onclick="sortPlanItems('amount')">采购金额 <span class="sort-icon" id="sortIcon-amount">↕</span></th>
+                            <th class="sorter" onclick="sortPlanItems('schedule')">计划日期 <span class="sort-icon" id="sortIcon-schedule">↕</span></th>
+                            <th>状态<div class="th-filter"><select class="form-control form-control-sm" onchange="filterPlanItems()" id="thFilterStatus"><option value="all">全部</option><option value="已生效">已生效</option><option value="执行中">执行中</option><option value="已完成">已完成</option><option value="草稿">草稿</option></select></div></th>
                         </tr>
                     </thead>
                     <tbody id="planItemTableBody"></tbody>
                 </table>
             </div>
-            <div class="text-xs text-muted mt-8">仅显示已生效且未被引用的招采项。共 <strong id="planItemCount">0</strong> 条可用。</div>
+            <div class="text-xs text-muted mt-8">仅用户数据权限下显示已生效且未被引用的招采项。共 <strong id="planItemCount">0</strong> 条可用。</div>
         </div>
         <div class="card-header" style="border-top:1px solid var(--gray-200);background:#fff;">
             <span></span>
@@ -159,17 +164,115 @@
 <script>
 // ========== 招采项数据（含状态与引用状态） ==========
 var PLAN_ITEMS = [
-    { id: 'PL-2026-0001-1', planId: 'PL-2026-0001', planName: '2026年度成员企业A采购计划', content: '年度法律顾问服务', unit: '成员企业A', cat: '服务类 · 法律服务', method: '直接采购', amount: 15.0, limit: 12.0, handler: '张明', status: '已完成', refStatus: '已引用' },
-    { id: 'PL-2026-0002-1', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '集团年度物业服务', unit: '集团总部', cat: '服务类 · 物业服务', method: '公开招标', amount: 186.5, limit: 180.0, handler: '李经理', status: '执行中', refStatus: '已引用' },
-    { id: 'PL-2026-0002-2', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '生产设备维护服务', unit: '集团总部', cat: '服务类 · 维护服务', method: '邀请招标', amount: 67.0, limit: 67.0, handler: '赵岩', status: '草稿', refStatus: '未引用' },
-    { id: 'PL-2026-0010-1', planId: 'PL-2026-0010', planName: '2026年度成员企业B采购计划', content: 'IT设备采购', unit: '成员企业B', cat: '货物类 · IT类', method: '邀请招标', amount: 45.0, limit: 42.0, handler: '王磊', status: '已生效', refStatus: '未引用' },
-    { id: 'PL-2026-0015-1', planId: 'PL-2026-0015', planName: '2026年度成员企业A采购计划', content: '年度培训服务', unit: '成员企业A', cat: '服务类 · 培训服务', method: '询比采购', amount: 28.0, limit: 25.0, handler: '陈芳', status: '已生效', refStatus: '未引用' }
+    { id: 'PL-2026-0001-1', planId: 'PL-2026-0001', planName: '2026年度成员企业A采购计划', content: '年度法律顾问服务', unit: '成员企业A', cat: '服务类 · 法律服务', method: '直接采购', note: '涉密/商业秘密', schedule: '2026-01 ~ 2026-12', amount: 15.0, limit: 12.0, handler: '张明', status: '已完成', refStatus: '已引用' },
+    { id: 'PL-2026-0002-1', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '集团年度物业服务', unit: '集团总部', cat: '服务类 · 物业服务', method: '公开招标', note: '', schedule: '2026-02 ~ 2026-04', amount: 186.5, limit: 180.0, handler: '李经理', status: '执行中', refStatus: '已引用' },
+    { id: 'PL-2026-0002-2', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '生产设备维护服务', unit: '集团总部', cat: '服务类 · 维护服务', method: '邀请招标', note: '', schedule: '2026-07 ~ 2026-09', amount: 67.0, limit: 67.0, handler: '赵岩', status: '草稿', refStatus: '未引用' },
+    { id: 'PL-2026-0010-1', planId: 'PL-2026-0010', planName: '2026年度成员企业B采购计划', content: 'IT设备采购', unit: '成员企业B', cat: '货物类 · IT类', method: '邀请招标', note: '', schedule: '2026-04 ~ 2026-06', amount: 45.0, limit: 42.0, handler: '王磊', status: '已生效', refStatus: '未引用' },
+    { id: 'PL-2026-0015-1', planId: 'PL-2026-0015', planName: '2026年度成员企业A采购计划', content: '年度培训服务', unit: '成员企业A', cat: '服务类 · 培训服务', method: '询比采购', note: '多种实施方案', schedule: '2026-05 ~ 2026-11', amount: 28.0, limit: 25.0, handler: '陈芳', status: '已生效', refStatus: '未引用' }
 ];
+
+var sortState = { field: '', asc: true };
 
 function getAvailableItems() {
     return PLAN_ITEMS.filter(function(item) {
         return item.status === '已生效' && item.refStatus === '未引用';
     });
+}
+
+function getFilteredAndSorted() {
+    var kw1 = document.getElementById('searchPlanId').value.toLowerCase();
+    var kw2 = document.getElementById('searchContent').value.toLowerCase();
+    var catFilter = document.getElementById('thFilterCat').value;
+    var methodFilter = document.getElementById('thFilterMethod').value;
+    var statusFilter = document.getElementById('thFilterStatus').value;
+
+    var available = getAvailableItems();
+    var filtered = available.filter(function(item) {
+        var match1 = !kw1 || item.planName.toLowerCase().indexOf(kw1) !== -1 || item.planId.toLowerCase().indexOf(kw1) !== -1;
+        var match2 = !kw2 || item.content.toLowerCase().indexOf(kw2) !== -1;
+        var matchCat = catFilter === 'all' || item.cat.indexOf(catFilter) !== -1;
+        var matchMethod = methodFilter === 'all' || item.method === methodFilter;
+        var matchStatus = statusFilter === 'all' || item.status === statusFilter;
+        return match1 && match2 && matchCat && matchMethod && matchStatus;
+    });
+
+    // 排序
+    if (sortState.field) {
+        var field = sortState.field;
+        filtered.sort(function(a, b) {
+            var va = a[field] || '', vb = b[field] || '';
+            if (field === 'amount') {
+                va = parseFloat(va) || 0;
+                vb = parseFloat(vb) || 0;
+            } else {
+                va = va.toString().toLowerCase();
+                vb = vb.toString().toLowerCase();
+                if (va < vb) return -1;
+                if (va > vb) return 1;
+                return 0;
+            }
+            return sortState.asc ? (va - vb) : (vb - va);
+        });
+    }
+
+    return filtered;
+}
+
+function renderPlanItems(items) {
+    var tbody = document.getElementById('planItemTableBody');
+    var html = '';
+    items.forEach(function(item) {
+        var noteDisplay = item.note || '<span class="text-muted">—</span>';
+        var scheduleDisplay = item.schedule || '<span class="text-muted">—</span>';
+        var statusTag = '';
+        if (item.status === '已生效') statusTag = '<span class="tag tag-green">已生效</span>';
+        else if (item.status === '执行中') statusTag = '<span class="tag tag-yellow">执行中</span>';
+        else if (item.status === '已完成') statusTag = '<span class="tag tag-green">已完成</span>';
+        else if (item.status === '草稿') statusTag = '<span class="tag tag-gray">草稿</span>';
+        else statusTag = '<span class="tag tag-gray">' + item.status + '</span>';
+
+        html += '<tr style="cursor:pointer;" onclick="selectPlanRow(this)" data-item="' + encodeURIComponent(JSON.stringify(item)) + '">';
+        html += '<td><input type="radio" name="planSelect" style="pointer-events:none;"></td>';
+        html += '<td><strong>' + item.planName + '</strong><br><span class="text-xs text-muted">' + item.planId + '</span></td>';
+        html += '<td>' + item.content + '</td>';
+        html += '<td>' + renderCategoryTag(item.cat) + '</td>';
+        html += '<td><span class="tag tag-blue">' + item.method + '</span></td>';
+        html += '<td class="text-sm">' + noteDisplay + '</td>';
+        html += '<td><span class="money">¥' + (item.amount * 10000).toFixed(2) + '元</span><br><span class="text-xs text-muted">限价：¥' + (item.limit * 10000).toFixed(2) + '元</span></td>';
+        html += '<td class="text-sm">' + scheduleDisplay + '</td>';
+        html += '<td>' + statusTag + '</td>';
+        html += '</tr>';
+    });
+    tbody.innerHTML = html || '<tr><td colspan="9" class="text-muted text-sm" style="text-align:center;padding:20px;">无匹配的可用招采项</td></tr>';
+}
+
+function filterPlanItems() {
+    var filtered = getFilteredAndSorted();
+    document.getElementById('planItemCount').textContent = getAvailableItems().length;
+    selectedItem = null;
+    document.getElementById('btnNextStep').disabled = true;
+    renderPlanItems(filtered);
+}
+
+function sortPlanItems(field) {
+    if (sortState.field === field) {
+        sortState.asc = !sortState.asc;
+    } else {
+        sortState.field = field;
+        sortState.asc = true;
+    }
+    // 更新所有排序图标
+    ['planName','content','note','amount','schedule'].forEach(function(f) {
+        var icon = document.getElementById('sortIcon-' + f);
+        if (icon) {
+            if (f === field) {
+                icon.textContent = sortState.asc ? '↑' : '↓';
+            } else {
+                icon.textContent = '↕';
+            }
+        }
+    });
+    filterPlanItems();
 }
 
 var selectedItem = null;
@@ -192,41 +295,16 @@ function showStep1() {
 function resetStep1Filter() {
     document.getElementById('searchPlanId').value = '';
     document.getElementById('searchContent').value = '';
+    document.getElementById('thFilterCat').value = 'all';
+    document.getElementById('thFilterMethod').value = 'all';
+    document.getElementById('thFilterStatus').value = 'all';
+    sortState.field = '';
+    sortState.asc = true;
+    ['planName','content','note','amount','schedule'].forEach(function(f) {
+        var icon = document.getElementById('sortIcon-' + f);
+        if (icon) icon.textContent = '↕';
+    });
     filterPlanItems();
-}
-
-function filterPlanItems() {
-    var kw1 = document.getElementById('searchPlanId').value.toLowerCase();
-    var kw2 = document.getElementById('searchContent').value.toLowerCase();
-    var available = getAvailableItems();
-    var filtered = available.filter(function(item) {
-        var match1 = !kw1 || item.planId.toLowerCase().indexOf(kw1) !== -1;
-        var match2 = !kw2 || item.content.toLowerCase().indexOf(kw2) !== -1;
-        return match1 && match2;
-    });
-    document.getElementById('planItemCount').textContent = available.length;
-    selectedItem = null;
-    document.getElementById('btnNextStep').disabled = true;
-    renderPlanItems(filtered);
-}
-
-function renderPlanItems(items) {
-    var tbody = document.getElementById('planItemTableBody');
-    var html = '';
-    items.forEach(function(item) {
-        html += '<tr style="cursor:pointer;" onclick="selectPlanRow(this)" data-item="' + encodeURIComponent(JSON.stringify(item)) + '">';
-        html += '<td><input type="radio" name="planSelect" style="pointer-events:none;"></td>';
-        html += '<td><strong>' + item.planId + '</strong><br><span class="text-xs text-muted">' + item.planName + '</span></td>';
-        html += '<td>' + item.content + '</td>';
-        html += '<td>' + item.unit + '</td>';
-        html += '<td>' + renderCategoryTag(item.cat) + '</td>';
-        html += '<td><span class="tag tag-blue">' + item.method + '</span></td>';
-        html += '<td><span class="money">' + item.amount.toFixed(1) + '</span></td>';
-        html += '<td>' + item.limit.toFixed(1) + '</td>';
-        html += '<td>' + item.handler + '</td>';
-        html += '</tr>';
-    });
-    tbody.innerHTML = html || '<tr><td colspan="9" class="text-muted text-sm" style="text-align:center;padding:20px;">无匹配的可用招采项</td></tr>';
 }
 
 function selectPlanRow(row) {
