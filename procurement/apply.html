@@ -68,7 +68,6 @@
                             <th class="sorter" onclick="sortPlanItems('note')">采购项说明 <span class="sort-icon" id="sortIcon-note">↕</span></th>
                             <th class="sorter" onclick="sortPlanItems('amount')">采购金额 <span class="sort-icon" id="sortIcon-amount">↕</span></th>
                             <th class="sorter" onclick="sortPlanItems('schedule')">计划日期 <span class="sort-icon" id="sortIcon-schedule">↕</span></th>
-                            <th>状态</th>
                         </tr>
                     </thead>
                     <tbody id="planItemTableBody"></tbody>
@@ -101,7 +100,6 @@
                 <span class="text-sm fw-600">📌 已选招采项：</span>
                 <span class="text-sm" id="step2SelectedInfo"></span>
             </div>
-
             <div class="form-row">
                 <div class="form-group"><label>关联招采计划编号</label><input class="form-control field-locked" id="s2PlanNo" disabled></div>
                 <div class="form-group"><label>所属单位</label><input class="form-control field-locked" id="s2Unit" disabled></div>
@@ -113,16 +111,13 @@
             </div>
             <div class="form-group"><label>采购内容</label><input class="form-control field-locked" id="s2ProcContent" disabled></div>
             <div class="form-group"><label>采购方式</label><input class="form-control field-locked" id="s2ProcMethod" disabled></div>
-
             <div id="s2MethodHints" style="margin-bottom:12px;"></div>
-
             <div id="s2DirectPurchaseSection" style="display:none;">
                 <div class="card" style="margin-bottom:16px;border-color:var(--warning);">
                     <div class="card-header" style="background:#fffbeb;"><h3>📌 直接采购原因选择</h3></div>
                     <div class="card-body" id="s2DpConditionsBody"></div>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
                     <label>采购金额含税（元）<span class="required">*</span></label>
@@ -130,7 +125,6 @@
                     <span class="text-xs" id="s2LimitHint" style="color:var(--gray-500);">计划上限：<span id="s2LimitMax"></span> 元</span>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="form-group"><label>拟发标时间</label><input class="form-control" type="date" id="s2BidIssueDate"></div>
                 <div class="form-group"><label>计划开标时间</label><input class="form-control" type="date" id="s2BidOpenDate"></div>
@@ -168,7 +162,6 @@
 
 <script src="../common/scripts.js"></script>
 <script>
-// ========== 招采项数据（含5种采购方式演示数据） ==========
 var PLAN_ITEMS = [
     { id: 'PL-2026-0020-1', planId: 'PL-2026-0020', planName: '2026年度成员企业A采购计划', content: '办公家具批量采购', unit: '成员企业A', cat: '货物类 · 家具类', method: '公开招标', note: '', schedule: '2026-03 ~ 2026-05', amount: 280.0, limit: 260.0, handler: '李华', status: '已生效', refStatus: '未引用' },
     { id: 'PL-2026-0021-1', planId: 'PL-2026-0021', planName: '2026年度集团总部采购计划', content: '弱电系统维保服务', unit: '集团总部', cat: '服务类 · 维护服务', method: '邀请招标', note: '', schedule: '2026-04 ~ 2026-12', amount: 85.0, limit: 80.0, handler: '王工', status: '已生效', refStatus: '未引用' },
@@ -184,162 +177,73 @@ var PLAN_ITEMS = [
     { id: 'PL-2026-0031-1', planId: 'PL-2026-0031', planName: '2026年度集团总部采购计划', content: '法律顾问服务续签', unit: '集团总部', cat: '服务类 · 法律服务', method: '直接采购', note: '涉密/商业秘密', schedule: '2026-01 ~ 2026-12', amount: 30.0, limit: 28.0, handler: '李经理', status: '已生效', refStatus: '未引用' }
 ];
 
-var PAGE_SIZE = 5;
-var currentPage = 1;
-var sortState = { field: '', asc: true };
-var selectedItem = null;
-var step2Limit = 0;
+var PAGE_SIZE = 5, currentPage = 1, sortState = { field: '', asc: true }, selectedItem = null, step2Limit = 0;
 
-function getAvailableItems() {
-    return PLAN_ITEMS.filter(function(item) {
-        return item.status === '已生效' && item.refStatus === '未引用';
-    });
-}
+function getAvailableItems() { return PLAN_ITEMS.filter(function(i) { return i.status === '已生效' && i.refStatus === '未引用'; }); }
 
 function getFilteredAndSorted() {
-    var kw1 = document.getElementById('searchPlanId').value.toLowerCase();
-    var kw2 = document.getElementById('searchContent').value.toLowerCase();
-    var catFilter = document.getElementById('thFilterCat').value;
-    var methodFilter = document.getElementById('thFilterMethod').value;
-
-    var available = getAvailableItems();
-    var filtered = available.filter(function(item) {
-        var match1 = !kw1 || item.planName.toLowerCase().indexOf(kw1) !== -1 || item.planId.toLowerCase().indexOf(kw1) !== -1;
-        var match2 = !kw2 || item.content.toLowerCase().indexOf(kw2) !== -1;
-        var matchCat = catFilter === 'all' || item.cat.indexOf(catFilter) !== -1;
-        var matchMethod = methodFilter === 'all' || item.method === methodFilter;
-        return match1 && match2 && matchCat && matchMethod;
+    var kw1 = document.getElementById('searchPlanId').value.toLowerCase(), kw2 = document.getElementById('searchContent').value.toLowerCase();
+    var catFilter = document.getElementById('thFilterCat').value, methodFilter = document.getElementById('thFilterMethod').value;
+    var filtered = getAvailableItems().filter(function(item) {
+        var m1 = !kw1 || item.planName.toLowerCase().indexOf(kw1) !== -1 || item.planId.toLowerCase().indexOf(kw1) !== -1;
+        var m2 = !kw2 || item.content.toLowerCase().indexOf(kw2) !== -1;
+        var mc = catFilter === 'all' || item.cat.indexOf(catFilter) !== -1;
+        var mm = methodFilter === 'all' || item.method === methodFilter;
+        return m1 && m2 && mc && mm;
     });
-
-    if (sortState.field) {
-        var field = sortState.field;
-        filtered.sort(function(a, b) {
-            var va = a[field] || '', vb = b[field] || '';
-            if (field === 'amount') {
-                va = parseFloat(va) || 0;
-                vb = parseFloat(vb) || 0;
-                return sortState.asc ? (va - vb) : (vb - va);
-            } else {
-                va = va.toString().toLowerCase();
-                vb = vb.toString().toLowerCase();
-                if (va < vb) return sortState.asc ? -1 : 1;
-                if (va > vb) return sortState.asc ? 1 : -1;
-                return 0;
-            }
-        });
-    }
+    if (sortState.field) { var f = sortState.field; filtered.sort(function(a, b) { var va = a[f]||'', vb = b[f]||''; if(f==='amount'){va=parseFloat(va)||0;vb=parseFloat(vb)||0;return sortState.asc?va-vb:vb-va;} else {va=va.toString().toLowerCase();vb=vb.toString().toLowerCase();if(va<vb)return sortState.asc?-1:1;if(va>vb)return sortState.asc?1:-1;return 0;} }); }
     return filtered;
 }
 
 function renderPlanItems(items) {
-    var tbody = document.getElementById('planItemTableBody');
     var html = '';
     items.forEach(function(item) {
-        var noteDisplay = item.note || '<span class="text-muted">—</span>';
-        var scheduleDisplay = item.schedule || '<span class="text-muted">—</span>';
-        var statusTag = '';
-        if (item.status === '已生效') statusTag = '<span class="tag tag-green">已生效</span>';
-        else if (item.status === '执行中') statusTag = '<span class="tag tag-yellow">执行中</span>';
-        else if (item.status === '已完成') statusTag = '<span class="tag tag-green">已完成</span>';
-        else if (item.status === '草稿') statusTag = '<span class="tag tag-gray">草稿</span>';
-        else statusTag = '<span class="tag tag-gray">' + item.status + '</span>';
-
+        var nd = item.note || '<span class="text-muted">—</span>', sd = item.schedule || '<span class="text-muted">—</span>';
         html += '<tr style="cursor:pointer;" onclick="selectPlanRow(this)" data-item="' + encodeURIComponent(JSON.stringify(item)) + '">';
         html += '<td><input type="radio" name="planSelect" style="pointer-events:none;"></td>';
         html += '<td><strong>' + item.planName + '</strong><br><span class="text-xs text-muted">' + item.planId + '</span></td>';
         html += '<td>' + item.content + '</td>';
         html += '<td>' + renderCategoryTag(item.cat) + '</td>';
         html += '<td><span class="tag tag-blue">' + item.method + '</span></td>';
-        html += '<td class="text-sm">' + noteDisplay + '</td>';
+        html += '<td class="text-sm">' + nd + '</td>';
         html += '<td><span class="money">¥' + (item.amount * 10000).toFixed(2) + '元</span><br><span class="text-xs text-muted">限价：¥' + (item.limit * 10000).toFixed(2) + '元</span></td>';
-        html += '<td class="text-sm">' + scheduleDisplay + '</td>';
-        html += '<td>' + statusTag + '</td>';
+        html += '<td class="text-sm">' + sd + '</td>';
         html += '</tr>';
     });
-    tbody.innerHTML = html || '<tr><td colspan="9" class="text-muted text-sm" style="text-align:center;padding:20px;">无匹配的可用招采项</td></tr>';
-}
-
-function filterPlanItems() {
-    currentPage = 1;
-    selectedItem = null;
-    document.getElementById('btnNextStep').disabled = true;
-    applyPagination();
+    document.getElementById('planItemTableBody').innerHTML = html || '<tr><td colspan="8" class="text-muted text-sm" style="text-align:center;padding:20px;">无匹配的可用招采项</td></tr>';
 }
 
 function applyPagination() {
-    var allFiltered = getFilteredAndSorted();
+    var all = getFilteredAndSorted();
     document.getElementById('planItemCount').textContent = getAvailableItems().length;
-    var totalPages = Math.ceil(allFiltered.length / PAGE_SIZE) || 1;
-    if (currentPage > totalPages) currentPage = totalPages;
+    var tp = Math.ceil(all.length / PAGE_SIZE) || 1;
+    if (currentPage > tp) currentPage = tp;
     var start = (currentPage - 1) * PAGE_SIZE;
-    var pageItems = allFiltered.slice(start, start + PAGE_SIZE);
-    renderPlanItems(pageItems);
-    document.getElementById('pageInfo').textContent = '第 ' + currentPage + '/' + totalPages + ' 页（共 ' + allFiltered.length + ' 条）';
+    renderPlanItems(all.slice(start, start + PAGE_SIZE));
+    document.getElementById('pageInfo').textContent = '第 ' + currentPage + '/' + tp + ' 页（共 ' + all.length + ' 条）';
     document.getElementById('prevPageBtn').disabled = currentPage <= 1;
-    document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
+    document.getElementById('nextPageBtn').disabled = currentPage >= tp;
 }
 
+function filterPlanItems() { currentPage = 1; selectedItem = null; document.getElementById('btnNextStep').disabled = true; applyPagination(); }
 function prevPage() { if (currentPage > 1) { currentPage--; applyPagination(); } }
 function nextPage() { var all = getFilteredAndSorted(); var tp = Math.ceil(all.length / PAGE_SIZE) || 1; if (currentPage < tp) { currentPage++; applyPagination(); } }
-
-function sortPlanItems(field) {
-    if (sortState.field === field) { sortState.asc = !sortState.asc; } else { sortState.field = field; sortState.asc = true; }
-    ['planName','content','note','amount','schedule'].forEach(function(f) {
-        var icon = document.getElementById('sortIcon-' + f);
-        if (icon) { if (f === field) icon.textContent = sortState.asc ? '↑' : '↓'; else icon.textContent = '↕'; }
-    });
-    filterPlanItems();
-}
-
+function sortPlanItems(field) { if (sortState.field === field) { sortState.asc = !sortState.asc; } else { sortState.field = field; sortState.asc = true; } ['planName','content','note','amount','schedule'].forEach(function(f) { var icon = document.getElementById('sortIcon-' + f); if (icon) { if (f === field) icon.textContent = sortState.asc ? '↑' : '↓'; else icon.textContent = '↕'; } }); filterPlanItems(); }
+function showStep1() { document.getElementById('step1Content').style.display = ''; document.getElementById('step2Content').style.display = 'none'; document.getElementById('stepNode1').classList.add('active'); document.getElementById('stepNode1').classList.remove('done'); document.getElementById('stepNode2').classList.remove('active', 'done'); document.getElementById('btnNextStep').disabled = true; filterPlanItems(); }
 (function init() { showStep1(); })();
-
-function showStep1() {
-    document.getElementById('step1Content').style.display = '';
-    document.getElementById('step2Content').style.display = 'none';
-    document.getElementById('stepNode1').classList.add('active');
-    document.getElementById('stepNode1').classList.remove('done');
-    document.getElementById('stepNode2').classList.remove('active', 'done');
-    document.getElementById('btnNextStep').disabled = true;
-    filterPlanItems();
-}
-
-function resetStep1Filter() {
-    document.getElementById('searchPlanId').value = '';
-    document.getElementById('searchContent').value = '';
-    document.getElementById('thFilterCat').value = 'all';
-    document.getElementById('thFilterMethod').value = 'all';
-    sortState.field = '';
-    sortState.asc = true;
-    ['planName','content','note','amount','schedule'].forEach(function(f) {
-        var icon = document.getElementById('sortIcon-' + f);
-        if (icon) icon.textContent = '↕';
-    });
-    filterPlanItems();
-}
-
-function selectPlanRow(row) {
-    var allRows = document.querySelectorAll('#planItemTableBody tr');
-    allRows.forEach(function(r) { r.classList.remove('selected'); });
-    row.classList.add('selected');
-    row.querySelector('input[type="radio"]').checked = true;
-    selectedItem = JSON.parse(decodeURIComponent(row.getAttribute('data-item')));
-    document.getElementById('btnNextStep').disabled = false;
-}
+function resetStep1Filter() { document.getElementById('searchPlanId').value = ''; document.getElementById('searchContent').value = ''; document.getElementById('thFilterCat').value = 'all'; document.getElementById('thFilterMethod').value = 'all'; sortState.field = ''; sortState.asc = true; ['planName','content','note','amount','schedule'].forEach(function(f) { var icon = document.getElementById('sortIcon-' + f); if (icon) icon.textContent = '↕'; }); filterPlanItems(); }
+function selectPlanRow(row) { document.querySelectorAll('#planItemTableBody tr').forEach(function(r) { r.classList.remove('selected'); }); row.classList.add('selected'); row.querySelector('input[type="radio"]').checked = true; selectedItem = JSON.parse(decodeURIComponent(row.getAttribute('data-item'))); document.getElementById('btnNextStep').disabled = false; }
 
 function goToStep2() {
     if (!selectedItem) return;
-    document.getElementById('step1Content').style.display = 'none';
-    document.getElementById('step2Content').style.display = '';
-    document.getElementById('stepNode1').classList.remove('active');
-    document.getElementById('stepNode1').classList.add('done');
-    document.getElementById('stepNode2').classList.add('active');
+    document.getElementById('step1Content').style.display = 'none'; document.getElementById('step2Content').style.display = '';
+    document.getElementById('stepNode1').classList.remove('active'); document.getElementById('stepNode1').classList.add('done'); document.getElementById('stepNode2').classList.add('active');
     document.getElementById('s2PlanNo').value = selectedItem.planId + ' · ' + selectedItem.planName;
     document.getElementById('s2Unit').value = selectedItem.unit;
     document.getElementById('s2ProjectName').value = selectedItem.content;
     document.getElementById('s2ProcContent').value = selectedItem.content;
     document.getElementById('s2ProcMethod').value = selectedItem.method;
-    var parent = extractParentCategory(selectedItem.cat);
-    var sub = extractSubCategory(selectedItem.cat);
+    var parent = extractParentCategory(selectedItem.cat), sub = extractSubCategory(selectedItem.cat);
     populateStep2Category(parent, sub);
     step2Limit = selectedItem.limit * 10000;
     var defaultAmount = Math.min(selectedItem.amount * 10000, step2Limit);
@@ -348,58 +252,30 @@ function goToStep2() {
     document.getElementById('s2ProcAmount').classList.remove('limit-exceeded');
     document.getElementById('step2SelectedInfo').textContent = selectedItem.planId + ' · ' + selectedItem.content + '（' + selectedItem.method + '）';
     renderStep2MethodHints(parent, selectedItem.method);
-    if (selectedItem.method === '直接采购') {
-        initStep2DirectPurchase();
-    } else {
-        document.getElementById('s2DirectPurchaseSection').style.display = 'none';
-        document.getElementById('s2DpReasonFileGroup').style.display = 'none';
-        document.getElementById('s2DpFlowHint').style.display = 'none';
-        document.getElementById('s2NormalFlowHint').style.display = '';
-    }
-    document.getElementById('s2BidIssueDate').value = '';
-    document.getElementById('s2BidOpenDate').value = '';
-    document.getElementById('s2BidAwardDate').value = '';
-    document.getElementById('s2AnnounceDate').value = '';
-    document.getElementById('s2Description').value = '';
+    if (selectedItem.method === '直接采购') { initStep2DirectPurchase(); } else { document.getElementById('s2DirectPurchaseSection').style.display = 'none'; document.getElementById('s2DpReasonFileGroup').style.display = 'none'; document.getElementById('s2DpFlowHint').style.display = 'none'; document.getElementById('s2NormalFlowHint').style.display = ''; }
+    document.getElementById('s2BidIssueDate').value = ''; document.getElementById('s2BidOpenDate').value = ''; document.getElementById('s2BidAwardDate').value = ''; document.getElementById('s2AnnounceDate').value = ''; document.getElementById('s2Description').value = '';
 }
 
 function populateStep2Category(parent, sub) {
-    var parentEl = document.getElementById('s2CatParent');
-    var childEl = document.getElementById('s2CatSub');
+    var parentEl = document.getElementById('s2CatParent'), childEl = document.getElementById('s2CatSub');
     parentEl.innerHTML = '<option value="' + parent + '" selected>' + parent + '</option>';
     var subs = CATEGORY_TREE[parent] || [];
     childEl.innerHTML = '<option value="">—</option>';
-    subs.forEach(function(s) {
-        var sel = (s === sub) ? ' selected' : '';
-        childEl.innerHTML += '<option value="' + s + '"' + sel + '>' + s + '</option>';
-    });
+    subs.forEach(function(s) { childEl.innerHTML += '<option value="' + s + '"' + (s === sub ? ' selected' : '') + '>' + s + '</option>'; });
 }
 
 function renderStep2MethodHints(category, selectedMethod) {
     var amt = parseFloat(document.getElementById('s2ProcAmount').value) || 0;
-    var recs = recommendProcurementMethod(category || '', amt);
-    var html = '';
-    for (var i = 0; i < recs.length; i++) {
-        var r = recs[i];
-        var isSelected = (r.method === selectedMethod);
-        var cls = r.isBest ? 'method-hint-best' : (r.compliant ? 'method-hint-ok' : 'method-hint-warn');
-        var prefix = isSelected ? '👉 ' : '';
-        html += '<div class="method-hint ' + cls + '" style="' + (isSelected ? 'font-weight:600;' : '') + '">' + prefix + r.tag + ' — ' + r.reason + '</div>';
-    }
+    var recs = recommendProcurementMethod(category || '', amt), html = '';
+    for (var i = 0; i < recs.length; i++) { var r = recs[i], isSel = (r.method === selectedMethod); html += '<div class="method-hint ' + (isSel ? 'method-hint-best' : (r.compliant ? 'method-hint-ok' : 'method-hint-warn')) + '" style="' + (isSel ? 'font-weight:600;' : '') + '">' + (isSel ? '👉 ' : '') + r.tag + ' — ' + r.reason + '</div>'; }
     document.getElementById('s2MethodHints').innerHTML = html;
 }
 
 function initStep2DirectPurchase() {
-    var section = document.getElementById('s2DirectPurchaseSection');
-    var body = document.getElementById('s2DpConditionsBody');
-    section.style.display = '';
-    var html = '';
-    DIRECT_PURCHASE_CONDITIONS.forEach(function(c) {
-        var checked = (c.id === 'D1') ? ' checked' : '';
-        html += '<label style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;cursor:pointer;"><input type="radio" name="s2DpCond" value="' + c.id + '"' + checked + ' style="margin-top:3px;" onchange="onStep2DpChange()"><div><strong>' + c.label + '</strong><br><span class="text-xs text-muted">' + c.desc + '</span></div></label>';
-    });
-    body.innerHTML = html;
-    onStep2DpChange();
+    var section = document.getElementById('s2DirectPurchaseSection'), body = document.getElementById('s2DpConditionsBody');
+    section.style.display = ''; var html = '';
+    DIRECT_PURCHASE_CONDITIONS.forEach(function(c) { html += '<label style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;cursor:pointer;"><input type="radio" name="s2DpCond" value="' + c.id + '"' + (c.id === 'D1' ? ' checked' : '') + ' style="margin-top:3px;" onchange="onStep2DpChange()"><div><strong>' + c.label + '</strong><br><span class="text-xs text-muted">' + c.desc + '</span></div></label>'; });
+    body.innerHTML = html; onStep2DpChange();
 }
 
 function onStep2DpChange() {
@@ -408,27 +284,15 @@ function onStep2DpChange() {
     var isD1 = (checked.value === 'D1');
     document.getElementById('s2DpReasonFileGroup').style.display = isD1 ? 'none' : '';
     document.getElementById('s2NormalFlowHint').style.display = 'none';
-    var hint = document.getElementById('s2DpFlowHint');
-    hint.style.display = '';
-    if (isD1) {
-        hint.innerHTML = '✅ <strong>流程合并说明：</strong>合同估算价＜100,000.00元，采购申请与确定采购结果合并，审批通过后可直接填写采购结果。';
-        document.getElementById('btnConfirm').textContent = '提交审批并进入采购结果';
-    } else {
-        hint.innerHTML = '📌 <strong>流程分开说明：</strong>该情形下采购申请审批通过后，需单独提交确定采购结果流程。';
-        document.getElementById('btnConfirm').textContent = '确认';
-    }
+    var hint = document.getElementById('s2DpFlowHint'); hint.style.display = '';
+    if (isD1) { hint.innerHTML = '✅ <strong>流程合并说明：</strong>合同估算价＜100,000.00元，采购申请与确定采购结果合并，审批通过后可直接填写采购结果。'; document.getElementById('btnConfirm').textContent = '提交审批并进入采购结果'; }
+    else { hint.innerHTML = '📌 <strong>流程分开说明：</strong>该情形下采购申请审批通过后，需单独提交确定采购结果流程。'; document.getElementById('btnConfirm').textContent = '确认'; }
 }
 
 function validateStep2Limit() {
-    var input = document.getElementById('s2ProcAmount');
-    var val = parseFloat(input.value);
-    if (!isNaN(val) && val > step2Limit) {
-        input.classList.add('limit-exceeded');
-        document.getElementById('s2LimitHint').innerHTML = '<span style="color:var(--danger);">⚠ 超出计划限价（≤' + step2Limit.toFixed(2) + ' 元）</span>';
-    } else {
-        input.classList.remove('limit-exceeded');
-        document.getElementById('s2LimitHint').innerHTML = '计划上限：<span>' + step2Limit.toFixed(2) + '</span> 元';
-    }
+    var input = document.getElementById('s2ProcAmount'), val = parseFloat(input.value);
+    if (!isNaN(val) && val > step2Limit) { input.classList.add('limit-exceeded'); document.getElementById('s2LimitHint').innerHTML = '<span style="color:var(--danger);">⚠ 超出计划限价（≤' + step2Limit.toFixed(2) + ' 元）</span>'; }
+    else { input.classList.remove('limit-exceeded'); document.getElementById('s2LimitHint').innerHTML = '计划上限：<span>' + step2Limit.toFixed(2) + '</span> 元'; }
     renderStep2MethodHints(extractParentCategory(selectedItem.cat), document.getElementById('s2ProcMethod').value);
 }
 
@@ -444,19 +308,12 @@ function confirmProcurement() {
         var isD1 = (checked.value === 'D1');
         if (!isD1) { var fi = document.getElementById('s2DpReasonFile'); if (fi && !fi.files.length) { showAlert('⚠️ 请上传直接采购原因说明文件。'); return; } }
         showAlert(isD1 ? '✅ 采购申请已提交，请进入采购结果填写页面。' : '✅ 采购申请已提交，审批通过后请单独提交确定采购结果。');
-    } else {
-        showAlert('✅ 采购申请已提交，进入OA审批流程。');
-    }
+    } else { showAlert('✅ 采购申请已提交，进入OA审批流程。'); }
     var refMap = {};
     try { refMap = JSON.parse(sessionStorage.getItem('planItemRefStatus') || '{}'); } catch(e) {}
     refMap[selectedItem.id] = '已引用';
     sessionStorage.setItem('planItemRefStatus', JSON.stringify(refMap));
-    sessionStorage.setItem('procurementViewContext', JSON.stringify({
-        method: selectedItem.method, projectName: selectedItem.content,
-        amount: '¥' + (selectedItem.amount * 10000).toFixed(2) + '元', unit: selectedItem.unit,
-        plan: selectedItem.planId + ' · ' + selectedItem.planName, handler: selectedItem.handler,
-        status: '进行中', currentStep: 0, doneCount: 0
-    }));
+    sessionStorage.setItem('procurementViewContext', JSON.stringify({ method: selectedItem.method, projectName: selectedItem.content, amount: '¥' + (selectedItem.amount * 10000).toFixed(2) + '元', unit: selectedItem.unit, plan: selectedItem.planId + ' · ' + selectedItem.planName, handler: selectedItem.handler, status: '进行中', currentStep: 0, doneCount: 0 }));
     navTo('procurement', 'procurement/view.html');
 }
 </script>
