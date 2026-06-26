@@ -56,7 +56,8 @@ window.addEventListener('message', function(e) {
 function saveItem() {
     var cat = document.getElementById('itemCatParent').value, method = document.getElementById('itemMethod').value;
     var amt = parseFloat(document.getElementById('itemCeiling').value) || 0;
-    var vld = validateItemMethod(cat, method, amt);
+    // fix: validateItemMethod(category, amount, method)
+    var vld = validateItemMethod(cat, amt, method);
     if (!vld.valid) { showAlert('⚠️ ' + vld.reason); return; }
     var note = document.getElementById('itemNote').value;
     var nv = validateItemNote(method, note, amt);

@@ -87,7 +87,8 @@ function onNewMethodChange(sel) {
 
 function saveNewItem(btn) {
     var row = btn.closest('tr');
-    var fields = ['name','cat','method','note','limit','time','dept','user'];
+    //sm fix
+    var fields = ['name','cat','method','limit','time','dept','user'];
     var vals = {};
     fields.forEach(function(f) { var td = row.querySelector('[data-field="'+f+'"]'); if(!td)return; var inp = td.querySelector('input, select'); vals[f] = inp ? inp.value : ''; });
     var cat = vals['cat'] || '', method = vals['method'] || '', limit = parseFloat(vals['limit']) || 0;
@@ -162,6 +163,21 @@ function updateTotal() {
 function submitCreate() {
     var rows = document.querySelectorAll('#itemTableBody tr:not(.text-muted)');
     if (rows.length === 0) { showAlert('⚠️ 请至少添加一条招采项后再提交。'); return; }
+    var total = 0;
+    rows.forEach(function(row) {
+        var td = row.querySelector('[data-field="limit"]');
+        if (!td) return;
+        var origVal = td.getAttribute('data-orig'), input = td.querySelector('input'), val = input ? input.value : origVal;
+        if (val && !isNaN(parseFloat(val))) total += parseFloat(val);
+    });
+    var budgetInput = document.querySelector('.form-group input[type="number"]');
+    if (budgetInput) {
+        var budget = parseFloat(budgetInput.value) || 0;
+        if (total > budget) {
+            showAlert('⚠️ 招采项限价合计（¥'+total.toFixed(2)+'元）超出计划总预算（¥'+budget.toFixed(2)+'元），请调整后提交。');
+            return;
+        }
+    }
     if (confirm('确认提交审批？提交后将生成 v1 版本，计划状态变为"审批中"，不可再编辑。')) { showAlert('✅ 采购计划已提交审批，审批流将在OA中流转。'); navTo('plans'); }
 }
 </script>
