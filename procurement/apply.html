@@ -67,7 +67,7 @@
                             <th class="sorter" onclick="sortPlanItems('note')">采购项说明 <span class="sort-icon" id="sortIcon-note">↕</span></th>
                             <th class="sorter" onclick="sortPlanItems('amount')">采购金额 <span class="sort-icon" id="sortIcon-amount">↕</span></th>
                             <th class="sorter" onclick="sortPlanItems('schedule')">计划日期 <span class="sort-icon" id="sortIcon-schedule">↕</span></th>
-                            <th>状态<div class="th-filter"><select class="form-control form-control-sm" onchange="filterPlanItems()" id="thFilterStatus"><option value="all">全部</option><option value="已生效">已生效</option><option value="执行中">执行中</option><option value="已完成">已完成</option><option value="草稿">草稿</option></select></div></th>
+                            <th>状态</th>
                         </tr>
                     </thead>
                     <tbody id="planItemTableBody"></tbody>
@@ -196,7 +196,6 @@ function getFilteredAndSorted() {
     var kw2 = document.getElementById('searchContent').value.toLowerCase();
     var catFilter = document.getElementById('thFilterCat').value;
     var methodFilter = document.getElementById('thFilterMethod').value;
-    var statusFilter = document.getElementById('thFilterStatus').value;
 
     var available = getAvailableItems();
     var filtered = available.filter(function(item) {
@@ -204,8 +203,7 @@ function getFilteredAndSorted() {
         var match2 = !kw2 || item.content.toLowerCase().indexOf(kw2) !== -1;
         var matchCat = catFilter === 'all' || item.cat.indexOf(catFilter) !== -1;
         var matchMethod = methodFilter === 'all' || item.method === methodFilter;
-        var matchStatus = statusFilter === 'all' || item.status === statusFilter;
-        return match1 && match2 && matchCat && matchMethod && matchStatus;
+        return match1 && match2 && matchCat && matchMethod;
     });
 
     // 排序
@@ -309,7 +307,6 @@ function resetStep1Filter() {
     document.getElementById('searchContent').value = '';
     document.getElementById('thFilterCat').value = 'all';
     document.getElementById('thFilterMethod').value = 'all';
-    document.getElementById('thFilterStatus').value = 'all';
     sortState.field = '';
     sortState.asc = true;
     ['planName','content','note','amount','schedule'].forEach(function(f) {
