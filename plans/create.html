@@ -87,8 +87,7 @@ function onNewMethodChange(sel) {
 
 function saveNewItem(btn) {
     var row = btn.closest('tr');
-    //sm fix
-    var fields = ['name','cat','method','limit','time','dept','user'];
+    var fields = ['name','cat','method','note','limit','time','dept','user'];
     var vals = {};
     fields.forEach(function(f) { var td = row.querySelector('[data-field="'+f+'"]'); if(!td)return; var inp = td.querySelector('input, select'); vals[f] = inp ? inp.value : ''; });
     var cat = vals['cat'] || '', method = vals['method'] || '', limit = parseFloat(vals['limit']) || 0;

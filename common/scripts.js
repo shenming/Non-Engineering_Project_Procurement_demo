@@ -302,6 +302,7 @@ function recommendProcurementMethod(category, amount) {
     var results = [];
 
     // <= 各方式阈值（元）===
+    //var publicMin = isGoods ? 2000000 : 1000000;    // 公开招标下限
     var publicMin = isGoods ? 2000000 : 1000000;    // 公开招标下限
     var inviteMax = publicMin;                       // 邀请招标上限 = 公开招标下限
     var rfqMax = isGoods ? 1000000 : 500000;         // 询比采购上限 = 邀请招标下限
@@ -337,7 +338,8 @@ function recommendProcurementMethod(category, amount) {
         method: '公开招标',
         priority: 1,
         compliant: true,
-        isBest: amount >= publicMin,
+        //isBest: amount >= publicMin,
+        isBest: amount >= 0,
         reason: '公开招标不限金额门槛，企业可自主选择',
         tag: '✅ 合规'
     });
