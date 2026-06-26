@@ -51,8 +51,9 @@
     <div class="card">
         <div class="card-body">
             <div class="flex gap-12 mb-12" style="flex-wrap:wrap;">
-                <input class="form-control form-control-sm" id="searchPlanId" placeholder="采购计划名称模糊搜索..." style="width:200px;" oninput="filterPlanItems()">
-                <input class="form-control form-control-sm" id="searchContent" placeholder="采购内容模糊搜索..." style="width:200px;" oninput="filterPlanItems()">
+                <input class="form-control form-control-sm" id="searchPlanId" placeholder="采购计划名称模糊搜索..." style="width:200px;">
+                <input class="form-control form-control-sm" id="searchContent" placeholder="采购内容模糊搜索..." style="width:200px;">
+                <button class="btn btn-sm btn-primary" onclick="filterPlanItems()">🔍 搜索</button>
                 <button class="btn btn-sm btn-outline" onclick="resetStep1Filter()">重置</button>
             </div>
             <div class="table-wrap">
@@ -113,10 +114,8 @@
             <div class="form-group"><label>采购内容</label><input class="form-control field-locked" id="s2ProcContent" disabled></div>
             <div class="form-group"><label>采购方式</label><input class="form-control field-locked" id="s2ProcMethod" disabled></div>
 
-            <!-- 采购方式推荐提示 -->
             <div id="s2MethodHints" style="margin-bottom:12px;"></div>
 
-            <!-- 直接采购原因选择 -->
             <div id="s2DirectPurchaseSection" style="display:none;">
                 <div class="card" style="margin-bottom:16px;border-color:var(--warning);">
                     <div class="card-header" style="background:#fffbeb;"><h3>📌 直接采购原因选择</h3></div>
@@ -177,7 +176,6 @@ var PLAN_ITEMS = [
     { id: 'PL-2026-0023-1', planId: 'PL-2026-0023', planName: '2026年度成员企业A采购计划', content: '信息化建设咨询服务', unit: '成员企业A', cat: '服务类 · 咨询服务', method: '谈判采购', note: '技术复杂/性质特殊', schedule: '2026-06 ~ 2026-08', amount: 120.0, limit: 110.0, handler: '张明', status: '已生效', refStatus: '未引用' },
     { id: 'PL-2026-0024-1', planId: 'PL-2026-0024', planName: '2026年度成员企业A采购计划', content: '数据安全审计服务', unit: '成员企业A', cat: '服务类 · 咨询服务', method: '直接采购', note: '涉密/商业秘密', schedule: '2026-07 ~ 2026-09', amount: 50.0, limit: 48.0, handler: '陈芳', status: '已生效', refStatus: '未引用' },
     { id: 'PL-2026-0025-1', planId: 'PL-2026-0025', planName: '2026年度集团总部采购计划', content: '办公用品零星采购', unit: '集团总部', cat: '货物类 · 办公用品类', method: '直接采购', note: '合同估算价＜100,000.00元', schedule: '2026-08 ~ 2026-09', amount: 8.0, limit: 8.0, handler: '赵岩', status: '已生效', refStatus: '未引用' },
-    // 更多示例数据用于演示分页
     { id: 'PL-2026-0026-1', planId: 'PL-2026-0026', planName: '2026年度成员企业A采购计划', content: '印刷服务采购', unit: '成员企业A', cat: '服务类 · 其他服务', method: '询比采购', note: '', schedule: '2026-09 ~ 2026-10', amount: 35.0, limit: 32.0, handler: '李华', status: '已生效', refStatus: '未引用' },
     { id: 'PL-2026-0027-1', planId: 'PL-2026-0027', planName: '2026年度成员企业B采购计划', content: '空调维保服务', unit: '成员企业B', cat: '服务类 · 维护服务', method: '邀请招标', note: '', schedule: '2026-06 ~ 2026-12', amount: 48.0, limit: 45.0, handler: '刘工', status: '已生效', refStatus: '未引用' },
     { id: 'PL-2026-0028-1', planId: 'PL-2026-0028', planName: '2026年度集团总部采购计划', content: '办公软件授权采购', unit: '集团总部', cat: '货物类 · IT类', method: '直接采购', note: '不可替代专利/专有技术', schedule: '2026-05 ~ 2026-06', amount: 75.0, limit: 72.0, handler: '王工', status: '已生效', refStatus: '未引用' },
@@ -189,6 +187,8 @@ var PLAN_ITEMS = [
 var PAGE_SIZE = 5;
 var currentPage = 1;
 var sortState = { field: '', asc: true };
+var selectedItem = null;
+var step2Limit = 0;
 
 function getAvailableItems() {
     return PLAN_ITEMS.filter(function(item) {
@@ -228,7 +228,6 @@ function getFilteredAndSorted() {
             }
         });
     }
-
     return filtered;
 }
 
@@ -270,54 +269,29 @@ function filterPlanItems() {
 function applyPagination() {
     var allFiltered = getFilteredAndSorted();
     document.getElementById('planItemCount').textContent = getAvailableItems().length;
-
     var totalPages = Math.ceil(allFiltered.length / PAGE_SIZE) || 1;
     if (currentPage > totalPages) currentPage = totalPages;
-
     var start = (currentPage - 1) * PAGE_SIZE;
     var pageItems = allFiltered.slice(start, start + PAGE_SIZE);
-
     renderPlanItems(pageItems);
-
-    // 更新分页控件
     document.getElementById('pageInfo').textContent = '第 ' + currentPage + '/' + totalPages + ' 页（共 ' + allFiltered.length + ' 条）';
     document.getElementById('prevPageBtn').disabled = currentPage <= 1;
     document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
 }
 
-function prevPage() {
-    if (currentPage > 1) { currentPage--; applyPagination(); }
-}
-
-function nextPage() {
-    var allFiltered = getFilteredAndSorted();
-    var totalPages = Math.ceil(allFiltered.length / PAGE_SIZE) || 1;
-    if (currentPage < totalPages) { currentPage++; applyPagination(); }
-}
+function prevPage() { if (currentPage > 1) { currentPage--; applyPagination(); } }
+function nextPage() { var all = getFilteredAndSorted(); var tp = Math.ceil(all.length / PAGE_SIZE) || 1; if (currentPage < tp) { currentPage++; applyPagination(); } }
 
 function sortPlanItems(field) {
-    if (sortState.field === field) {
-        sortState.asc = !sortState.asc;
-    } else {
-        sortState.field = field;
-        sortState.asc = true;
-    }
+    if (sortState.field === field) { sortState.asc = !sortState.asc; } else { sortState.field = field; sortState.asc = true; }
     ['planName','content','note','amount','schedule'].forEach(function(f) {
         var icon = document.getElementById('sortIcon-' + f);
-        if (icon) {
-            if (f === field) icon.textContent = sortState.asc ? '↑' : '↓';
-            else icon.textContent = '↕';
-        }
+        if (icon) { if (f === field) icon.textContent = sortState.asc ? '↑' : '↓'; else icon.textContent = '↕'; }
     });
     filterPlanItems();
 }
 
-var selectedItem = null;
-var step2Limit = 0;
-
-(function init() {
-    showStep1();
-})();
+(function init() { showStep1(); })();
 
 function showStep1() {
     document.getElementById('step1Content').style.display = '';
@@ -354,33 +328,26 @@ function selectPlanRow(row) {
 
 function goToStep2() {
     if (!selectedItem) return;
-
     document.getElementById('step1Content').style.display = 'none';
     document.getElementById('step2Content').style.display = '';
     document.getElementById('stepNode1').classList.remove('active');
     document.getElementById('stepNode1').classList.add('done');
     document.getElementById('stepNode2').classList.add('active');
-
     document.getElementById('s2PlanNo').value = selectedItem.planId + ' · ' + selectedItem.planName;
     document.getElementById('s2Unit').value = selectedItem.unit;
     document.getElementById('s2ProjectName').value = selectedItem.content;
     document.getElementById('s2ProcContent').value = selectedItem.content;
     document.getElementById('s2ProcMethod').value = selectedItem.method;
-
     var parent = extractParentCategory(selectedItem.cat);
     var sub = extractSubCategory(selectedItem.cat);
     populateStep2Category(parent, sub);
-
     step2Limit = selectedItem.limit * 10000;
     var defaultAmount = Math.min(selectedItem.amount * 10000, step2Limit);
     document.getElementById('s2ProcAmount').value = defaultAmount.toFixed(2);
     document.getElementById('s2LimitMax').textContent = step2Limit.toFixed(2);
     document.getElementById('s2ProcAmount').classList.remove('limit-exceeded');
-
     document.getElementById('step2SelectedInfo').textContent = selectedItem.planId + ' · ' + selectedItem.content + '（' + selectedItem.method + '）';
-
     renderStep2MethodHints(parent, selectedItem.method);
-
     if (selectedItem.method === '直接采购') {
         initStep2DirectPurchase();
     } else {
@@ -389,7 +356,6 @@ function goToStep2() {
         document.getElementById('s2DpFlowHint').style.display = 'none';
         document.getElementById('s2NormalFlowHint').style.display = '';
     }
-
     document.getElementById('s2BidIssueDate').value = '';
     document.getElementById('s2BidOpenDate').value = '';
     document.getElementById('s2BidAwardDate').value = '';
@@ -466,53 +432,31 @@ function validateStep2Limit() {
     renderStep2MethodHints(extractParentCategory(selectedItem.cat), document.getElementById('s2ProcMethod').value);
 }
 
-function goBackToStep1() {
-    showStep1();
-}
+function goBackToStep1() { showStep1(); }
 
 function confirmProcurement() {
     var limitVal = parseFloat(document.getElementById('s2ProcAmount').value);
-    if (limitVal > step2Limit) {
-        showAlert('⚠️ 采购金额超出计划限价，请调整后提交。');
-        return;
-    }
+    if (limitVal > step2Limit) { showAlert('⚠️ 采购金额超出计划限价，请调整后提交。'); return; }
     var method = document.getElementById('s2ProcMethod').value;
     if (method === '直接采购') {
         var checked = document.querySelector('input[name="s2DpCond"]:checked');
-        if (!checked) {
-            showAlert('⚠️ 请选择直接采购原因。');
-            return;
-        }
+        if (!checked) { showAlert('⚠️ 请选择直接采购原因。'); return; }
         var isD1 = (checked.value === 'D1');
-        if (!isD1) {
-            var fi = document.getElementById('s2DpReasonFile');
-            if (fi && !fi.files.length) {
-                showAlert('⚠️ 请上传直接采购原因说明文件。');
-                return;
-            }
-        }
+        if (!isD1) { var fi = document.getElementById('s2DpReasonFile'); if (fi && !fi.files.length) { showAlert('⚠️ 请上传直接采购原因说明文件。'); return; } }
         showAlert(isD1 ? '✅ 采购申请已提交，请进入采购结果填写页面。' : '✅ 采购申请已提交，审批通过后请单独提交确定采购结果。');
     } else {
         showAlert('✅ 采购申请已提交，进入OA审批流程。');
     }
-
     var refMap = {};
     try { refMap = JSON.parse(sessionStorage.getItem('planItemRefStatus') || '{}'); } catch(e) {}
     refMap[selectedItem.id] = '已引用';
     sessionStorage.setItem('planItemRefStatus', JSON.stringify(refMap));
-
     sessionStorage.setItem('procurementViewContext', JSON.stringify({
-        method: selectedItem.method,
-        projectName: selectedItem.content,
-        amount: '¥' + (selectedItem.amount * 10000).toFixed(2) + '元',
-        unit: selectedItem.unit,
-        plan: selectedItem.planId + ' · ' + selectedItem.planName,
-        handler: selectedItem.handler,
-        status: '进行中',
-        currentStep: 0,
-        doneCount: 0
+        method: selectedItem.method, projectName: selectedItem.content,
+        amount: '¥' + (selectedItem.amount * 10000).toFixed(2) + '元', unit: selectedItem.unit,
+        plan: selectedItem.planId + ' · ' + selectedItem.planName, handler: selectedItem.handler,
+        status: '进行中', currentStep: 0, doneCount: 0
     }));
-
     navTo('procurement', 'procurement/view.html');
 }
 </script>
