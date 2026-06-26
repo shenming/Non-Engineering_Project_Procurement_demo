@@ -73,7 +73,14 @@
                     <tbody id="planItemTableBody"></tbody>
                 </table>
             </div>
-            <div class="text-xs text-muted mt-8">仅用户数据权限下显示已生效且未被引用的招采项。共 <strong id="planItemCount">0</strong> 条可用。</div>
+            <div class="flex-between mt-8" style="display:flex;align-items:center;justify-content:space-between;">
+                <div class="text-xs text-muted">仅用户数据权限下显示已生效且未被引用的招采项。共 <strong id="planItemCount">0</strong> 条可用。</div>
+                <div class="flex gap-8" style="display:flex;align-items:center;gap:8px;" id="paginationControls">
+                    <span class="text-xs text-muted" id="pageInfo"></span>
+                    <button class="btn btn-xs btn-outline" id="prevPageBtn" onclick="prevPage()" disabled>← 上一页</button>
+                    <button class="btn btn-xs btn-outline" id="nextPageBtn" onclick="nextPage()" disabled>下一页 →</button>
+                </div>
+            </div>
         </div>
         <div class="card-header" style="border-top:1px solid var(--gray-200);background:#fff;">
             <span></span>
@@ -164,25 +171,23 @@
 <script>
 // ========== 招采项数据（含5种采购方式演示数据） ==========
 var PLAN_ITEMS = [
-    // --- 公开招标（货物类，金额≥200万）---
     { id: 'PL-2026-0020-1', planId: 'PL-2026-0020', planName: '2026年度成员企业A采购计划', content: '办公家具批量采购', unit: '成员企业A', cat: '货物类 · 家具类', method: '公开招标', note: '', schedule: '2026-03 ~ 2026-05', amount: 280.0, limit: 260.0, handler: '李华', status: '已生效', refStatus: '未引用' },
-
-    // --- 邀请招标（服务类，金额＜100万）---
     { id: 'PL-2026-0021-1', planId: 'PL-2026-0021', planName: '2026年度集团总部采购计划', content: '弱电系统维保服务', unit: '集团总部', cat: '服务类 · 维护服务', method: '邀请招标', note: '', schedule: '2026-04 ~ 2026-12', amount: 85.0, limit: 80.0, handler: '王工', status: '已生效', refStatus: '未引用' },
-
-    // --- 询比采购（货物类，金额＜100万）---
     { id: 'PL-2026-0022-1', planId: 'PL-2026-0022', planName: '2026年度成员企业B采购计划', content: '台式计算机采购', unit: '成员企业B', cat: '货物类 · IT类', method: '询比采购', note: '', schedule: '2026-05 ~ 2026-06', amount: 60.0, limit: 58.0, handler: '刘工', status: '已生效', refStatus: '未引用' },
-
-    // --- 谈判采购（服务类，需选择情形）---
     { id: 'PL-2026-0023-1', planId: 'PL-2026-0023', planName: '2026年度成员企业A采购计划', content: '信息化建设咨询服务', unit: '成员企业A', cat: '服务类 · 咨询服务', method: '谈判采购', note: '技术复杂/性质特殊', schedule: '2026-06 ~ 2026-08', amount: 120.0, limit: 110.0, handler: '张明', status: '已生效', refStatus: '未引用' },
-
-    // --- 直接采购（非D1，涉密情形）---
     { id: 'PL-2026-0024-1', planId: 'PL-2026-0024', planName: '2026年度成员企业A采购计划', content: '数据安全审计服务', unit: '成员企业A', cat: '服务类 · 咨询服务', method: '直接采购', note: '涉密/商业秘密', schedule: '2026-07 ~ 2026-09', amount: 50.0, limit: 48.0, handler: '陈芳', status: '已生效', refStatus: '未引用' },
-
-    // --- 直接采购（D1，金额＜10万元）---
-    { id: 'PL-2026-0025-1', planId: 'PL-2026-0025', planName: '2026年度集团总部采购计划', content: '办公用品零星采购', unit: '集团总部', cat: '货物类 · 办公用品类', method: '直接采购', note: '合同估算价＜100,000.00元', schedule: '2026-08 ~ 2026-09', amount: 8.0, limit: 8.0, handler: '赵岩', status: '已生效', refStatus: '未引用' }
+    { id: 'PL-2026-0025-1', planId: 'PL-2026-0025', planName: '2026年度集团总部采购计划', content: '办公用品零星采购', unit: '集团总部', cat: '货物类 · 办公用品类', method: '直接采购', note: '合同估算价＜100,000.00元', schedule: '2026-08 ~ 2026-09', amount: 8.0, limit: 8.0, handler: '赵岩', status: '已生效', refStatus: '未引用' },
+    // 更多示例数据用于演示分页
+    { id: 'PL-2026-0026-1', planId: 'PL-2026-0026', planName: '2026年度成员企业A采购计划', content: '印刷服务采购', unit: '成员企业A', cat: '服务类 · 其他服务', method: '询比采购', note: '', schedule: '2026-09 ~ 2026-10', amount: 35.0, limit: 32.0, handler: '李华', status: '已生效', refStatus: '未引用' },
+    { id: 'PL-2026-0027-1', planId: 'PL-2026-0027', planName: '2026年度成员企业B采购计划', content: '空调维保服务', unit: '成员企业B', cat: '服务类 · 维护服务', method: '邀请招标', note: '', schedule: '2026-06 ~ 2026-12', amount: 48.0, limit: 45.0, handler: '刘工', status: '已生效', refStatus: '未引用' },
+    { id: 'PL-2026-0028-1', planId: 'PL-2026-0028', planName: '2026年度集团总部采购计划', content: '办公软件授权采购', unit: '集团总部', cat: '货物类 · IT类', method: '直接采购', note: '不可替代专利/专有技术', schedule: '2026-05 ~ 2026-06', amount: 75.0, limit: 72.0, handler: '王工', status: '已生效', refStatus: '未引用' },
+    { id: 'PL-2026-0029-1', planId: 'PL-2026-0029', planName: '2026年度成员企业A采购计划', content: '档案数字化服务', unit: '成员企业A', cat: '服务类 · 其他服务', method: '公开招标', note: '', schedule: '2026-08 ~ 2026-11', amount: 200.0, limit: 195.0, handler: '张明', status: '已生效', refStatus: '未引用' },
+    { id: 'PL-2026-0030-1', planId: 'PL-2026-0030', planName: '2026年度成员企业B采购计划', content: '劳保用品采购', unit: '成员企业B', cat: '货物类 · 劳保用品类', method: '询比采购', note: '', schedule: '2026-04 ~ 2026-05', amount: 25.0, limit: 24.0, handler: '刘工', status: '已生效', refStatus: '未引用' },
+    { id: 'PL-2026-0031-1', planId: 'PL-2026-0031', planName: '2026年度集团总部采购计划', content: '法律顾问服务续签', unit: '集团总部', cat: '服务类 · 法律服务', method: '直接采购', note: '涉密/商业秘密', schedule: '2026-01 ~ 2026-12', amount: 30.0, limit: 28.0, handler: '李经理', status: '已生效', refStatus: '未引用' }
 ];
 
+var PAGE_SIZE = 5;
+var currentPage = 1;
 var sortState = { field: '', asc: true };
 
 function getAvailableItems() {
@@ -206,7 +211,6 @@ function getFilteredAndSorted() {
         return match1 && match2 && matchCat && matchMethod;
     });
 
-    // 排序
     if (sortState.field) {
         var field = sortState.field;
         filtered.sort(function(a, b) {
@@ -214,14 +218,14 @@ function getFilteredAndSorted() {
             if (field === 'amount') {
                 va = parseFloat(va) || 0;
                 vb = parseFloat(vb) || 0;
+                return sortState.asc ? (va - vb) : (vb - va);
             } else {
                 va = va.toString().toLowerCase();
                 vb = vb.toString().toLowerCase();
-                if (va < vb) return -1;
-                if (va > vb) return 1;
+                if (va < vb) return sortState.asc ? -1 : 1;
+                if (va > vb) return sortState.asc ? 1 : -1;
                 return 0;
             }
-            return sortState.asc ? (va - vb) : (vb - va);
         });
     }
 
@@ -257,11 +261,38 @@ function renderPlanItems(items) {
 }
 
 function filterPlanItems() {
-    var filtered = getFilteredAndSorted();
-    document.getElementById('planItemCount').textContent = getAvailableItems().length;
+    currentPage = 1;
     selectedItem = null;
     document.getElementById('btnNextStep').disabled = true;
-    renderPlanItems(filtered);
+    applyPagination();
+}
+
+function applyPagination() {
+    var allFiltered = getFilteredAndSorted();
+    document.getElementById('planItemCount').textContent = getAvailableItems().length;
+
+    var totalPages = Math.ceil(allFiltered.length / PAGE_SIZE) || 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    var start = (currentPage - 1) * PAGE_SIZE;
+    var pageItems = allFiltered.slice(start, start + PAGE_SIZE);
+
+    renderPlanItems(pageItems);
+
+    // 更新分页控件
+    document.getElementById('pageInfo').textContent = '第 ' + currentPage + '/' + totalPages + ' 页（共 ' + allFiltered.length + ' 条）';
+    document.getElementById('prevPageBtn').disabled = currentPage <= 1;
+    document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
+}
+
+function prevPage() {
+    if (currentPage > 1) { currentPage--; applyPagination(); }
+}
+
+function nextPage() {
+    var allFiltered = getFilteredAndSorted();
+    var totalPages = Math.ceil(allFiltered.length / PAGE_SIZE) || 1;
+    if (currentPage < totalPages) { currentPage++; applyPagination(); }
 }
 
 function sortPlanItems(field) {
@@ -271,15 +302,11 @@ function sortPlanItems(field) {
         sortState.field = field;
         sortState.asc = true;
     }
-    // 更新所有排序图标
     ['planName','content','note','amount','schedule'].forEach(function(f) {
         var icon = document.getElementById('sortIcon-' + f);
         if (icon) {
-            if (f === field) {
-                icon.textContent = sortState.asc ? '↑' : '↓';
-            } else {
-                icon.textContent = '↕';
-            }
+            if (f === field) icon.textContent = sortState.asc ? '↑' : '↓';
+            else icon.textContent = '↕';
         }
     });
     filterPlanItems();
@@ -469,13 +496,11 @@ function confirmProcurement() {
         showAlert('✅ 采购申请已提交，进入OA审批流程。');
     }
 
-    // 标记招采项为「已引用」
     var refMap = {};
     try { refMap = JSON.parse(sessionStorage.getItem('planItemRefStatus') || '{}'); } catch(e) {}
     refMap[selectedItem.id] = '已引用';
     sessionStorage.setItem('planItemRefStatus', JSON.stringify(refMap));
 
-    // 设置 view.html 上下文
     sessionStorage.setItem('procurementViewContext', JSON.stringify({
         method: selectedItem.method,
         projectName: selectedItem.content,
