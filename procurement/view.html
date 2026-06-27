@@ -24,11 +24,12 @@
         .approval-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .approval-table th { text-align: left; padding: 8px 10px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
         .approval-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-100); }
+        .ver-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; background: var(--primary-lighter); color: var(--primary-light); }
     </style>
 </head>
 <body class="content-page">
 
-<!-- 顶部导航（保留面包屑） -->
+<!-- 顶部导航 -->
 <div class="sub-navbar">
     <button class="btn btn-sm btn-outline" onclick="navTo('procurement')" style="margin-right:8px;">← 返回列表</button>
     <span class="sub-nav-title">🔍 招采详情</span>
@@ -38,61 +39,62 @@
     </span>
 </div>
 
-<!-- 一、顶部操作按钮栏 -->
-<div class="flex gap-8 mb-12">
-    <button class="btn btn-sm btn-outline" onclick="parent.showAlert('✏️ 编辑')">✏️ 编辑</button>
-    <button class="btn btn-sm btn-primary" onclick="submitNode()">📤 提交</button>
-    <button class="btn btn-sm btn-danger" onclick="if(confirm('确认删除？'))showAlert('🗑️ 已删除')">🗑️ 删除</button>
-</div>
-
-<!-- TAB 容器：进度条卡片 ↔ 审批流预览 -->
-<div class="card" style="margin-bottom:12px;">
-    <div class="card-body" style="padding:0;">
-        <div class="tab-nav" style="padding:0 16px;">
-            <button class="tab-btn active" onclick="switchTab('tab-steps', this)">📌 招采进度</button>
-            <button class="tab-btn" onclick="switchTab('tab-approval', this)">✅ 审批流预览</button>
+<!-- 参照 plans/view.html 的 tab-card 布局 -->
+<div class="tab-card">
+    <div class="tab-header">
+        <div class="tab-title">
+            <h3 id="infoTitle">📄 项目名称</h3>
+            <span class="tag tag-yellow" id="infoStatusTag" style="margin-left:8px;">进行中</span>
         </div>
-
-        <!-- TAB 招采进度：7步圆形进度条 -->
-        <div class="tab-body active" id="tab-steps" style="padding:12px 16px;">
-            <div class="card-header" style="padding:0 0 8px 0;border:none;">
-                <h3 id="procTitle" style="margin:0;">📌 招标管理：步骤 1 / 7 (招采申请)</h3>
-            </div>
-            <div class="circle-steps" id="stepsContainer"></div>
+        <div class="flex gap-8">
+            <button class="btn btn-sm btn-danger" onclick="if(confirm('确认删除？'))showAlert('🗑️ 已删除')">🗑️ 删除</button>
+            <button class="btn btn-sm btn-primary" onclick="submitNode()">📤 提交</button>
         </div>
+    </div>
 
-        <!-- TAB 审批流预览：审批状态表格 -->
-        <div class="tab-body" id="tab-approval">
-            <table class="approval-table">
-                <thead>
-                    <tr>
-                        <th>节点描述</th>
-                        <th>审批状态</th>
-                        <th>审批日期</th>
-                        <th>流程 ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>招采申请&招采公告</td><td><span class="tag tag-green">审批通过</span></td><td>2026-06-20</td><td>WF-2026-003-01</td></tr>
-                    <tr><td>开标信息</td><td><span class="tag tag-green">审批通过</span></td><td>2026-07-10</td><td>WF-2026-003-02</td></tr>
-                    <tr><td>上传评标结果&评标结果公示</td><td><span class="tag tag-yellow">审批中</span></td><td>—</td><td>WF-2026-003-03</td></tr>
-                    <tr><td>中标结果</td><td><span class="tag tag-gray">待提交</span></td><td>—</td><td>—</td></tr>
-                    <tr><td>中标结果公示</td><td><span class="tag tag-gray">待提交</span></td><td>—</td><td>—</td></tr>
-                </tbody>
-            </table>
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('tab-steps', this)">📌 招采进度</button>
+        <button class="tab-btn" onclick="switchTab('tab-approval', this)">✅ 审批流预览</button>
+    </div>
+
+    <!-- TAB 招采进度 -->
+    <div class="tab-body active" id="tab-steps" style="padding:12px 16px;">
+        <div style="margin-bottom:8px;">
+            <h3 id="procTitle" style="margin:0;font-size:14px;">📌 招标管理：步骤 1 / 7 (招采申请)</h3>
         </div>
+        <div class="circle-steps" id="stepsContainer"></div>
+    </div>
+
+    <!-- TAB 审批流预览 -->
+    <div class="tab-body" id="tab-approval">
+        <table class="approval-table">
+            <thead>
+                <tr>
+                    <th>节点描述</th>
+                    <th>审批状态</th>
+                    <th>审批日期</th>
+                    <th>流程 ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>招采申请&招采公告</td><td><span class="tag tag-green">审批通过</span></td><td>2026-06-20</td><td>WF-2026-003-01</td></tr>
+                <tr><td>开标信息</td><td><span class="tag tag-green">审批通过</span></td><td>2026-07-10</td><td>WF-2026-003-02</td></tr>
+                <tr><td>上传评标结果&评标结果公示</td><td><span class="tag tag-yellow">审批中</span></td><td>—</td><td>WF-2026-003-03</td></tr>
+                <tr><td>中标结果</td><td><span class="tag tag-gray">待提交</span></td><td>—</td><td>—</td></tr>
+                <tr><td>中标结果公示</td><td><span class="tag tag-gray">待提交</span></td><td>—</td><td>—</td></tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
-<!-- iframe 节点详情页（始终可见，不受 TAB 切换影响） -->
-<iframe class="node-frame" id="nodeFrame" src=""></iframe>
+<!-- iframe 节点详情（始终可见） -->
+<iframe class="node-frame" id="nodeFrame" src="" style="margin-top:12px;"></iframe>
 
 <!-- 底部全局操作栏 -->
 <div class="flex-between" style="padding:12px 0;border-top:1px solid var(--gray-200);margin-top:12px;">
     <button class="btn btn-outline" onclick="prevStep()">← 上一步</button>
     <div class="flex gap-8">
         <button class="btn btn-primary" onclick="nextStep()">下一步 →</button>
-        <button class="btn btn-success" onclick="showAlert('💾 已保存')">💾 保存</button>
         <button class="btn btn-outline" onclick="navTo('procurement')">取消</button>
     </div>
 </div>
@@ -110,7 +112,10 @@ var doneCount = 1;
     var ctx = null;
     try { ctx = JSON.parse(sessionStorage.getItem('procurementViewContext') || 'null'); } catch(e) {}
     if (ctx) {
-        if (ctx.projectName) document.getElementById('breadProject').textContent = ctx.projectName;
+        if (ctx.projectName) {
+            document.getElementById('breadProject').textContent = ctx.projectName;
+            document.getElementById('infoTitle').innerHTML = '📄 ' + ctx.projectName;
+        }
         if (ctx.status === '进行中' || ctx.status === '审批中') { doneCount = 1; currentStep = 1; }
         else if (ctx.status === '已完成') { doneCount = PUBLIC_BID_STEPS.length; currentStep = PUBLIC_BID_STEPS.length; }
         sessionStorage.removeItem('procurementViewContext');

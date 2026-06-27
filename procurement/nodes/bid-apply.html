@@ -8,83 +8,85 @@
 .field-table td { padding: 5px 12px 5px 0; vertical-align: top; }
 .field-table .flabel { width: 140px; color: var(--gray-500); font-size: 12px; white-space: nowrap; }
 .field-table .fvalue { font-size: 13px; font-weight: 500; }
-.attach-section { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--gray-200); }
-.form-row-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.form-row-full { grid-column: 1 / -1; }
 .attach-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .attach-table th { text-align: left; padding: 6px 8px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); font-size: 11px; white-space: nowrap; }
 .attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
 .attach-table .op-icon { cursor: pointer; color: var(--primary); font-size: 14px; margin: 0 2px; }
 .attach-table .op-icon:hover { color: var(--primary-dark); }
+.info-grid-readonly { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.info-grid-readonly .info-item { font-size: 13px; }
+.info-grid-readonly .info-label { color: var(--gray-500); font-size: 12px; }
+.info-grid-readonly .info-value { font-weight: 500; margin-top: 2px; }
+.info-grid-readonly .full-width { grid-column: 1 / -1; }
 </style>
 </head>
 <body class="content-page" style="padding:0;">
 
 <div class="card" style="margin:0;border:none;box-shadow:none;">
 
-    <!-- ===== 模块 1：招采信息基础信息表单 ===== -->
+    <!-- ===== 模块 1：招采信息（只读） ===== -->
     <div class="card-header"><h3>📋 招采信息</h3></div>
     <div class="card-body">
-        <div class="form-row-duo">
-            <div class="form-group"><label>招标过程编号</label><input class="form-control" value="ZB-2026-003" disabled></div>
-            <div class="form-group"><label>招标过程名称</label><input class="form-control" value="集团年度物业服务"></div>
-            <div class="form-group"><label>公司编号</label><input class="form-control" value="HQ-001"></div>
-            <div class="form-group"><label>招采限额</label><input class="form-control" type="number" value="1865000.00"></div>
-            <div class="form-group"><label>招标方式</label><input class="form-control" value="公开招标" disabled></div>
-            <div class="form-group"><label>招采类型</label><input class="form-control" value="服务类 · 物业服务"></div>
-            <div class="form-group"><label>经办人</label><input class="form-control" value="李经理"></div>
-            <div class="form-group"><label>申请日期</label><input class="form-control" type="date" value="2026-06-19"></div>
-            <div class="form-group"><label>招标代理机构</label><input class="form-control" value="上海XX招标代理有限公司"></div>
-            <div class="form-group"><label>招标预计开始日期</label><input class="form-control" type="date" value="2026-06-20"></div>
-            <div class="form-group"><label>拟发标日期</label><input class="form-control" type="date" value="2026-06-19"></div>
-            <div class="form-group"><label>招标预计完成日期</label><input class="form-control" type="date" value="2026-07-25"></div>
-            <div class="form-group"><label>审批状态</label><input class="form-control" value="已生效" disabled></div>
-            <div class="form-group"><label>是否进场招标</label><select class="form-control"><option>是</option><option selected>否</option></select></div>
-            <div class="form-row-full"><div class="form-group"><label>招标范围及相关说明</label><textarea class="form-control" rows="3">集团总部大楼A/B座、园区绿化、安保等物业服务，服务期12个月。</textarea></div></div>
+        <div class="info-grid-readonly">
+            <div class="info-item"><div class="info-label">招标过程编号</div><div class="info-value">ZB-2026-003</div></div>
+            <div class="info-item"><div class="info-label">招标过程名称</div><div class="info-value">集团年度物业服务</div></div>
+            <div class="info-item"><div class="info-label">公司编号</div><div class="info-value">HQ-001</div></div>
+            <div class="info-item"><div class="info-label">招采限额</div><div class="info-value"><span class="money">¥1,865,000.00元</span></div></div>
+            <div class="info-item"><div class="info-label">招标方式</div><div class="info-value"><span class="tag tag-blue">公开招标</span></div></div>
+            <div class="info-item"><div class="info-label">招采类型</div><div class="info-value"><span class="tag tag-blue">服务类 · 物业服务</span></div></div>
+            <div class="info-item"><div class="info-label">经办人</div><div class="info-value">李经理</div></div>
+            <div class="info-item"><div class="info-label">申请日期</div><div class="info-value">2026-06-19</div></div>
+            <div class="info-item"><div class="info-label">招标代理机构</div><div class="info-value">上海XX招标代理有限公司</div></div>
+            <div class="info-item"><div class="info-label">招标预计开始日期</div><div class="info-value">2026-06-20</div></div>
+            <div class="info-item"><div class="info-label">拟发标日期</div><div class="info-value">2026-06-19</div></div>
+            <div class="info-item"><div class="info-label">招标预计完成日期</div><div class="info-value">2026-07-25</div></div>
+            <div class="info-item"><div class="info-label">审批状态</div><div class="info-value"><span class="tag tag-green">已生效</span></div></div>
+            <div class="info-item"><div class="info-label">是否进场招标</div><div class="info-value">否</div></div>
+            <div class="full-width info-item" style="margin-top:4px;"><div class="info-label">招标范围及相关说明</div><div class="info-value text-sm" style="margin-top:4px;">集团总部大楼A/B座、园区绿化、安保等物业服务，服务期12个月。</div></div>
         </div>
     </div>
 
-    <!-- ===== 模块 2：采购明细表格 ===== -->
+    <!-- ===== 模块 2：采购明细（只读） ===== -->
     <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 采购明细</h3></div>
     <div class="card-body" style="padding:0;">
         <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
-                        <th style="width:36px;"><input type="checkbox" onchange="toggleAllCheckbox(this)"></th>
-                        <th><span class="required">*</span>招标采购名称</th>
+                        <th style="width:36px;"><input type="checkbox"></th>
+                        <th>招标采购名称</th>
                         <th>采购计划编号</th>
                         <th>采购计划行编号</th>
                         <th>采购名称</th>
                         <th>采购金额含税（元）</th>
-                        <th><span class="required">*</span>标段数</th>
-                        <th><span class="required">*</span>招采品类</th>
-                        <th><span class="required">*</span>招采二级品类</th>
+                        <th>标段数</th>
+                        <th>招采品类</th>
+                        <th>招采二级品类</th>
                         <th>招采目标</th>
                     </tr>
                 </thead>
-                <tbody id="purchaseTableBody">
-                    <tr data-idx="0">
-                        <td><input type="checkbox" class="row-checkbox"></td>
-                        <td><input class="form-control form-control-sm" value="集团年度物业服务"></td>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>集团年度物业服务</td>
                         <td>PL-2026-0002</td>
                         <td>PL-2026-0002-001</td>
                         <td>集团年度物业服务</td>
-                        <td><input class="form-control form-control-sm" type="number" value="1865000.00" style="width:110px;" oninput="updateTotal()"></td>
-                        <td><input class="form-control form-control-sm" type="number" value="1" min="0" style="width:60px;" oninput="syncBidSections()"></td>
-                        <td><select class="form-control form-control-sm" style="width:90px;"><option>服务类</option><option>货物类</option></select></td>
-                        <td><select class="form-control form-control-sm" style="width:100px;"><option selected>物业服务</option><option>咨询服务</option><option>IT类</option></select></td>
+                        <td><span class="money">¥1,865,000.00元</span></td>
+                        <td>1</td>
+                        <td>服务类</td>
+                        <td>物业服务</td>
                         <td>主合同</td>
                     </tr>
                 </tbody>
                 <tfoot>
-                    <tr><td colspan="10" class="text-sm text-muted" style="padding:6px 10px;">采购金额合计：<span class="money" id="purchaseTotal">¥1,865,000.00元</span>｜招采限额：<span class="money">¥1,865,000.00元</span></td></tr>
+                    <tr><td colspan="10" class="text-sm text-muted" style="padding:6px 10px;">采购金额合计：<span class="money">¥1,865,000.00元</span>｜招采限额：<span class="money">¥1,865,000.00元</span></td></tr>
                 </tfoot>
             </table>
         </div>
     </div>
 
-    <!-- ===== 模块 2.2：标段明细表 ===== -->
+    <!-- ===== 模块 2.2：标段明细（只读） ===== -->
     <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 标段明细</h3></div>
     <div class="card-body" style="padding:0;">
         <div class="table-wrap">
@@ -92,30 +94,30 @@
                 <thead>
                     <tr>
                         <th>标段号</th>
-                        <th><span class="required">*</span>招标采购名称</th>
+                        <th>招标采购名称</th>
                         <th>招采限额</th>
                         <th>采购计划编号</th>
                         <th>采购计划行编号</th>
                         <th>采购名称</th>
                         <th>采购金额含税</th>
-                        <th><span class="required">*</span>标段数</th>
-                        <th><span class="required">*</span>招采品类</th>
-                        <th><span class="required">*</span>招采二级品类</th>
+                        <th>标段数</th>
+                        <th>招采品类</th>
+                        <th>招采二级品类</th>
                         <th>招采目标</th>
                     </tr>
                 </thead>
-                <tbody id="bidSectionBody">
+                <tbody>
                     <tr>
                         <td>1</td>
-                        <td><input class="form-control form-control-sm" value="集团年度物业服务"></td>
-                        <td><input class="form-control form-control-sm" type="number" value="1865000.00" style="width:110px;"></td>
+                        <td>集团年度物业服务</td>
+                        <td><span class="money">¥1,865,000.00元</span></td>
                         <td>PL-2026-0002</td>
                         <td>PL-2026-0002-001</td>
                         <td>集团年度物业服务</td>
-                        <td><input class="form-control form-control-sm" type="number" value="1865000.00" style="width:110px;" oninput="validateSectionTotal()"></td>
+                        <td><span class="money">¥1,865,000.00元</span></td>
                         <td>1</td>
-                        <td><select class="form-control form-control-sm" style="width:90px;"><option>服务类</option><option>货物类</option></select></td>
-                        <td><select class="form-control form-control-sm" style="width:100px;"><option selected>物业服务</option><option>咨询服务</option><option>IT类</option></select></td>
+                        <td>服务类</td>
+                        <td>物业服务</td>
                         <td>主合同</td>
                     </tr>
                 </tbody>
@@ -123,14 +125,14 @@
         </div>
     </div>
 
-    <!-- ===== 模块 3：附件管理表格 ===== -->
+    <!-- ===== 模块 3：附件管理（保留操作图标） ===== -->
     <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📎 附件管理</h3></div>
     <div class="card-body" style="padding:0;">
         <div class="table-wrap">
             <table class="attach-table">
                 <thead>
                     <tr>
-                        <th style="width:30px;"><input type="checkbox" onchange="toggleAllAttach(this)"></th>
+                        <th style="width:30px;"><input type="checkbox"></th>
                         <th>操作</th>
                         <th>附件类型</th>
                         <th>附件文档名称（预览）</th>
@@ -176,32 +178,5 @@
 </div>
 
 <script src="../../common/scripts.js"></script>
-<script>
-function toggleAllCheckbox(master) {
-    document.querySelectorAll('#purchaseTableBody .row-checkbox').forEach(function(cb) { cb.checked = master.checked; });
-}
-
-function toggleAllAttach(master) {
-    document.querySelectorAll('#attachBody .attach-checkbox').forEach(function(cb) { cb.checked = master.checked; });
-}
-
-function updateTotal() {
-    var total = 0;
-    document.querySelectorAll('#purchaseTableBody tr').forEach(function(row) {
-        var inp = row.querySelector('td:nth-child(6) input');
-        if (inp) total += parseFloat(inp.value) || 0;
-    });
-    document.getElementById('purchaseTotal').innerHTML = '¥' + total.toLocaleString('en-US', {minimumFractionDigits:2}) + '元';
-}
-
-function syncBidSections() {
-    // 标段数联动：简单提示
-    parent.showAlert('标段数已更新，标段明细表需同步调整');
-}
-
-function validateSectionTotal() {
-    // 标段金额合计校验（占位）
-}
-</script>
 </body>
 </html>
