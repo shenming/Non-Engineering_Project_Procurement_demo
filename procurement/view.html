@@ -16,7 +16,7 @@
         .step-connector { width: 32px; height: 2px; background: var(--gray-300); flex-shrink: 0; margin: 0 2px; }
         .step-connector.done { background: var(--primary); }
         .node-frame { width: 100%; min-height: 600px; border: 1px solid var(--gray-200); border-radius: var(--radius); background: #fff; }
-        .tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--gray-200); margin-bottom: 16px; }
+        .tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--gray-200); margin-bottom: 0; }
         .tab-nav .tab-btn { padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--gray-500); background: none; border-top: none; border-left: none; border-right: none; }
         .tab-nav .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
         .tab-body { display: none; }
@@ -45,54 +45,47 @@
     <button class="btn btn-sm btn-danger" onclick="if(confirm('确认删除？'))showAlert('🗑️ 已删除')">🗑️ 删除</button>
 </div>
 
-<!-- 进度条卡片（始终可见，不受 TAB 切换影响） -->
+<!-- TAB 容器：进度条卡片 ↔ 审批流预览 -->
 <div class="card" style="margin-bottom:12px;">
-    <div class="card-header">
-        <h3 id="procTitle">📌 招标管理：步骤 1 / 7 (招采申请)</h3>
-    </div>
-    <div class="card-body">
-        <div class="circle-steps" id="stepsContainer"></div>
+    <div class="card-body" style="padding:0;">
+        <div class="tab-nav" style="padding:0 16px;">
+            <button class="tab-btn active" onclick="switchTab('tab-steps', this)">📌 招采进度</button>
+            <button class="tab-btn" onclick="switchTab('tab-approval', this)">✅ 审批流预览</button>
+        </div>
+
+        <!-- TAB 招采进度：7步圆形进度条 -->
+        <div class="tab-body active" id="tab-steps" style="padding:12px 16px;">
+            <div class="card-header" style="padding:0 0 8px 0;border:none;">
+                <h3 id="procTitle" style="margin:0;">📌 招标管理：步骤 1 / 7 (招采申请)</h3>
+            </div>
+            <div class="circle-steps" id="stepsContainer"></div>
+        </div>
+
+        <!-- TAB 审批流预览：审批状态表格 -->
+        <div class="tab-body" id="tab-approval">
+            <table class="approval-table">
+                <thead>
+                    <tr>
+                        <th>节点描述</th>
+                        <th>审批状态</th>
+                        <th>审批日期</th>
+                        <th>流程 ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>招采申请&招采公告</td><td><span class="tag tag-green">审批通过</span></td><td>2026-06-20</td><td>WF-2026-003-01</td></tr>
+                    <tr><td>开标信息</td><td><span class="tag tag-green">审批通过</span></td><td>2026-07-10</td><td>WF-2026-003-02</td></tr>
+                    <tr><td>上传评标结果&评标结果公示</td><td><span class="tag tag-yellow">审批中</span></td><td>—</td><td>WF-2026-003-03</td></tr>
+                    <tr><td>中标结果</td><td><span class="tag tag-gray">待提交</span></td><td>—</td><td>—</td></tr>
+                    <tr><td>中标结果公示</td><td><span class="tag tag-gray">待提交</span></td><td>—</td><td>—</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <!-- iframe 节点详情页（始终可见，不受 TAB 切换影响） -->
 <iframe class="node-frame" id="nodeFrame" src=""></iframe>
-
-<!-- TAB 区：仅控制下方审批流等内容 -->
-<div class="card" style="margin-top:12px;">
-    <div class="card-body" style="padding:0;">
-        <div class="tab-nav">
-            <button class="tab-btn active" onclick="switchTab('tab-progress', this)">📌 招采进度</button>
-            <button class="tab-btn" onclick="switchTab('tab-approval', this)">✅ 审批流预览</button>
-        </div>
-
-        <div class="tab-body active" id="tab-progress" style="padding:12px 16px;">
-            <div class="text-sm text-muted">当前进度由上方步骤条控制，点击已完成节点可切换查看对应页面。</div>
-        </div>
-
-        <div class="tab-body" id="tab-approval">
-            <div style="padding:0;">
-                <table class="approval-table">
-                    <thead>
-                        <tr>
-                            <th>节点描述</th>
-                            <th>审批状态</th>
-                            <th>审批日期</th>
-                            <th>流程 ID</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>招采申请&招采公告</td><td><span class="tag tag-green">审批通过</span></td><td>2026-06-20</td><td>WF-2026-003-01</td></tr>
-                        <tr><td>开标信息</td><td><span class="tag tag-green">审批通过</span></td><td>2026-07-10</td><td>WF-2026-003-02</td></tr>
-                        <tr><td>上传评标结果&评标结果公示</td><td><span class="tag tag-yellow">审批中</span></td><td>—</td><td>WF-2026-003-03</td></tr>
-                        <tr><td>中标结果</td><td><span class="tag tag-gray">待提交</span></td><td>—</td><td>—</td></tr>
-                        <tr><td>中标结果公示</td><td><span class="tag tag-gray">待提交</span></td><td>—</td><td>—</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- 底部全局操作栏 -->
 <div class="flex-between" style="padding:12px 0;border-top:1px solid var(--gray-200);margin-top:12px;">
