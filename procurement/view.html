@@ -4,26 +4,34 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../common/styles.css">
     <style>
-        .info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .info-grid .info-item { font-size: 13px; }
-        .info-grid .info-label { color: var(--gray-500); font-size: 12px; }
-        .info-grid .info-value { font-weight: 500; margin-top: 2px; }
-        .steps-bar { display: flex; align-items: center; gap: 0; padding: 10px 0; flex-wrap: wrap; overflow-x: auto; }
-        .steps-bar .step { display: flex; align-items: center; gap: 4px; font-size: 12px; padding: 4px 10px; border-radius: 16px; white-space: nowrap; }
-        .steps-bar .step .snum { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 600; }
-        .steps-bar .step.done { background: #ecfdf5; color: #065f46; cursor: pointer; }
-        .steps-bar .step.done .snum { background: var(--success); color: #fff; }
-        .steps-bar .step.active { background: var(--primary-lighter); color: var(--primary); font-weight: 600; }
-        .steps-bar .step.active .snum { background: var(--primary); color: #fff; }
-        .steps-bar .step.future { background: var(--gray-100); color: var(--gray-400); }
-        .steps-bar .step.future .snum { background: var(--gray-200); color: var(--gray-500); }
-        .step-arrow { margin: 0 2px; color: var(--gray-300); font-size: 12px; flex-shrink: 0; }
-        .btn-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid var(--gray-200); margin-top: 12px; }
+        .circle-steps { display: flex; align-items: center; gap: 0; padding: 16px 0; flex-wrap: nowrap; overflow-x: auto; }
+        .circle-step { display: flex; align-items: center; gap: 6px; font-size: 12px; white-space: nowrap; cursor: default; }
+        .circle-step .cnum { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; font-size: 13px; font-weight: 700; flex-shrink: 0; border: 2px solid var(--gray-300); color: var(--gray-400); background: #fff; }
+        .circle-step.done { cursor: pointer; color: var(--primary); }
+        .circle-step.done .cnum { border-color: var(--primary); background: #fff; color: var(--primary); }
+        .circle-step.active { cursor: pointer; color: var(--primary); font-weight: 600; }
+        .circle-step.active .cnum { border-color: var(--primary); background: var(--primary); color: #fff; }
+        .circle-step.future { color: var(--gray-400); }
+        .circle-step.future .cnum { border-color: var(--gray-300); background: #fff; color: var(--gray-400); }
+        .step-connector { width: 32px; height: 2px; background: var(--gray-300); flex-shrink: 0; margin: 0 2px; }
+        .step-connector.done { background: var(--primary); }
+        .node-frame { width: 100%; min-height: 600px; border: 1px solid var(--gray-200); border-radius: var(--radius); background: #fff; }
+        .info-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .info-grid-2col .form-group { margin-bottom: 0; }
+        .info-grid-2col .full-width { grid-column: 1 / -1; }
+        .tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--gray-200); margin-bottom: 16px; }
+        .tab-nav .tab-btn { padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--gray-500); background: none; border-top: none; border-left: none; border-right: none; }
+        .tab-nav .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-body { display: none; }
+        .tab-body.active { display: block; }
+        .approval-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .approval-table th { text-align: left; padding: 8px 10px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
+        .approval-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-100); }
     </style>
 </head>
 <body class="content-page">
 
-<!-- 顶部导航 -->
+<!-- 顶部导航（保留面包屑） -->
 <div class="sub-navbar">
     <button class="btn btn-sm btn-outline" onclick="navTo('procurement')" style="margin-right:8px;">← 返回列表</button>
     <span class="sub-nav-title">🔍 招采详情</span>
@@ -33,158 +41,185 @@
     </span>
 </div>
 
-<!-- 基本信息卡片 -->
+<!-- 一、顶部操作按钮栏 -->
+<div class="flex gap-8 mb-12">
+    <button class="btn btn-sm btn-outline" onclick="parent.showAlert('✏️ 编辑')">✏️ 编辑</button>
+    <button class="btn btn-sm btn-primary" onclick="submitNode()">📤 提交</button>
+    <button class="btn btn-sm btn-danger" onclick="if(confirm('确认删除？'))showAlert('🗑️ 已删除')">🗑️ 删除</button>
+</div>
+
+<!-- 二、TAB 区 -->
 <div class="card">
-    <div class="card-header">
-        <h3 id="infoTitle">📄 项目名称 <span class="tag tag-yellow" style="margin-left:8px;" id="infoStatusTag">进行中</span></h3>
-        <div class="flex gap-8">
-            <button class="btn btn-sm btn-outline" onclick="showAlert('正在导出...')">📥 导出</button>
-            <button class="btn btn-sm btn-outline" onclick="showAlert('正在跳转OA审批...')">🔗 OA审批</button>
-            <button class="btn btn-sm btn-outline" onclick="showAlert('✏️ 修改功能')">✏️ 修改</button>
+    <div class="card-body" style="padding:0;">
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('tab-progress', this)">📌 招采进度</button>
+            <button class="tab-btn" onclick="switchTab('tab-approval', this)">✅ 审批流预览</button>
         </div>
-    </div>
-    <div class="card-body">
-        <div class="info-grid" id="infoGrid">
-            <div class="info-item"><div class="info-label">申请编号</div><div class="info-value" id="infoId">—</div></div>
-            <div class="info-item"><div class="info-label">采购方式</div><div class="info-value"><span class="tag tag-blue" id="infoMethod">公开招标</span></div></div>
-            <div class="info-item"><div class="info-label">采购金额</div><div class="info-value"><span class="money" id="infoAmount">—</span></div></div>
-            <div class="info-item"><div class="info-label">所属单位</div><div class="info-value" id="infoUnit">—</div></div>
-            <div class="info-item"><div class="info-label">当前节点</div><div class="info-value fw-600" id="infoNode">—</div></div>
-            <div class="info-item"><div class="info-label">关联计划</div><div class="info-value" id="infoPlan">—</div></div>
-            <div class="info-item"><div class="info-label">经办人</div><div class="info-value" id="infoHandler">—</div></div>
-            <div class="info-item"><div class="info-label">创建时间</div><div class="info-value">2026-06-19</div></div>
+
+        <!-- TAB 2.1：招采进度 -->
+        <div class="tab-body active" id="tab-progress">
+            <div class="card" style="margin-bottom:12px;">
+                <div class="card-header">
+                    <h3 id="procTitle">📌 招标管理：步骤 1 / 7 (招采申请)</h3>
+                </div>
+                <div class="card-body">
+                    <div class="circle-steps" id="stepsContainer"></div>
+                </div>
+            </div>
+            <!-- iframe 加载节点页面 -->
+            <iframe class="node-frame" id="nodeFrame" src=""></iframe>
+        </div>
+
+        <!-- TAB 2.2：审批流预览 -->
+        <div class="tab-body" id="tab-approval">
+            <div class="card" style="margin-bottom:0;">
+                <div class="card-header"><h3>✅ 审批流预览</h3></div>
+                <div class="card-body" style="padding:0;">
+                    <table class="approval-table">
+                        <thead>
+                            <tr>
+                                <th>节点描述</th>
+                                <th>审批状态</th>
+                                <th>审批日期</th>
+                                <th>流程 ID</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approvalBody">
+                            <tr><td>招采申请&招采公告</td><td><span class="tag tag-green">审批通过</span></td><td>2026-06-20</td><td>WF-2026-003-01</td></tr>
+                            <tr><td>开标信息</td><td><span class="tag tag-green">审批通过</span></td><td>2026-07-10</td><td>WF-2026-003-02</td></tr>
+                            <tr><td>上传评标结果&评标结果公示</td><td><span class="tag tag-yellow">审批中</span></td><td>—</td><td>WF-2026-003-03</td></tr>
+                            <tr><td>中标结果</td><td><span class="tag tag-gray">待提交</span></td><td>—</td><td>—</td></tr>
+                            <tr><td>中标结果公示</td><td><span class="tag tag-gray">待提交</span></td><td>—</td><td>—</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- 流程步骤条 -->
-<div class="card">
-    <div class="card-header"><h3 id="procTitle">📌 流程进度</h3></div>
-    <div class="card-body">
-        <div class="steps-bar" id="stepsContainer"></div>
-    </div>
-</div>
-
-<!-- 节点详情（用 showStepDetail 渲染） -->
-<div id="stepDetailPanel"></div>
-
-<!-- 操作按钮栏 -->
-<div class="btn-bar">
-    <div>
-        <button class="btn btn-outline" onclick="navTo('procurement')">← 返回列表</button>
-    </div>
+<!-- 六、底部全局操作栏 -->
+<div class="flex-between" style="padding:12px 0;border-top:1px solid var(--gray-200);margin-top:12px;">
+    <button class="btn btn-outline" onclick="prevStep()">← 上一步</button>
     <div class="flex gap-8">
-        <button class="btn btn-outline" onclick="showAlert('✏️ 修改功能')">✏️ 修改</button>
-        <button class="btn btn-primary" onclick="showAlert('💾 草稿已保存')">💾 保存</button>
-        <button class="btn btn-success" onclick="advanceStep()">▶ 提交审批</button>
+        <button class="btn btn-primary" onclick="nextStep()">下一步 →</button>
+        <button class="btn btn-success" onclick="showAlert('💾 已保存')">💾 保存</button>
+        <button class="btn btn-outline" onclick="navTo('procurement')">取消</button>
     </div>
 </div>
 
 <script src="../common/scripts.js"></script>
 <script>
-// ========== 当前状态 ==========
+// 公开招标 7 步流程（固定）
+var PUBLIC_BID_STEPS = [
+    '招采申请',
+    '招采公告',
+    '开标信息',
+    '上传评标结果',
+    '评标结果公示',
+    '中标结果',
+    '中标结果公示'
+];
+
 var currentMethod = '公开招标';
 var currentStep = 0;
-var doneCount = 0;
+var doneCount = 1; // 默认第1个已完成
 
-// ========== 初始化 ==========
 (function init() {
     var ctx = null;
     try { ctx = JSON.parse(sessionStorage.getItem('procurementViewContext') || 'null'); } catch(e) {}
 
     if (ctx) {
-        currentMethod = ctx.method || currentMethod;
-        currentStep = ctx.currentStep || 0;
-        doneCount = ctx.doneCount || 0;
-
         if (ctx.projectName) {
-            document.getElementById('infoTitle').innerHTML = '📄 ' + ctx.projectName;
             document.getElementById('breadProject').textContent = ctx.projectName;
         }
-        if (ctx.amount) document.getElementById('infoAmount').textContent = ctx.amount;
-        if (ctx.unit) document.getElementById('infoUnit').textContent = ctx.unit;
-        if (ctx.plan) document.getElementById('infoPlan').textContent = ctx.plan;
-        if (ctx.handler) document.getElementById('infoHandler').textContent = ctx.handler;
-        if (ctx.method) document.getElementById('infoMethod').textContent = ctx.method;
-        if (ctx.status) {
-            var tag = document.getElementById('infoStatusTag');
-            tag.textContent = ctx.status;
-            tag.className = 'tag ' + (ctx.status === '已完成' ? 'tag-green' : (ctx.status === '进行中' || ctx.status === '审批中' ? 'tag-yellow' : 'tag-gray'));
+        if (ctx.status === '进行中' || ctx.status === '审批中') {
+            doneCount = 1;
+            currentStep = 1;
+        } else if (ctx.status === '已完成') {
+            doneCount = PUBLIC_BID_STEPS.length;
+            currentStep = PUBLIC_BID_STEPS.length;
         }
         sessionStorage.removeItem('procurementViewContext');
     }
 
     renderSteps();
-    loadNodeDetail(currentStep);
+    loadNode(currentStep);
 })();
 
-// ========== 渲染步骤条（使用 common/scripts.js 的 PROCUREMENT_METHODS）==========
 function renderSteps() {
-    var data = PROCUREMENT_METHODS[currentMethod];
-    if (!data) return;
-
-    document.getElementById('procTitle').textContent = data.title;
-
     var container = document.getElementById('stepsContainer');
+    var titleEl = document.getElementById('procTitle');
+    titleEl.innerHTML = '📌 招标管理：步骤 ' + (currentStep + 1) + ' / ' + PUBLIC_BID_STEPS.length + ' (' + PUBLIC_BID_STEPS[currentStep] + ')';
+
     var html = '';
-    for (var i = 0; i < data.steps.length; i++) {
-        if (i > 0) html += '<span class="step-arrow">→</span>';
+    for (var i = 0; i < PUBLIC_BID_STEPS.length; i++) {
+        if (i > 0) {
+            var connCls = i <= doneCount ? 'done' : '';
+            html += '<span class="step-connector ' + connCls + '"></span>';
+        }
         var cls = '';
         if (i < doneCount) cls += ' done';
         else if (i === currentStep) cls += ' active';
         else cls += ' future';
         var clickable = (i <= doneCount) ? ' onclick="onStepClick(' + i + ')"' : '';
-        html += '<span class="step' + cls + '"' + clickable + '><span class="snum">' + (i + 1) + '</span> ' + data.steps[i] + '</span>';
+        html += '<span class="circle-step' + cls + '"' + clickable + '><span class="cnum">' + (i + 1) + '</span><span>' + PUBLIC_BID_STEPS[i] + '</span></span>';
     }
     container.innerHTML = html;
-
-    if (data.steps[currentStep]) {
-        document.getElementById('infoNode').textContent = data.steps[currentStep];
-    }
 }
 
-// ========== 步骤点击 ==========
 function onStepClick(index) {
-    if (index < doneCount || index === currentStep) {
+    if (index <= doneCount) {
         currentStep = index;
-        loadNodeDetail(index);
+        loadNode(index);
         renderSteps();
     }
 }
 
-// ========== 加载节点详情（使用 common/scripts.js 的 showStepDetail）==========
-function loadNodeDetail(index) {
-    var data = PROCUREMENT_METHODS[currentMethod];
-    if (!data || !data.steps[index]) return;
-
-    // 调用 common/scripts.js 中的 showStepDetail
-    // 它会将面板插入 stepDetailPanel
-    showStepDetail(currentMethod, index);
-
-    // 确保 panel 可见
-    var panel = document.getElementById('stepDetailPanel');
-    if (panel) panel.style.display = '';
+function loadNode(index) {
+    var files = [
+        'nodes/bid-apply.html',
+        'nodes/bid-announce.html',
+        'nodes/bid-opening.html',
+        'nodes/eval-result.html',
+        'nodes/eval-announce.html',
+        'nodes/award-result.html',
+        'nodes/award-announce.html'
+    ];
+    var iframe = document.getElementById('nodeFrame');
+    iframe.src = files[index] || '';
 }
 
-// ========== 推进步骤 ==========
-function advanceStep() {
-    var data = PROCUREMENT_METHODS[currentMethod];
-    if (!data) return;
-
-    if (currentStep < data.steps.length - 1) {
+function nextStep() {
+    if (currentStep < PUBLIC_BID_STEPS.length - 1) {
         doneCount = currentStep + 1;
         currentStep = doneCount;
         renderSteps();
-        loadNodeDetail(currentStep);
-        showAlert('✅ 已推进至下一节点：' + data.steps[currentStep]);
+        loadNode(currentStep);
     } else {
-        doneCount = data.steps.length;
-        currentStep = doneCount;
-        renderSteps();
-        document.getElementById('infoStatusTag').textContent = '已完成';
-        document.getElementById('infoStatusTag').className = 'tag tag-green';
-        showAlert('🎉 招采流程已完成，所有节点已归档。');
+        showAlert('🎉 已到达最后一步');
     }
+}
+
+function prevStep() {
+    if (currentStep > 0) {
+        currentStep--;
+        renderSteps();
+        loadNode(currentStep);
+    } else {
+        showAlert('已经第一步');
+    }
+}
+
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-body').forEach(function(t) { t.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+}
+
+function submitNode() {
+    showAlert('📤 已提交当前节点审批');
 }
 </script>
 </body>
