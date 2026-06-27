@@ -130,7 +130,7 @@ function renderSteps() {
     var html = '';
     for (var i = 0; i < PUBLIC_BID_STEPS.length; i++) {
         if (i > 0) html += '<span class="step-connector ' + (i <= doneCount ? 'done' : '') + '"></span>';
-        var cls = i < doneCount ? ' done' : (i === currentStep ? ' active' : ' future');
+        var cls = i === currentStep ? ' active' : (i < doneCount ? ' done' : ' future');
         html += '<span class="circle-step' + cls + '"' + (i <= doneCount ? ' onclick="onStepClick(' + i + ')"' : '') + '><span class="cnum">' + (i + 1) + '</span><span>' + PUBLIC_BID_STEPS[i] + '</span></span>';
     }
     container.innerHTML = html;
