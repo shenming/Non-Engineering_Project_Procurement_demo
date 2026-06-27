@@ -12,7 +12,7 @@
 
 <div class="flex-between mb-16">
     <div>
-        <span class="text-muted">共 <strong id="totalCount">8</strong> 条采购记录</span>
+        <span class="text-muted">共 <strong id="totalCount">9</strong> 条采购记录</span>
     </div>
     <div class="flex gap-8">
         <button class="btn btn-sm btn-outline">📥 导出</button>
@@ -62,7 +62,19 @@
                         <td>评标&公示</td>
                         <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
-                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
+                        </td>
+                    </tr>
+                    <tr data-id="ZB-2026-011" data-plan-item-id="PL-2026-0021-1" data-status="进行中" data-method="邀请招标">
+                        <td><strong>ZB-2026-011</strong></td>
+                        <td>弱电系统维保服务</td>
+                        <td><span class="tag tag-blue">邀请招标</span></td>
+                        <td><span class="money">¥85.0万</span></td>
+                        <td>集团总部</td>
+                        <td>招标申请</td>
+                        <td><span class="tag tag-yellow">进行中</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
                     <tr data-id="ZB-2026-005" data-plan-item-id="PL-2026-0010-1" data-status="已完成" data-method="询比采购">
@@ -74,7 +86,7 @@
                         <td>已定标</td>
                         <td><span class="tag tag-green">已完成</span></td>
                         <td>
-                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
                     <tr data-id="ZB-2026-006" data-plan-item-id="PL-2026-0001-1" data-status="审批中" data-method="直接采购">
@@ -86,7 +98,7 @@
                         <td>采购申请</td>
                         <td><span class="tag tag-blue">审批中</span></td>
                         <td>
-                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
                     <tr data-id="ZB-2026-007" data-plan-item-id="PL-2026-0015-1" data-status="进行中" data-method="谈判采购">
@@ -98,7 +110,7 @@
                         <td>谈判中</td>
                         <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
-                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
                     <tr data-id="ZB-2026-008" data-plan-item-id="PL-2026-0003-1" data-status="进行中" data-method="公开招标">
@@ -110,7 +122,7 @@
                         <td>开标</td>
                         <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
-                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
                     <tr data-id="ZB-2026-009" data-plan-item-id="PL-2026-0004-1" data-status="已完成" data-method="谈判采购">
@@ -122,7 +134,7 @@
                         <td>谈判结束</td>
                         <td><span class="tag tag-green">已完成</span></td>
                         <td>
-                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
                     <tr data-id="ZB-2026-010" data-plan-item-id="PL-2026-0002-2" data-status="草稿" data-method="询比采购">
@@ -134,8 +146,20 @@
                         <td>采购申请</td>
                         <td><span class="tag tag-gray">草稿</span></td>
                         <td>
-                            <button class="btn btn-xs btn-outline" onclick="navTo('procurement','procurement/view.html')">查看</button>
+                            <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                             <button class="btn btn-xs btn-danger" onclick="deleteProcurement(this)" data-proc-id="ZB-2026-010" data-plan-item-id="PL-2026-0002-2">删除</button>
+                        </td>
+                    </tr>
+                    <tr data-id="ZB-2026-012" data-plan-item-id="PL-2026-0022-1" data-status="已完成" data-method="询比采购">
+                        <td><strong>ZB-2026-012</strong></td>
+                        <td>台式计算机采购</td>
+                        <td><span class="tag tag-purple">询比采购</span></td>
+                        <td><span class="money">¥60.0万</span></td>
+                        <td>成员企业B</td>
+                        <td>已定标</td>
+                        <td><span class="tag tag-green">已完成</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
                 </tbody>
@@ -143,11 +167,10 @@
         </div>
     </div>
     <div class="card-header" style="border-top:1px solid var(--gray-200);">
-        <span class="text-muted text-sm" id="pageInfo">显示 1-7 / 共 8 条</span>
+        <span class="text-muted text-sm" id="pageInfo">显示 1-9 / 共 9 条</span>
         <div class="flex gap-8">
             <button class="btn btn-xs btn-outline" disabled>上一页</button>
             <button class="btn btn-xs btn-primary">1</button>
-            <button class="btn btn-xs btn-outline">2</button>
             <button class="btn btn-xs btn-outline" disabled>下一页</button>
         </div>
     </div>
@@ -165,25 +188,65 @@
 var sortCol = -1;
 var sortAsc = true;
 
+// ========== 查看详情（携带采购方式）==========
+function viewProcurement(btn) {
+    var row = btn.closest('tr');
+    var method = row.getAttribute('data-method') || '公开招标';
+    var cells = row.cells;
+    var projectName = cells[1] ? cells[1].textContent.trim() : '';
+    var amountText = cells[3] ? cells[3].textContent.trim() : '';
+    var unit = cells[4] ? cells[4].textContent.trim() : '';
+    var nodeText = cells[5] ? cells[5].textContent.trim() : '';
+    var status = row.getAttribute('data-status') || '进行中';
+
+    // 根据采购方式映射步骤数来确定 currentStep/doneCount
+    var steps = PROCUREMENT_METHODS[method] ? PROCUREMENT_METHODS[method].steps : [];
+    var currentStep = 0;
+    var doneCount = 0;
+    if (status === '已完成') {
+        doneCount = steps.length;
+        currentStep = steps.length;
+    } else if (status === '进行中' || status === '审批中') {
+        // 根据当前节点文本估算进度
+        for (var i = 0; i < steps.length; i++) {
+            if (steps[i].indexOf(nodeText.replace('&','')) !== -1 || nodeText.indexOf(steps[i]) !== -1) {
+                doneCount = i;
+                currentStep = i;
+                break;
+            }
+        }
+    }
+
+    var ctx = {
+        method: method,
+        projectName: projectName,
+        amount: amountText,
+        unit: unit,
+        plan: '',
+        handler: '',
+        status: status,
+        currentStep: currentStep,
+        doneCount: doneCount
+    };
+    sessionStorage.setItem('procurementViewContext', JSON.stringify(ctx));
+    navTo('procurement', 'procurement/view.html');
+}
+
 // ========== 列排序 ==========
 function sortTable(col) {
     var tbody = document.getElementById('procTableBody');
     var rows = Array.from(tbody.querySelectorAll('tr'));
 
-    // 切换排序方向
     if (sortCol === col) { sortAsc = !sortAsc; }
     else { sortCol = col; sortAsc = true; }
 
-    // 清除所有箭头
     document.querySelectorAll('.sort-arrow').forEach(function(a) { a.className = 'sort-arrow'; });
-    // 设置当前箭头
     var th = document.querySelector('th[data-col="' + col + '"] .sort-arrow');
     if (th) th.className = 'sort-arrow ' + (sortAsc ? 'asc' : 'desc');
 
     rows.sort(function(a, b) {
         var cellA = (a.cells[col] || {}).textContent || '';
         var cellB = (b.cells[col] || {}).textContent || '';
-        // 金额列：提取数字
         if (col === 3) {
             var na = parseFloat(cellA.replace(/[^0-9.]/g, '')) || 0;
             var nb = parseFloat(cellB.replace(/[^0-9.]/g, '')) || 0;
@@ -241,11 +304,9 @@ function deleteProcurement(btn) {
 
     if (!confirm('确定删除采购记录 ' + procId + ' 吗？\n\n删除后，关联招采项将恢复为「未引用」状态，可重新发起申请。')) return;
 
-    // 移除该行
     var row = btn.closest('tr');
     if (row) row.remove();
 
-    // 更新招采项引用状态为「未引用」
     var map = getRefStatusMap();
     map[planItemId] = '未引用';
     setRefStatusMap(map);
