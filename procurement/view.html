@@ -25,6 +25,7 @@
         .approval-table th { text-align: left; padding: 8px 10px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
         .approval-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-100); }
         .ver-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; background: var(--primary-lighter); color: var(--primary-light); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     </style>
 </head>
 <body class="content-page">
@@ -47,6 +48,7 @@
             <span class="tag tag-yellow" id="infoStatusTag" style="margin-left:8px;">进行中</span>
         </div>
         <div class="flex gap-8">
+            <button class="btn btn-sm btn-outline" onclick="editProcurement()">✏️ 编辑</button>
             <button class="btn btn-sm btn-danger" onclick="if(confirm('确认删除？'))showAlert('🗑️ 已删除')">🗑️ 删除</button>
             <button class="btn btn-sm btn-primary" onclick="submitNode()">📤 提交</button>
         </div>
@@ -92,9 +94,9 @@
 
 <!-- 底部全局操作栏 -->
 <div class="flex-between" style="padding:12px 0;border-top:1px solid var(--gray-200);margin-top:12px;">
-    <button class="btn btn-outline" onclick="prevStep()">← 上一步</button>
+    <button id="prevBtn" class="btn btn-outline" onclick="prevStep()">← 上一步</button>
     <div class="flex gap-8">
-        <button class="btn btn-primary" onclick="nextStep()">下一步 →</button>
+        <button id="nextBtn" class="btn btn-primary" onclick="nextStep()">下一步 →</button>
         <button class="btn btn-outline" onclick="navTo('procurement')">取消</button>
     </div>
 </div>
@@ -134,10 +136,11 @@ function renderSteps() {
         html += '<span class="circle-step' + cls + '"' + (i <= doneCount ? ' onclick="onStepClick(' + i + ')"' : '') + '><span class="cnum">' + (i + 1) + '</span><span>' + PUBLIC_BID_STEPS[i] + '</span></span>';
     }
     container.innerHTML = html;
+    updateNavButtons();
 }
 
 function onStepClick(index) {
-    if (index <= doneCount) { currentStep = index; loadNode(index); renderSteps(); }
+    if (index <= doneCount) { currentStep = index; loadNode(index); renderSteps(); updateNavButtons(); }
 }
 
 function loadNode(index) {
@@ -160,6 +163,13 @@ function switchTab(tabId, btn) {
     document.querySelectorAll('.tab-body').forEach(function(t) { t.classList.remove('active'); });
     btn.classList.add('active');
     document.getElementById(tabId).classList.add('active');
+}
+
+function editProcurement() { showAlert('✏️ 进入编辑模式'); }
+
+function updateNavButtons() {
+    document.getElementById('prevBtn').disabled = (currentStep === 0);
+    document.getElementById('nextBtn').disabled = (currentStep >= doneCount || currentStep >= PUBLIC_BID_STEPS.length - 1);
 }
 
 function submitNode() { showAlert('📤 已提交当前节点审批'); }
