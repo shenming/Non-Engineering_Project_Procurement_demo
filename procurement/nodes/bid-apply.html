@@ -202,16 +202,40 @@ var SECTION_DATA = {
     ]
 };
 
+// 附件数据（采购明细选择联动）
+var ATTACH_DATA = {
+    0: [
+        { type: '*招标文件', name: '集团物业服务招标文件_v2.pdf', file: 'ZB-2026-003-ZB.pdf', fileId: 'F202606001', fileType: 'pdf', size: '2,456,832', ts: '2026-06-19 10:30', user: '李经理' },
+        { type: '*招标公告', name: '集团物业服务招标公告.pdf', file: 'ZB-2026-003-GG.pdf', fileId: 'F202606002', fileType: 'pdf', size: '1,023,456', ts: '2026-06-19 10:35', user: '李经理' }
+    ],
+    1: [
+        { type: '*招标文件', name: 'IT设备采购招标文件_v1.pdf', file: 'ZB-2026-010-ZB.pdf', fileId: 'F202606010', fileType: 'pdf', size: '3,124,789', ts: '2026-06-20 14:00', user: '王磊' },
+        { type: '*招标公告', name: 'IT设备采购招标公告.pdf', file: 'ZB-2026-010-GG.pdf', fileId: 'F202606011', fileType: 'pdf', size: '876,543', ts: '2026-06-20 14:05', user: '王磊' },
+        { type: '技术规范书', name: 'IT设备技术参数.docx', file: 'ZB-2026-010-JS.pdf', fileId: 'F202606012', fileType: 'docx', size: '567,890', ts: '2026-06-20 14:10', user: '王磊' }
+    ]
+};
+
 function onPurchaseSelect(radio) {
     var row = radio.closest('tr');
     var idx = parseInt(row.getAttribute('data-idx'));
+
+    // 更新标段明细
     var sections = SECTION_DATA[idx] || [];
-    var tbody = document.getElementById('bidSectionBody');
-    var html = '';
+    var stbody = document.getElementById('bidSectionBody');
+    var shtml = '';
     sections.forEach(function(s) {
-        html += '<tr><td>' + s.seq + '</td><td>' + s.name + '</td><td><span class="money">¥' + s.limit.toLocaleString('en-US', {minimumFractionDigits:2}) + '元</span></td><td>' + s.planId + '</td><td>' + s.planRow + '</td><td>' + s.purchaseName + '</td><td><span class="money">¥' + s.amount.toLocaleString('en-US', {minimumFractionDigits:2}) + '元</span></td><td>' + s.sections + '</td><td>' + s.cat + '</td><td>' + s.subCat + '</td><td>' + s.target + '</td></tr>';
+        shtml += '<tr><td>' + s.seq + '</td><td>' + s.name + '</td><td><span class="money">¥' + s.limit.toLocaleString('en-US', {minimumFractionDigits:2}) + '元</span></td><td>' + s.planId + '</td><td>' + s.planRow + '</td><td>' + s.purchaseName + '</td><td><span class="money">¥' + s.amount.toLocaleString('en-US', {minimumFractionDigits:2}) + '元</span></td><td>' + s.sections + '</td><td>' + s.cat + '</td><td>' + s.subCat + '</td><td>' + s.target + '</td></tr>';
     });
-    tbody.innerHTML = html;
+    stbody.innerHTML = shtml;
+
+    // 更新附件明细
+    var atts = ATTACH_DATA[idx] || [];
+    var atbody = document.getElementById('attachBody');
+    var ahtml = '';
+    atts.forEach(function(a) {
+        ahtml += '<tr><td><input type="checkbox" class="attach-checkbox"></td><td><span class="op-icon" onclick="parent.showAlert(\'上传\')">📤</span><span class="op-icon" onclick="parent.showAlert(\'删除\')">🗑️</span><span class="op-icon" onclick="parent.showAlert(\'预览\')">👁️</span><span class="op-icon" onclick="parent.showAlert(\'下载\')">⬇️</span></td><td>' + a.type + '</td><td>' + a.name + '</td><td>' + a.file + '</td><td>' + a.fileId + '</td><td>' + a.fileType + '</td><td>' + a.size + '</td><td>' + a.ts + '</td><td>' + a.user + '</td></tr>';
+    });
+    atbody.innerHTML = ahtml;
 }
 </script>
 </body>
