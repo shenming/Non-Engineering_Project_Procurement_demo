@@ -104,6 +104,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th style="width:36px;"></th>
                         <th>标段号</th>
                         <th>招标采购名称</th>
                         <th>招采限额</th>
@@ -118,7 +119,8 @@
                     </tr>
                 </thead>
                 <tbody id="bidSectionBody">
-                    <tr>
+                    <tr data-purchase-idx="0" data-section-seq="0">
+                        <td><input type="radio" name="sectionSelect" checked onchange="onSectionSelect(this)"></td>
                         <td>1</td>
                         <td>集团年度物业服务</td>
                         <td><span class="money">¥1,865,000.00元</span></td>
@@ -155,32 +157,7 @@
                         <th>用户名</th>
                     </tr>
                 </thead>
-                <tbody id="attachBody">
-                    <tr>
-                        <td><input type="checkbox" class="attach-checkbox"></td>
-                        <td><span class="op-icon" onclick="parent.showAlert('上传')">📤</span><span class="op-icon" onclick="parent.showAlert('删除')">🗑️</span><span class="op-icon" onclick="parent.showAlert('预览')">👁️</span><span class="op-icon" onclick="parent.showAlert('下载')">⬇️</span></td>
-                        <td><span class="tag tag-red" style="font-size:10px;">*招标文件</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="attach-checkbox"></td>
-                        <td><span class="op-icon" onclick="parent.showAlert('上传')">📤</span><span class="op-icon" onclick="parent.showAlert('删除')">🗑️</span><span class="op-icon" onclick="parent.showAlert('预览')">👁️</span><span class="op-icon" onclick="parent.showAlert('下载')">⬇️</span></td>
-                        <td><span class="tag tag-red" style="font-size:10px;">*招标公告</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                    </tr>
-                </tbody>
+                <tbody id="attachBody"></tbody>
             </table>
         </div>
         <div class="text-xs text-muted" style="padding:8px 10px;">支持多选行批量操作</div>
@@ -202,40 +179,69 @@ var SECTION_DATA = {
     ]
 };
 
-// 附件数据（采购明细选择联动）
-var ATTACH_DATA = {
-    0: [
+// 附件数据按 [采购idx][标段seq-1] 索引
+var ATTACH_BY_SECTION = {
+    '0_0': [
         { type: '*招标文件', name: '集团物业服务招标文件_v2.pdf', file: 'ZB-2026-003-ZB.pdf', fileId: 'F202606001', fileType: 'pdf', size: '2,456,832', ts: '2026-06-19 10:30', user: '李经理' },
         { type: '*招标公告', name: '集团物业服务招标公告.pdf', file: 'ZB-2026-003-GG.pdf', fileId: 'F202606002', fileType: 'pdf', size: '1,023,456', ts: '2026-06-19 10:35', user: '李经理' }
     ],
-    1: [
-        { type: '*招标文件', name: 'IT设备采购招标文件_v1.pdf', file: 'ZB-2026-010-ZB.pdf', fileId: 'F202606010', fileType: 'pdf', size: '3,124,789', ts: '2026-06-20 14:00', user: '王磊' },
-        { type: '*招标公告', name: 'IT设备采购招标公告.pdf', file: 'ZB-2026-010-GG.pdf', fileId: 'F202606011', fileType: 'pdf', size: '876,543', ts: '2026-06-20 14:05', user: '王磊' },
-        { type: '技术规范书', name: 'IT设备技术参数.docx', file: 'ZB-2026-010-JS.pdf', fileId: 'F202606012', fileType: 'docx', size: '567,890', ts: '2026-06-20 14:10', user: '王磊' }
+    '1_0': [
+        { type: '*招标文件', name: 'IT设备-标段1招标文件.pdf', file: 'ZB-2026-010-S1-ZB.pdf', fileId: 'F202606010', fileType: 'pdf', size: '1,200,000', ts: '2026-06-20 14:00', user: '王磊' },
+        { type: '*招标公告', name: 'IT设备-标段1招标公告.pdf', file: 'ZB-2026-010-S1-GG.pdf', fileId: 'F202606011', fileType: 'pdf', size: '450,000', ts: '2026-06-20 14:05', user: '王磊' }
+    ],
+    '1_1': [
+        { type: '*招标文件', name: 'IT设备-标段2招标文件.pdf', file: 'ZB-2026-010-S2-ZB.pdf', fileId: 'F202606012', fileType: 'pdf', size: '1,100,000', ts: '2026-06-20 15:00', user: '王磊' },
+        { type: '*招标公告', name: 'IT设备-标段2招标公告.pdf', file: 'ZB-2026-010-S2-GG.pdf', fileId: 'F202606013', fileType: 'pdf', size: '380,000', ts: '2026-06-20 15:05', user: '王磊' },
+        { type: '技术规范书', name: 'IT设备-标段2技术参数.pdf', file: 'ZB-2026-010-S2-JS.pdf', fileId: 'F202606014', fileType: 'pdf', size: '890,000', ts: '2026-06-20 15:10', user: '王磊' }
+    ],
+    '1_2': [
+        { type: '*招标文件', name: 'IT设备-标段3招标文件.pdf', file: 'ZB-2026-010-S3-ZB.pdf', fileId: 'F202606015', fileType: 'pdf', size: '950,000', ts: '2026-06-20 16:00', user: '王磊' },
+        { type: '配置清单', name: 'IT设备-标段3配置清单.xlsx', file: 'ZB-2026-010-S3-PZ.xlsx', fileId: 'F202606016', fileType: 'xlsx', size: '320,000', ts: '2026-06-20 16:05', user: '王磊' }
     ]
 };
+
+function renderSectionRows(sections, purchaseIdx) {
+    var shtml = '';
+    sections.forEach(function(s, si) {
+        var checked = (si === 0) ? ' checked' : '';
+        shtml += '<tr data-purchase-idx="' + purchaseIdx + '" data-section-seq="' + (si) + '"><td><input type="radio" name="sectionSelect" onchange="onSectionSelect(this)"' + checked + '></td><td>' + s.seq + '</td><td>' + s.name + '</td><td><span class="money">¥' + s.limit.toLocaleString('en-US', {minimumFractionDigits:2}) + '元</span></td><td>' + s.planId + '</td><td>' + s.planRow + '</td><td>' + s.purchaseName + '</td><td><span class="money">¥' + s.amount.toLocaleString('en-US', {minimumFractionDigits:2}) + '元</span></td><td>' + s.sections + '</td><td>' + s.cat + '</td><td>' + s.subCat + '</td><td>' + s.target + '</td></tr>';
+    });
+    return shtml;
+}
+
+function renderAttachRows(purchaseIdx, sectionSeq) {
+    var key = purchaseIdx + '_' + sectionSeq;
+    var atts = ATTACH_BY_SECTION[key] || [];
+    var ahtml = '';
+    atts.forEach(function(a) {
+        ahtml += '<tr><td><input type="checkbox" class="attach-checkbox"></td><td><span class="op-icon" onclick="parent.showAlert(\'上传\')">📤</span><span class="op-icon" onclick="parent.showAlert(\'删除\')">🗑️</span><span class="op-icon" onclick="parent.showAlert(\'预览\')">👁️</span><span class="op-icon" onclick="parent.showAlert(\'下载\')">⬇️</span></td><td>' + a.type + '</td><td>' + a.name + '</td><td>' + a.file + '</td><td>' + a.fileId + '</td><td>' + a.fileType + '</td><td>' + a.size + '</td><td>' + a.ts + '</td><td>' + a.user + '</td></tr>';
+    });
+    return ahtml;
+}
 
 function onPurchaseSelect(radio) {
     var row = radio.closest('tr');
     var idx = parseInt(row.getAttribute('data-idx'));
 
-    // 更新标段明细
+    // 更新标段明细（含 radio）
     var sections = SECTION_DATA[idx] || [];
-    var stbody = document.getElementById('bidSectionBody');
-    var shtml = '';
-    sections.forEach(function(s) {
-        shtml += '<tr><td>' + s.seq + '</td><td>' + s.name + '</td><td><span class="money">¥' + s.limit.toLocaleString('en-US', {minimumFractionDigits:2}) + '元</span></td><td>' + s.planId + '</td><td>' + s.planRow + '</td><td>' + s.purchaseName + '</td><td><span class="money">¥' + s.amount.toLocaleString('en-US', {minimumFractionDigits:2}) + '元</span></td><td>' + s.sections + '</td><td>' + s.cat + '</td><td>' + s.subCat + '</td><td>' + s.target + '</td></tr>';
-    });
-    stbody.innerHTML = shtml;
+    document.getElementById('bidSectionBody').innerHTML = renderSectionRows(sections, idx);
 
-    // 更新附件明细
-    var atts = ATTACH_DATA[idx] || [];
-    var atbody = document.getElementById('attachBody');
-    var ahtml = '';
-    atts.forEach(function(a) {
-        ahtml += '<tr><td><input type="checkbox" class="attach-checkbox"></td><td><span class="op-icon" onclick="parent.showAlert(\'上传\')">📤</span><span class="op-icon" onclick="parent.showAlert(\'删除\')">🗑️</span><span class="op-icon" onclick="parent.showAlert(\'预览\')">👁️</span><span class="op-icon" onclick="parent.showAlert(\'下载\')">⬇️</span></td><td>' + a.type + '</td><td>' + a.name + '</td><td>' + a.file + '</td><td>' + a.fileId + '</td><td>' + a.fileType + '</td><td>' + a.size + '</td><td>' + a.ts + '</td><td>' + a.user + '</td></tr>';
-    });
-    atbody.innerHTML = ahtml;
+    // 默认选中第一个标段，加载对应附件
+    if (sections.length > 0) {
+        document.getElementById('attachBody').innerHTML = renderAttachRows(idx, 0);
+    } else {
+        document.getElementById('attachBody').innerHTML = '';
+    }
+}
+
+function onSectionSelect(radio) {
+    var row = radio.closest('tr');
+    var purchaseIdx = parseInt(row.getAttribute('data-purchase-idx'));
+    var sectionSeq = parseInt(row.getAttribute('data-section-seq'));
+
+    // 更新附件明细（根据采购idx + 标段seq）
+    document.getElementById('attachBody').innerHTML = renderAttachRows(purchaseIdx, sectionSeq);
 }
 </script>
 </body>
