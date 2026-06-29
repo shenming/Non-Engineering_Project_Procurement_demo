@@ -1,0 +1,339 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../../common/styles.css">
+<style>
+body.content-page { padding: 16px; }
+.info-card { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+.info-card .card-header { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+.info-card .card-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.info-card .card-body { padding: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 4px; }
+.form-group:last-child { margin-bottom: 0; }
+.attach-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.attach-table th { text-align: left; padding: 6px 8px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); font-size: 11px; white-space: nowrap; }
+.attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
+.attach-table .op-icon { cursor: pointer; color: var(--primary); font-size: 14px; margin: 0 2px; }
+.attach-table .op-icon.disabled { color: var(--gray-400); cursor: not-allowed; pointer-events: none; }
+.form-control[readonly],
+.form-control:disabled { background: var(--gray-50); color: var(--gray-600); cursor: not-allowed; }
+select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
+</style>
+</head>
+<body class="content-page">
+
+<div class="card" style="margin:0;border:none;box-shadow:none;">
+
+    <!-- ===== 妯″潡 1锛氭嫑閲囦俊鎭紙鎺т欢鍙妯″紡锛?===== -->
+    <div class="card-header"><h3>馃搵 鎷涢噰淇℃伅</h3></div>
+    <div class="card-body">
+        <!-- 绗?琛?-->
+        <div class="form-row">
+            <div class="form-group">
+                <label>鎷涙爣杩囩▼缂栧彿</label>
+                <input class="form-control" value="ZB-2026-003" readonly>
+            </div>
+            <div class="form-group">
+                <label>鎷涙爣杩囩▼鍚嶇О</label>
+                <input class="form-control" value="闆嗗洟骞村害鐗╀笟鏈嶅姟" readonly>
+            </div>
+        </div>
+        <!-- 绗?琛?-->
+        <div class="form-row">
+            <div class="form-group">
+                <label>鍏徃缂栧彿</label>
+                <input class="form-control" value="HQ-001" readonly>
+            </div>
+            <div class="form-group">
+                <label>鎷涢噰闄愰</label>
+                <input class="form-control" value="楼1,865,000.00鍏? readonly>
+            </div>
+        </div>
+        <!-- 绗?琛?-->
+        <div class="form-row">
+            <div class="form-group">
+                <label>鎷涙爣鏂瑰紡</label>
+                <select class="form-control" disabled>
+                    <option>鍏紑鎷涙爣</option>
+                    <option>閭€璇锋嫑鏍?/option>
+                    <option>璇㈡瘮閲囪喘</option>
+                    <option>璋堝垽閲囪喘</option>
+                    <option>鐩存帴閲囪喘</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>鎷涢噰绫诲瀷</label>
+                <select class="form-control" disabled>
+                    <option>鏈嶅姟绫?路 鐗╀笟鏈嶅姟</option>
+                    <option>鏈嶅姟绫?路 娉曞緥鏈嶅姟</option>
+                    <option>鏈嶅姟绫?路 鍜ㄨ鏈嶅姟</option>
+                    <option>鏈嶅姟绫?路 鍩硅鏈嶅姟</option>
+                    <option>鏈嶅姟绫?路 缁存姢鏈嶅姟</option>
+                    <option>璐х墿绫?路 IT绫?/option>
+                    <option>璐х墿绫?路 鍔炲叕鐢ㄥ搧绫?/option>
+                    <option>璐х墿绫?路 璁惧绫?/option>
+                    <option>璐х墿绫?路 瀹跺叿绫?/option>
+                </select>
+            </div>
+        </div>
+        <!-- 绗?琛?-->
+        <div class="form-row">
+            <div class="form-group">
+                <label>閲囪喘椤硅鏄?/label>
+                <select class="form-control" disabled>
+                    <option value="">鈥?鍏紑鎷涙爣涓嶉檺閲戦闂ㄦ锛屼紒涓氬彲鑷富閫夋嫨</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>缁忓姙浜?/label>
+                <input class="form-control" value="鏉庣粡鐞? readonly>
+            </div>
+        </div>
+        <!-- 绗?琛?-->
+        <div class="form-row">
+            <div class="form-group">
+                <label>鐢宠鏃ユ湡</label>
+                <input class="form-control" value="2026-06-19" readonly>
+            </div>
+            <div class="form-group">
+                <label>鎷涙爣浠ｇ悊鏈烘瀯</label>
+                <input class="form-control" value="涓婃捣XX鎷涙爣浠ｇ悊鏈夐檺鍏徃" readonly>
+            </div>
+        </div>
+        <!-- 绗?琛?-->
+        <div class="form-row">
+            <div class="form-group">
+                <label>鎷熷彂鏍囨棩鏈?/label>
+                <input type="date" class="form-control" value="2026-06-19" disabled>
+            </div>
+            <div class="form-group">
+                <label>鎷涙爣棰勮瀹屾垚鏃ユ湡</label>
+                <input type="date" class="form-control" value="2026-07-25" disabled>
+            </div>
+        </div>
+        <!-- 绗?琛?-->
+        <div class="form-row">
+            <div class="form-group">
+                <label>鏄惁杩涘満鎷涙爣</label>
+                <input class="form-control" value="鍚? readonly>
+            </div>
+            <div class="form-group">
+                <label>瀹℃壒鐘舵€?/label>
+                <input class="form-control" value="瀹℃壒閫氳繃" disabled>
+            </div>
+        </div>
+        <!-- 绗?琛岋細閫氭爮 -->
+        <div class="form-group" style="margin-bottom:0;">
+            <label>鎷涙爣鑼冨洿鍙婄浉鍏宠鏄?/label>
+            <textarea class="form-control" rows="3" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;resize:none;">闆嗗洟鎬婚儴澶фゼA/B搴с€佸洯鍖虹豢鍖栥€佸畨淇濈瓑鐗╀笟鏈嶅姟锛屾湇鍔℃湡12涓湀銆?/textarea>
+        </div>
+    </div>
+
+    <!-- ===== 妯″潡 2锛氶噰璐槑缁嗭紙澧炲姞閲囪喘椤硅鏄庡垪锛?===== -->
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>馃搵 閲囪喘鏄庣粏</h3></div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36px;"></th>
+                        <th>鎷涙爣閲囪喘鍚嶇О</th>
+                        <th>閲囪喘璁″垝缂栧彿</th>
+                        <th>琛屽彿</th>
+                        <th>閲囪喘鍚嶇О</th>
+                        <th>閲囪喘閲戦鍚◣锛堝厓锛?/th>
+                        <th>鏍囨鏁?/th>
+                        <th>鎷涢噰鍝佺被</th>
+                        <th>浜岀骇鍝佺被</th>
+                        <th>鎷涢噰鐩爣</th>
+                        <th>閲囪喘椤硅鏄?/th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-idx="0" data-sections="1" data-amount="1865000.00">
+                        <td><input type="radio" name="purchaseSelect" checked onchange="onPurchaseSelect(this)"></td>
+                        <td>闆嗗洟骞村害鐗╀笟鏈嶅姟</td>
+                        <td>PL-2026-0002</td>
+                        <td>001</td>
+                        <td>闆嗗洟骞村害鐗╀笟鏈嶅姟</td>
+                        <td><span class="money">楼1,865,000.00鍏?/span></td>
+                        <td>1</td>
+                        <td>鏈嶅姟绫?/td>
+                        <td>鐗╀笟鏈嶅姟</td>
+                        <td>涓诲悎鍚?/td>
+                        <td><select disabled style="font-size:11px;padding:2px 4px;border:1px solid var(--gray-300);border-radius:4px;background:var(--gray-50);color:var(--gray-600);"><option>鍏紑鎷涙爣涓嶉檺閲戦闂ㄦ</option></select></td>
+                    </tr>
+                    <tr data-idx="1" data-sections="3" data-amount="2450000.00">
+                        <td><input type="radio" name="purchaseSelect" onchange="onPurchaseSelect(this)"></td>
+                        <td>IT璁惧閲囪喘</td>
+                        <td>PL-2026-0010</td>
+                        <td>001</td>
+                        <td>鍙板紡璁＄畻鏈哄強鏈嶅姟鍣?/td>
+                        <td><span class="money">楼2,450,000.00鍏?/span></td>
+                        <td>3</td>
+                        <td>璐х墿绫?/td>
+                        <td>IT绫?/td>
+                        <td>涓诲悎鍚?/td>
+                        <td><select disabled style="font-size:11px;padding:2px 4px;border:1px solid var(--gray-300);border-radius:4px;background:var(--gray-50);color:var(--gray-600);"><option>鈥?/option></select></td>
+                    </tr>
+                <tfoot>
+                    <tr><td colspan="11" class="text-sm text-muted" style="padding:6px 10px;">閲囪喘閲戦鍚堣锛?span class="money">楼1,865,000.00鍏?/span>锝滄嫑閲囬檺棰濓細<span class="money">楼1,865,000.00鍏?/span></td></tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== 妯″潡 3锛氭爣娈垫槑缁嗭紙澧炲姞閲囪喘椤硅鏄庡垪锛?===== -->
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>馃搵 鏍囨鏄庣粏</h3></div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36px;"></th>
+                        <th>鏍囨鍙?/th>
+                        <th>鎷涙爣閲囪喘鍚嶇О</th>
+                        <th>鎷涢噰闄愰</th>
+                        <th>閲囪喘璁″垝缂栧彿</th>
+                        <th>琛屽彿</th>
+                        <th>閲囪喘鍚嶇О</th>
+                        <th>閲囪喘閲戦鍚◣</th>
+                        <th>鏍囨鏁?/th>
+                        <th>鎷涢噰鍝佺被</th>
+                        <th>浜岀骇鍝佺被</th>
+                        <th>鎷涢噰鐩爣</th>
+                        <th>閲囪喘椤硅鏄?/th>
+                    </tr>
+                </thead>
+                <tbody id="bidSectionBody">
+                    <tr data-purchase-idx="0" data-section-seq="0">
+                        <td><input type="radio" name="sectionSelect" checked onchange="onSectionSelect(this)"></td>
+                        <td>1</td>
+                        <td>闆嗗洟骞村害鐗╀笟鏈嶅姟</td>
+                        <td><span class="money">楼1,865,000.00鍏?/span></td>
+                        <td>PL-2026-0002</td>
+                        <td>001</td>
+                        <td>闆嗗洟骞村害鐗╀笟鏈嶅姟</td>
+                        <td><span class="money">楼1,865,000.00鍏?/span></td>
+                        <td>1</td>
+                        <td>鏈嶅姟绫?/td>
+                        <td>鐗╀笟鏈嶅姟</td>
+                        <td>涓诲悎鍚?/td>
+                        <td><select disabled style="font-size:11px;padding:2px 4px;border:1px solid var(--gray-300);border-radius:4px;background:var(--gray-50);color:var(--gray-600);"><option>鍏紑鎷涙爣涓嶉檺閲戦闂ㄦ</option></select></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== 妯″潡 4锛氶檮浠剁鐞嗭紙鍙妯″紡锛屼笂浼?鍒犻櫎 disabled锛?===== -->
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>馃搸 闄勪欢绠＄悊</h3></div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table class="attach-table">
+                <thead>
+                    <tr>
+                        <th style="width:120px;">鎿嶄綔</th>
+                        <th>闄勪欢绫诲瀷</th>
+                        <th>闄勪欢鏂囨。鍚嶇О</th>
+                        <th>鏂囦欢鍚嶏紙涓嬭浇锛?/th>
+                        <th>鏂囦欢 ID</th>
+                        <th>鏂囦欢绫诲瀷</th>
+                        <th>鏂囦欢澶у皬锛堝瓧鑺傦級</th>
+                        <th>鏃舵埑</th>
+                        <th>鐢ㄦ埛鍚?/th>
+                    </tr>
+                </thead>
+                <tbody id="attachBody">
+                    <tr data-id="a1">
+                        <td>
+                            <span class="op-icon disabled" title="涓婁紶锛堜粎鏌ョ湅妯″紡锛?>馃摛</span>
+                            <span class="op-icon disabled" title="鍒犻櫎锛堜粎鏌ョ湅妯″紡锛?>馃棏锔?/span>
+                            <span class="op-icon" onclick="alert('馃憗锔?棰勮')" title="棰勮">馃憗锔?/span>
+                            <span class="op-icon" onclick="alert('猬囷笍 涓嬭浇')" title="涓嬭浇">猬囷笍</span>
+                        </td>
+                        <td>鎷涙爣鏂囦欢</td>
+                        <td>闆嗗洟鐗╀笟鏈嶅姟鎷涙爣鏂囦欢_v2.pdf</td>
+                        <td>ZB-2026-003-ZB.pdf</td>
+                        <td style="font-family:monospace;font-size:10px;">F202606001</td>
+                        <td>pdf</td>
+                        <td style="text-align:right;">2,456,832</td>
+                        <td>2026-06-19 10:30</td>
+                        <td>鏉庣粡鐞?/td>
+                    </tr>
+                    <tr data-id="a2">
+                        <td>
+                            <span class="op-icon disabled" title="涓婁紶锛堜粎鏌ョ湅妯″紡锛?>馃摛</span>
+                            <span class="op-icon disabled" title="鍒犻櫎锛堜粎鏌ョ湅妯″紡锛?>馃棏锔?/span>
+                            <span class="op-icon" onclick="alert('馃憗锔?棰勮')" title="棰勮">馃憗锔?/span>
+                            <span class="op-icon" onclick="alert('猬囷笍 涓嬭浇')" title="涓嬭浇">猬囷笍</span>
+                        </td>
+                        <td>鎷涙爣鍏憡</td>
+                        <td>闆嗗洟鐗╀笟鏈嶅姟鎷涙爣鍏憡.pdf</td>
+                        <td>ZB-2026-003-GG.pdf</td>
+                        <td style="font-family:monospace;font-size:10px;">F202606002</td>
+                        <td>pdf</td>
+                        <td style="text-align:right;">1,023,456</td>
+                        <td>2026-06-19 10:35</td>
+                        <td>鏉庣粡鐞?/td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="../../../common/scripts.js"></script>
+<script>
+// 閲囪喘鏄庣粏 鈫?鏍囨鏄庣粏鑱斿姩
+var SECTION_DATA = {
+    0: [
+        { seq: 1, name: '闆嗗洟骞村害鐗╀笟鏈嶅姟', limit: 1865000.00, planId: 'PL-2026-0002', planRow: '001', purchaseName: '闆嗗洟骞村害鐗╀笟鏈嶅姟', amount: 1865000.00, sections: 1, cat: '鏈嶅姟绫?, subCat: '鐗╀笟鏈嶅姟', target: '涓诲悎鍚?, note: '鍏紑鎷涙爣涓嶉檺閲戦闂ㄦ' }
+    ],
+    1: [
+        { seq: 1, name: 'IT璁惧閲囪喘-鏍囨1', limit: 1000000.00, planId: 'PL-2026-0010', planRow: '001', purchaseName: '鍙板紡璁＄畻鏈?, amount: 1000000.00, sections: 1, cat: '璐х墿绫?, subCat: 'IT绫?, target: '涓诲悎鍚?, note: '鈥? },
+        { seq: 2, name: 'IT璁惧閲囪喘-鏍囨2', limit: 800000.00, planId: 'PL-2026-0010', planRow: '001', purchaseName: '鏈嶅姟鍣?, amount: 800000.00, sections: 2, cat: '璐х墿绫?, subCat: 'IT绫?, target: '涓诲悎鍚?, note: '鈥? },
+        { seq: 3, name: 'IT璁惧閲囪喘-鏍囨3', limit: 650000.00, planId: 'PL-2026-0010', planRow: '001', purchaseName: '缃戠粶璁惧', amount: 650000.00, sections: 3, cat: '璐х墿绫?, subCat: 'IT绫?, target: '涓诲悎鍚?, note: '鈥? }
+    ]
+};
+
+function renderSectionRows(sections, purchaseIdx) {
+    var shtml = '';
+    sections.forEach(function(s, si) {
+        var checked = (si === 0) ? ' checked' : '';
+        shtml += '<tr data-purchase-idx="' + purchaseIdx + '" data-section-seq="' + si + '">';
+        shtml += '<td><input type="radio" name="sectionSelect" onchange="onSectionSelect(this)"' + checked + '></td>';
+        shtml += '<td>' + s.seq + '</td>';
+        shtml += '<td>' + s.name + '</td>';
+        shtml += '<td><span class="money">楼' + s.limit.toLocaleString('en-US', {minimumFractionDigits:2}) + '鍏?/span></td>';
+        shtml += '<td>' + s.planId + '</td>';
+        shtml += '<td>' + s.planRow + '</td>';
+        shtml += '<td>' + s.purchaseName + '</td>';
+        shtml += '<td><span class="money">楼' + s.amount.toLocaleString('en-US', {minimumFractionDigits:2}) + '鍏?/span></td>';
+        shtml += '<td>' + s.sections + '</td>';
+        shtml += '<td>' + s.cat + '</td>';
+        shtml += '<td>' + s.subCat + '</td>';
+        shtml += '<td>' + s.target + '</td>';
+        shtml += '<td><select disabled style="font-size:11px;padding:2px 4px;border:1px solid var(--gray-300);border-radius:4px;background:var(--gray-50);color:var(--gray-600);"><option>' + s.note + '</option></select></td>';
+        shtml += '</tr>';
+    });
+    return shtml;
+}
+
+function onPurchaseSelect(radio) {
+    var row = radio.closest('tr');
+    var idx = parseInt(row.getAttribute('data-idx'));
+    var sections = SECTION_DATA[idx] || [];
+    document.getElementById('bidSectionBody').innerHTML = renderSectionRows(sections, idx);
+}
+
+function onSectionSelect(radio) {
+    // 鍗犱綅 鈥?鍙仈鍔ㄩ檮浠?
+}
+</script>
+</body>
+</html>
