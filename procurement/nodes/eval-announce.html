@@ -10,6 +10,8 @@
     .attach-table .op-icon { cursor: pointer; color: var(--primary); font-size: 14px; margin: 0 2px; }
     .attach-table .op-icon.disabled { color: var(--gray-400); cursor: not-allowed; pointer-events: none; }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .form-control[readonly],
+    .form-control:disabled { background: var(--gray-50); color: var(--gray-600); cursor: not-allowed; }
 </style>
 </head>
 <body class="content-page" style="padding:0;">
@@ -18,36 +20,26 @@
     <div class="card-header"><h3>📢 评标结果公示 <span class="tag tag-green">审批通过</span></h3></div>
     <div class="card-body">
 
-        <!-- ===== 第 1 层：评标公示基础信息（通栏整栏）===== -->
+        <!-- ===== 第 1 层：评标公示基础信息（只读）===== -->
         <div class="form-group" style="margin-bottom:12px;">
-            <label>评标结果公示信息说明 <span class="required">*</span></label>
-            <textarea class="form-control" id="evalAnnounceDesc" rows="4" placeholder="请填写评标结果公示信息说明，包括公示期、公示媒介、中标候选人信息等">中标候选人：供应商A，中标金额 1,780,000.00 元。公示期自 2026-07-15 至 2026-07-18，公示媒介为集团官网和中国招标投标公共服务平台。</textarea>
+            <label>评标结果公示信息说明</label>
+            <textarea class="form-control" id="evalAnnounceDesc" rows="4" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;">中标候选人：供应商A，中标金额 1,780,000.00 元。公示期自 2026-07-15 至 2026-07-18，公示媒介为集团官网和中国招标投标公共服务平台。</textarea>
         </div>
         <div class="form-group" style="margin-bottom:0;">
             <label>审批状态</label>
-            <input class="form-control" value="审批通过" disabled style="background:var(--gray-100);color:var(--gray-600);">
+            <input class="form-control" value="审批通过" disabled>
         </div>
 
-        <!-- ===== 第 2 层：附件操作工具栏 ===== -->
-        <div class="flex-between mb-8" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;">
-            <div class="text-sm fw-600">📎 附件管理</div>
-            <div class="flex gap-8">
-                <button class="btn btn-sm btn-outline" onclick="createAttachRow()">创建</button>
-                <button class="btn btn-sm btn-danger" onclick="batchDeleteAttach()">删除</button>
-            </div>
-        </div>
-
-        <!-- ===== 第 3 层：附件列表（11 列）===== -->
+        <!-- ===== 第 2 层：附件管理表格（只读，无创建/删除按钮）===== -->
+        <div class="text-sm fw-600" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;margin-bottom:8px;">📎 附件管理</div>
         <div class="table-wrap">
             <table class="attach-table">
                 <thead>
                     <tr>
-                        <th style="width:30px;"><input type="checkbox" onclick="toggleAllAttach(this)"></th>
-                        <th style="width:100px;">操作</th>
+                        <th style="width:120px;">操作</th>
                         <th>附件类型</th>
                         <th>附件文档名称</th>
                         <th>组件名称</th>
-                        <th style="width:40px;">预览</th>
                         <th>文件类型</th>
                         <th>文件大小（字节）</th>
                         <th>时戳编码</th>
@@ -57,17 +49,15 @@
                 </thead>
                 <tbody id="attachBody">
                     <tr data-id="a1">
-                        <td><input type="checkbox" class="attach-cb"></td>
                         <td>
-                            <span class="op-icon" onclick="uploadAttach(this)" title="上传">📤</span>
-                            <span class="op-icon" onclick="deleteAttachRow(this)" title="删除">🗑️</span>
-                            <span class="op-icon" onclick="parent.showAlert('⬇️ 下载')" title="下载">⬇️</span>
-                            <span class="op-icon" onclick="parent.showAlert('👁️ 预览')" title="预览">👁️</span>
+                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
+                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
+                            <span class="op-icon" onclick="alert('👁️ 预览文件')" title="预览">👁️</span>
+                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
                         </td>
                         <td>中标候选人公示</td>
                         <td>ZB-2026-003-中标候选人公示.pdf</td>
                         <td>评标公示</td>
-                        <td><span class="op-icon" onclick="parent.showAlert('👁️ 预览文件')">👁️</span></td>
                         <td>pdf</td>
                         <td>1,200,000</td>
                         <td>TS-20260715-001</td>
@@ -75,22 +65,20 @@
                         <td>李经理</td>
                     </tr>
                     <tr data-id="a2">
-                        <td><input type="checkbox" class="attach-cb"></td>
                         <td>
-                            <span class="op-icon" onclick="uploadAttach(this)" title="上传">📤</span>
-                            <span class="op-icon" onclick="deleteAttachRow(this)" title="删除">🗑️</span>
-                            <span class="op-icon" onclick="parent.showAlert('⬇️ 下载')" title="下载">⬇️</span>
-                            <span class="op-icon" onclick="parent.showAlert('👁️ 预览')" title="预览">👁️</span>
+                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
+                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
+                            <span class="op-icon" onclick="alert('👁️ 预览文件')" title="预览">👁️</span>
+                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
                         </td>
-                        <td contenteditable="true">评标报告</td>
-                        <td contenteditable="true">ZB-2026-003-评标报告公示版.pdf</td>
-                        <td contenteditable="true">评标公示</td>
-                        <td><span class="op-icon" onclick="parent.showAlert('👁️ 预览文件')">👁️</span></td>
-                        <td contenteditable="true">pdf</td>
-                        <td contenteditable="true">1,500,000</td>
-                        <td contenteditable="true">TS-20260715-002</td>
-                        <td contenteditable="true">2026-07-15 09:05</td>
-                        <td contenteditable="true">李经理</td>
+                        <td>评标报告</td>
+                        <td>ZB-2026-003-评标报告公示版.pdf</td>
+                        <td>评标公示</td>
+                        <td>pdf</td>
+                        <td>1,500,000</td>
+                        <td>TS-20260715-002</td>
+                        <td>2026-07-15 09:05</td>
+                        <td>李经理</td>
                     </tr>
                 </tbody>
             </table>
@@ -101,40 +89,7 @@
 
 <script src="../../common/scripts.js"></script>
 <script>
-function createAttachRow() {
-    var tbody = document.getElementById('attachBody');
-    var tr = document.createElement('tr');
-    tr.setAttribute('data-id', 'a' + Date.now());
-    tr.innerHTML = '<td><input type="checkbox" class="attach-cb"></td>' +
-        '<td><span class="op-icon" onclick="uploadAttach(this)" title="上传">📤</span><span class="op-icon" onclick="deleteAttachRow(this)" title="删除">🗑️</span><span class="op-icon" onclick="parent.showAlert(\'⬇️ 下载\')" title="下载">⬇️</span><span class="op-icon" onclick="parent.showAlert(\'👁️ 预览\')" title="预览">👁️</span></td>' +
-        '<td contenteditable="true">新附件</td>' +
-        '<td contenteditable="true"></td>' +
-        '<td contenteditable="true">评标公示</td>' +
-        '<td><span class="op-icon" onclick="parent.showAlert(\'👁️ 预览文件\')">👁️</span></td>' +
-        '<td contenteditable="true">pdf</td>' +
-        '<td contenteditable="true"></td>' +
-        '<td contenteditable="true"></td>' +
-        '<td contenteditable="true">' + new Date().toISOString().replace('T',' ').substring(0,19) + '</td>' +
-        '<td contenteditable="true">当前用户</td>';
-    tbody.appendChild(tr);
-}
-
-function uploadAttach(icon) { parent.showAlert('📤 上传附件功能'); }
-
-function deleteAttachRow(icon) { var row = icon.closest('tr'); if (row) row.remove(); }
-
-function batchDeleteAttach() {
-    var cbs = document.querySelectorAll('.attach-cb:checked');
-    if (cbs.length === 0) { parent.showAlert('⚠️ 请先勾选要删除的附件行。'); return; }
-    if (parent.confirm('确认删除选中的 ' + cbs.length + ' 条附件？')) {
-        cbs.forEach(function(cb) { var row = cb.closest('tr'); if (row) row.remove(); });
-    }
-}
-
-function toggleAllAttach(checkbox) {
-    var checked = checkbox.checked;
-    document.querySelectorAll('.attach-cb').forEach(function(cb) { cb.checked = checked; });
-}
+// 当前为只读查看模式
 </script>
 </body>
 </html>
