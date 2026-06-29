@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -17,68 +17,68 @@
 <body class="content-page" style="padding:0;">
 
 <div class="card" style="margin:0;border:none;box-shadow:none;">
-    <div class="card-header"><h3>馃摙 璇勬爣缁撴灉鍏ず <span class="tag tag-green">瀹℃壒閫氳繃</span></h3></div>
+    <div class="card-header"><h3>📢 评标结果公示 <span class="tag tag-green">审批通过</span></h3></div>
     <div class="card-body">
 
-        <!-- ===== 绗?1 灞傦細璇勬爣鍏ず鍩虹淇℃伅锛堝彧璇伙級===== -->
+        <!-- ===== 第 1 层：评标公示基础信息（只读）===== -->
         <div class="form-group" style="margin-bottom:12px;">
-            <label>璇勬爣缁撴灉鍏ず淇℃伅璇存槑</label>
-            <textarea class="form-control" id="evalAnnounceDesc" rows="4" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;">涓爣鍊欓€変汉锛氫緵搴斿晢A锛屼腑鏍囬噾棰?1,780,000.00 鍏冦€傚叕绀烘湡鑷?2026-07-15 鑷?2026-07-18锛屽叕绀哄獟浠嬩负闆嗗洟瀹樼綉鍜屼腑鍥芥嫑鏍囨姇鏍囧叕鍏辨湇鍔″钩鍙般€?/textarea>
+            <label>评标结果公示信息说明</label>
+            <textarea class="form-control" id="evalAnnounceDesc" rows="4" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;">中标候选人：供应商A，中标金额 1,780,000.00 元。公示期自 2026-07-15 至 2026-07-18，公示媒介为集团官网和中国招标投标公共服务平台。</textarea>
         </div>
         <div class="form-group" style="margin-bottom:0;">
-            <label>瀹℃壒鐘舵€?/label>
-            <input class="form-control" value="瀹℃壒閫氳繃" disabled>
+            <label>审批状态</label>
+            <input class="form-control" value="审批通过" disabled>
         </div>
 
-        <!-- ===== 绗?2 灞傦細闄勪欢绠＄悊琛ㄦ牸锛堝彧璇伙紝鏃犲垱寤?鍒犻櫎鎸夐挳锛?==== -->
-        <div class="text-sm fw-600" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;margin-bottom:8px;">馃搸 闄勪欢绠＄悊</div>
+        <!-- ===== 第 2 层：附件管理表格（只读，无创建/删除按钮）===== -->
+        <div class="text-sm fw-600" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;margin-bottom:8px;">📎 附件管理</div>
         <div class="table-wrap">
             <table class="attach-table">
                 <thead>
                     <tr>
-                        <th style="width:120px;">鎿嶄綔</th>
-                        <th>闄勪欢绫诲瀷</th>
-                        <th>闄勪欢鏂囨。鍚嶇О</th>
-                        <th>缁勪欢鍚嶇О</th>
-                        <th>鏂囦欢绫诲瀷</th>
-                        <th>鏂囦欢澶у皬锛堝瓧鑺傦級</th>
-                        <th>鏃舵埑缂栫爜</th>
-                        <th>鏂囦欢涓婁紶鏃堕棿</th>
-                        <th>涓婁紶鎿嶄綔鐢ㄦ埛鍚?/th>
+                        <th style="width:120px;">操作</th>
+                        <th>附件类型</th>
+                        <th>附件文档名称</th>
+                        <th>组件名称</th>
+                        <th>文件类型</th>
+                        <th>文件大小（字节）</th>
+                        <th>时戳编码</th>
+                        <th>文件上传时间</th>
+                        <th>上传操作用户名</th>
                     </tr>
                 </thead>
                 <tbody id="attachBody">
                     <tr data-id="a1">
                         <td>
-                            <span class="op-icon disabled" title="涓婁紶锛堜粎鏌ョ湅妯″紡锛?>馃摛</span>
-                            <span class="op-icon disabled" title="鍒犻櫎锛堜粎鏌ョ湅妯″紡锛?>馃棏锔?/span>
-                            <span class="op-icon" onclick="alert('馃憗锔?棰勮鏂囦欢')" title="棰勮">馃憗锔?/span>
-                            <span class="op-icon" onclick="alert('猬囷笍 涓嬭浇')" title="涓嬭浇">猬囷笍</span>
+                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
+                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
+                            <span class="op-icon" onclick="alert('👁️ 预览文件')" title="预览">👁️</span>
+                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
                         </td>
-                        <td>涓爣鍊欓€変汉鍏ず</td>
-                        <td>ZB-2026-003-涓爣鍊欓€変汉鍏ず.pdf</td>
-                        <td>璇勬爣鍏ず</td>
+                        <td>中标候选人公示</td>
+                        <td>ZB-2026-003-中标候选人公示.pdf</td>
+                        <td>评标公示</td>
                         <td>pdf</td>
                         <td>1,200,000</td>
                         <td>TS-20260715-001</td>
                         <td>2026-07-15 09:00</td>
-                        <td>鏉庣粡鐞?/td>
+                        <td>李经理</td>
                     </tr>
                     <tr data-id="a2">
                         <td>
-                            <span class="op-icon disabled" title="涓婁紶锛堜粎鏌ョ湅妯″紡锛?>馃摛</span>
-                            <span class="op-icon disabled" title="鍒犻櫎锛堜粎鏌ョ湅妯″紡锛?>馃棏锔?/span>
-                            <span class="op-icon" onclick="alert('馃憗锔?棰勮鏂囦欢')" title="棰勮">馃憗锔?/span>
-                            <span class="op-icon" onclick="alert('猬囷笍 涓嬭浇')" title="涓嬭浇">猬囷笍</span>
+                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
+                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
+                            <span class="op-icon" onclick="alert('👁️ 预览文件')" title="预览">👁️</span>
+                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
                         </td>
-                        <td>璇勬爣鎶ュ憡</td>
-                        <td>ZB-2026-003-璇勬爣鎶ュ憡鍏ず鐗?pdf</td>
-                        <td>璇勬爣鍏ず</td>
+                        <td>评标报告</td>
+                        <td>ZB-2026-003-评标报告公示版.pdf</td>
+                        <td>评标公示</td>
                         <td>pdf</td>
                         <td>1,500,000</td>
                         <td>TS-20260715-002</td>
                         <td>2026-07-15 09:05</td>
-                        <td>鏉庣粡鐞?/td>
+                        <td>李经理</td>
                     </tr>
                 </tbody>
             </table>
@@ -89,7 +89,7 @@
 
 <script src="../../../common/scripts.js"></script>
 <script>
-// 褰撳墠涓哄彧璇绘煡鐪嬫ā寮?
+// 当前为只读查看模式
 </script>
 </body>
 </html>

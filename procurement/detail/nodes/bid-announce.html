@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -29,107 +29,107 @@ body.content-page { padding: 16px; }
 </head>
 <body class="content-page">
 
-<!-- ===== 涓€銆侀《閮ㄥ熀纭€淇℃伅琛ㄥ崟鍖?===== -->
+<!-- ===== 一、顶部基础信息表单区 ===== -->
 <div class="info-card">
-  <div class="card-header"><h3>馃摙 鎷涢噰鍏憡鍩烘湰淇℃伅</h3></div>
+  <div class="card-header"><h3>📢 招采公告基本信息</h3></div>
   <div class="card-body">
-    <!-- 绗竴琛岋細鎷涢噰鍏憡瀵瑰鎶湶鍚嶇О锛堥€氭爮锛?-->
+    <!-- 第一行：招采公告对外披露名称（通栏） -->
     <div class="form-group">
-      <label>鎷涢噰鍏憡瀵瑰鎶湶鍚嶇О</label>
-      <input class="form-control" value="闆嗗洟骞村害鐗╀笟鏈嶅姟鍏紑鎷涙爣鍏憡" readonly>
+      <label>招采公告对外披露名称</label>
+      <input class="form-control" value="集团年度物业服务公开招标公告" readonly>
     </div>
 
-    <!-- 绗簩琛岋細宸﹀彸鍒嗘爮鏃ユ湡 -->
+    <!-- 第二行：左右分栏日期 -->
     <div class="form-row">
       <div class="form-group">
-        <label>寮€濮嬫姤鍚嶆棩鏈?/label>
+        <label>开始报名日期</label>
         <input type="date" class="form-control" value="2026-06-21" disabled>
       </div>
       <div class="form-group">
-        <label>鎴鎶ュ悕鏃ユ湡</label>
+        <label>截止报名日期</label>
         <input type="date" class="form-control" value="2026-07-08" disabled>
       </div>
     </div>
 
-    <!-- 绗笁琛岋細瀹℃壒鐘舵€侊紙閫氭爮锛?-->
+    <!-- 第三行：审批状态（通栏） -->
     <div class="form-group" style="margin-bottom:0;">
-      <label>瀹℃壒鐘舵€?/label>
-      <input class="form-control" value="瀹℃壒閫氳繃" disabled>
+      <label>审批状态</label>
+      <input class="form-control" value="审批通过" disabled>
     </div>
   </div>
 </div>
 
-<!-- ===== 浜屻€侀檮浠剁鐞嗚〃鏍?===== -->
+<!-- ===== 二、附件管理表格 ===== -->
 <div class="info-card">
-  <div class="card-header"><h3>馃搸 闄勪欢绠＄悊</h3></div>
+  <div class="card-header"><h3>📎 附件管理</h3></div>
   <div class="card-body" style="padding:0;">
     <div class="table-wrap">
       <table class="attach-table">
         <thead>
           <tr>
             <th style="width:30px;"><input type="checkbox" disabled></th>
-            <th style="width:130px;">鎿嶄綔</th>
-            <th>闄勪欢绫诲瀷</th>
-            <th>闄勪欢鏂囨。鍚嶇О锛堥瑙堬級</th>
-            <th>鏂囦欢鍚嶏紙涓嬭浇锛?/th>
-            <th>鏂囦欢 ID</th>
-            <th>鏂囦欢绫诲瀷</th>
-            <th>鏂囦欢澶у皬(瀛楄妭)</th>
-            <th>鏃舵埑</th>
-            <th>鐢ㄦ埛鍚?/th>
+            <th style="width:130px;">操作</th>
+            <th>附件类型</th>
+            <th>附件文档名称（预览）</th>
+            <th>文件名（下载）</th>
+            <th>文件 ID</th>
+            <th>文件类型</th>
+            <th>文件大小(字节)</th>
+            <th>时戳</th>
+            <th>用户名</th>
           </tr>
         </thead>
         <tbody id="attachBody">
           <tr>
             <td><input type="checkbox" disabled></td>
             <td>
-              <button class="op-icon upload" disabled title="涓婁紶">馃摛</button>
-              <button class="op-icon delete" disabled title="鍒犻櫎">馃棏</button>
-              <button class="op-icon preview" disabled title="棰勮">馃憗</button>
-              <button class="op-icon download" disabled title="涓嬭浇">馃摜</button>
+              <button class="op-icon upload" disabled title="上传">📤</button>
+              <button class="op-icon delete" disabled title="删除">🗑</button>
+              <button class="op-icon preview" disabled title="预览">👁</button>
+              <button class="op-icon download" disabled title="下载">📥</button>
             </td>
-            <td>鎷涙爣鍏憡</td>
-            <td><a href="#" onclick="previewFile('F-2026-0620-001', event);return false;" style="color:var(--accent);">鎷涙爣鍏憡_闆嗗洟骞村害鐗╀笟鏈嶅姟.pdf</a></td>
-            <td><a href="#" onclick="downloadFile('F-2026-0620-001', event);return false;" style="color:var(--success);">鎷涙爣鍏憡_闆嗗洟骞村害鐗╀笟鏈嶅姟.pdf</a></td>
+            <td>招标公告</td>
+            <td><a href="#" onclick="previewFile('F-2026-0620-001', event);return false;" style="color:var(--accent);">招标公告_集团年度物业服务.pdf</a></td>
+            <td><a href="#" onclick="downloadFile('F-2026-0620-001', event);return false;" style="color:var(--success);">招标公告_集团年度物业服务.pdf</a></td>
             <td style="font-family:monospace;font-size:10px;">F-2026-0620-001</td>
             <td>pdf</td>
             <td style="text-align:right;">1,245,000</td>
             <td>2026-06-20 09:30</td>
-            <td>鏉庣粡鐞?/td>
+            <td>李经理</td>
           </tr>
           <tr>
             <td><input type="checkbox" disabled></td>
             <td>
-              <button class="op-icon upload" disabled title="涓婁紶">馃摛</button>
-              <button class="op-icon delete" disabled title="鍒犻櫎">馃棏</button>
-              <button class="op-icon preview" disabled title="棰勮">馃憗</button>
-              <button class="op-icon download" disabled title="涓嬭浇">馃摜</button>
+              <button class="op-icon upload" disabled title="上传">📤</button>
+              <button class="op-icon delete" disabled title="删除">🗑</button>
+              <button class="op-icon preview" disabled title="预览">👁</button>
+              <button class="op-icon download" disabled title="下载">📥</button>
             </td>
-            <td>鎷涙爣鏂囦欢</td>
-            <td><a href="#" onclick="previewFile('F-2026-0620-002', event);return false;" style="color:var(--accent);">鎷涙爣鏂囦欢_闆嗗洟骞村害鐗╀笟鏈嶅姟.pdf</a></td>
-            <td><a href="#" onclick="downloadFile('F-2026-0620-002', event);return false;" style="color:var(--success);">鎷涙爣鏂囦欢_闆嗗洟骞村害鐗╀笟鏈嶅姟.pdf</a></td>
+            <td>招标文件</td>
+            <td><a href="#" onclick="previewFile('F-2026-0620-002', event);return false;" style="color:var(--accent);">招标文件_集团年度物业服务.pdf</a></td>
+            <td><a href="#" onclick="downloadFile('F-2026-0620-002', event);return false;" style="color:var(--success);">招标文件_集团年度物业服务.pdf</a></td>
             <td style="font-family:monospace;font-size:10px;">F-2026-0620-002</td>
             <td>pdf</td>
             <td style="text-align:right;">3,560,000</td>
             <td>2026-06-20 10:15</td>
-            <td>鏉庣粡鐞?/td>
+            <td>李经理</td>
           </tr>
           <tr>
             <td><input type="checkbox" disabled></td>
             <td>
-              <button class="op-icon upload" disabled title="涓婁紶">馃摛</button>
-              <button class="op-icon delete" disabled title="鍒犻櫎">馃棏</button>
-              <button class="op-icon preview" disabled title="棰勮">馃憗</button>
-              <button class="op-icon download" disabled title="涓嬭浇">馃摜</button>
+              <button class="op-icon upload" disabled title="上传">📤</button>
+              <button class="op-icon delete" disabled title="删除">🗑</button>
+              <button class="op-icon preview" disabled title="预览">👁</button>
+              <button class="op-icon download" disabled title="下载">📥</button>
             </td>
-            <td>鏈€楂橀檺浠锋枃浠?/td>
-            <td><a href="#" onclick="previewFile('F-2026-0620-003', event);return false;" style="color:var(--accent);">鏈€楂橀檺浠疯鏄巁鐗╀笟.pdf</a></td>
-            <td><a href="#" onclick="downloadFile('F-2026-0620-003', event);return false;" style="color:var(--success);">鏈€楂橀檺浠疯鏄巁鐗╀笟.pdf</a></td>
+            <td>最高限价文件</td>
+            <td><a href="#" onclick="previewFile('F-2026-0620-003', event);return false;" style="color:var(--accent);">最高限价说明_物业.pdf</a></td>
+            <td><a href="#" onclick="downloadFile('F-2026-0620-003', event);return false;" style="color:var(--success);">最高限价说明_物业.pdf</a></td>
             <td style="font-family:monospace;font-size:10px;">F-2026-0620-003</td>
             <td>pdf</td>
             <td style="text-align:right;">856,000</td>
             <td>2026-06-20 11:00</td>
-            <td>寮犳槑</td>
+            <td>张明</td>
           </tr>
         </tbody>
       </table>
@@ -141,11 +141,11 @@ body.content-page { padding: 16px; }
 <script>
 function previewFile(fileId, ev) {
   ev && ev.stopPropagation();
-  alert('馃憗 棰勮鏂囦欢锛? + fileId + '锛堟ā鎷熼瑙堝姛鑳斤級');
+  alert('👁 预览文件：' + fileId + '（模拟预览功能）');
 }
 function downloadFile(fileId, ev) {
   ev && ev.stopPropagation();
-  alert('馃摜 涓嬭浇鏂囦欢锛? + fileId + '锛堟ā鎷熶笅杞藉姛鑳斤級');
+  alert('📥 下载文件：' + fileId + '（模拟下载功能）');
 }
 </script>
 </body>

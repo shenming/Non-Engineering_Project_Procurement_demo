@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -31,55 +31,55 @@ body.content-page { padding: 16px; }
 </head>
 <body class="content-page">
 
-<!-- ===== 椤甸潰涓绘爣棰?===== -->
-<div class="page-main-title" id="pageMainTitle">闆嗗洟骞村害鐗╀笟鏈嶅姟 瀹氭爣缁撴灉</div>
+<!-- ===== 页面主标题 ===== -->
+<div class="page-main-title" id="pageMainTitle">集团年度物业服务 定标结果</div>
 
-<!-- ===== 椤堕儴鍩虹淇℃伅鍖?===== -->
+<!-- ===== 顶部基础信息区 ===== -->
 <div class="info-card">
-  <div class="card-header"><h3>馃搵 瀹氭爣鍩烘湰淇℃伅</h3></div>
+  <div class="card-header"><h3>📋 定标基本信息</h3></div>
   <div class="card-body">
     <div class="info-row" style="margin-bottom:12px;">
       <div class="info-item">
-        <span class="label">瀹℃壒鐘舵€侊細</span>
-        <span id="approvalStatusTag" class="tag tag-green">瀹℃壒閫氳繃</span>
+        <span class="label">审批状态：</span>
+        <span id="approvalStatusTag" class="tag tag-green">审批通过</span>
       </div>
       <div class="info-item">
-        <span class="label">鎷涢噰鐢宠缂栧彿锛?/span>
+        <span class="label">招采申请编号：</span>
         <span style="font-weight:600;">ZB-2026-003</span>
       </div>
       <div class="info-item">
-        <span class="label">鎵€灞炲崟浣嶏細</span>
-        <span>闆嗗洟鎬婚儴</span>
+        <span class="label">所属单位：</span>
+        <span>集团总部</span>
       </div>
     </div>
     <div>
-      <div class="label" style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">瀹氭爣缁撴灉淇℃伅璇存槑锛?/div>
-      <textarea id="resultNote" readonly>璇勬爣濮斿憳浼氬凡瀹屾垚鍏ㄩ儴璇勫宸ヤ綔锛屾牴鎹患鍚堣瘎鍒嗘硶鎺ㄨ崘涓爣鍊欓€変汉銆傜粡瀹氭爣濮斿憳浼氬璁€氳繃锛岀幇瀵逛腑鏍囩粨鏋滆繘琛屽叕绀猴紝鍏ず鏈?3 涓伐浣滄棩銆?/textarea>
+      <div class="label" style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">定标结果信息说明：</div>
+      <textarea id="resultNote" readonly>评标委员会已完成全部评审工作，根据综合评分法推荐中标候选人。经定标委员会审议通过，现对中标结果进行公示，公示期 3 个工作日。</textarea>
     </div>
   </div>
 </div>
 
-<!-- ===== 妯″潡 1锛氬畾鏍囨爣娈垫槑缁嗚〃鏍?===== -->
+<!-- ===== 模块 1：定标标段明细表格 ===== -->
 <div class="info-card">
-  <div class="card-header"><h3>馃摝 瀹氭爣鏍囨鏄庣粏</h3></div>
+  <div class="card-header"><h3>📦 定标标段明细</h3></div>
   <div class="card-body" style="padding:0;">
     <div class="sub-table-wrap">
       <table>
         <thead>
           <tr>
-            <th style="width:36px;text-align:center;"><!-- 鍗曢€夋 --></th>
-            <th>鎷涢噰璁″垝缂栧彿</th>
-            <th>琛屽彿</th>
-            <th>鎷涢噰鐩爣</th>
-            <th>瀹氭爣缂栧彿</th>
-            <th>鎷涙爣閲囪喘鍚嶇О</th>
-            <th>鏍囨鍙?/th>
-            <th>鎷涢噰闄愰</th>
-            <th>涓爣閲戦(鍏?</th>
-            <th>涓爣鍗曚綅缂栧彿</th>
-            <th>涓爣鍗曚綅鍚嶇О</th>
-            <th>涓爣鏃ユ湡</th>
-            <th>鍏朵粬渚涘簲鍟?/th>
+            <th style="width:36px;text-align:center;"><!-- 单选框 --></th>
+            <th>招采计划编号</th>
+            <th>行号</th>
+            <th>招采目标</th>
+            <th>定标编号</th>
+            <th>招标采购名称</th>
+            <th>标段号</th>
+            <th>招采限额</th>
+            <th>中标金额(元)</th>
+            <th>中标单位编号</th>
+            <th>中标单位名称</th>
+            <th>中标日期</th>
+            <th>其他供应商</th>
           </tr>
         </thead>
         <tbody id="bidSectionBody"></tbody>
@@ -88,70 +88,70 @@ body.content-page { padding: 16px; }
   </div>
 </div>
 
-<!-- ===== 妯″潡 2锛氶檮浠剁鐞嗚〃鏍?===== -->
+<!-- ===== 模块 2：附件管理表格 ===== -->
 <div class="info-card">
-  <div class="card-header"><h3>馃搸 闄勪欢绠＄悊</h3></div>
+  <div class="card-header"><h3>📎 附件管理</h3></div>
   <div class="card-body" style="padding:0;">
     <div class="sub-table-wrap">
       <table>
         <thead>
           <tr>
-            <th style="width:120px;">鎿嶄綔</th>
-            <th>闄勪欢绫诲瀷</th>
-            <th>闄勪欢鏂囨。鍚嶇О</th>
-            <th>缁勪欢鍚嶇О</th>
-            <th>鏂囦欢 ID</th>
-            <th>鏂囦欢绫诲瀷</th>
-            <th>鏂囦欢澶у皬(瀛楄妭)</th>
-            <th>鏃舵埑</th>
-            <th>鐢ㄦ埛鍚?/th>
+            <th style="width:120px;">操作</th>
+            <th>附件类型</th>
+            <th>附件文档名称</th>
+            <th>组件名称</th>
+            <th>文件 ID</th>
+            <th>文件类型</th>
+            <th>文件大小(字节)</th>
+            <th>时戳</th>
+            <th>用户名</th>
           </tr>
         </thead>
         <tbody id="attachBody"></tbody>
       </table>
     </div>
-    <div id="attachEmpty" class="attach-empty">璇峰湪瀹氭爣鏍囨鏄庣粏涓€夋嫨涓€鏉¤褰曟煡鐪嬮檮浠?/div>
+    <div id="attachEmpty" class="attach-empty">请在定标标段明细中选择一条记录查看附件</div>
   </div>
 </div>
 
 <script src="../../../common/scripts.js"></script>
 <script>
-// ===== 妯℃嫙鏁版嵁 =====
-// 闆嗗洟骞村害鐗╀笟鏈嶅姟鎷涙爣 鈥?1 涓爣娈?
-// IT璁惧閲囪喘鎷涙爣 鈥?3 涓爣娈?
-// 鎵€鏈夋嫑閲囩洰鏍囧潎涓?涓诲悎鍚?
+// ===== 模拟数据 =====
+// 集团年度物业服务招标 — 1 个标段
+// IT设备采购招标 — 3 个标段
+// 所有招采目标均为"主合同"
 var BID_SECTIONS = [
-  { id: 'BD-001', planCode: 'PL-2026-0002', lineNo: 1, target: '涓诲悎鍚?, awardCode: 'DB-2026-003-1', purchaseName: '闆嗗洟骞村害鐗╀笟鏈嶅姟', sectionNo: '1', limitAmount: 1865000, winAmount: 1820000, supplierCode: 'GYS-001', supplierName: '鍖椾含閲戠墝鐗╀笟鏈嶅姟鏈夐檺鍏徃', winDate: '2026-07-20', otherSuppliers: [{ code: 'GYS-002', name: '涓婃捣淇¤瘹鐗╀笟鏈夐檺鍏徃' }, { code: 'GYS-003', name: '骞垮窞鍗庢嘲鐗╀笟鏈嶅姟鏈夐檺鍏徃' }] },
-  { id: 'BD-002', planCode: 'PL-2026-0010', lineNo: 1, target: '涓诲悎鍚?, awardCode: 'DB-2026-005-1', purchaseName: '鍔炲叕璁惧闆嗕腑閲囪喘 - 鏈嶅姟鍣ㄩ噰璐?, sectionNo: '1', limitAmount: 452000, winAmount: 438000, supplierCode: 'GYS-010', supplierName: '涓婃捣鍗庤缃戠粶绯荤粺鏈夐檺鍏徃', winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-011', name: '鍖椾含绁炲窞鏁扮爜鏈夐檺鍏徃' }, { code: 'GYS-012', name: '娣卞湷鍗庝负鎶€鏈湁闄愬叕鍙? }] },
-  { id: 'BD-003', planCode: 'PL-2026-0010', lineNo: 1, target: '涓诲悎鍚?, awardCode: 'DB-2026-005-2', purchaseName: '鍔炲叕璁惧闆嗕腑閲囪喘 - 缃戠粶璁惧閲囪喘', sectionNo: '2', limitAmount: 452000, winAmount: 445000, supplierCode: 'GYS-015', supplierName: '鏉窞娴峰悍濞佽鏁板瓧鎶€鏈偂浠芥湁闄愬叕鍙?, winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-016', name: '娴欐睙澶у崕鎶€鏈偂浠芥湁闄愬叕鍙? }] },
-  { id: 'BD-004', planCode: 'PL-2026-0010', lineNo: 1, target: '涓诲悎鍚?, awardCode: 'DB-2026-005-3', purchaseName: '鍔炲叕璁惧闆嗕腑閲囪喘 - 瀛樺偍璁惧閲囪喘', sectionNo: '3', limitAmount: 452000, winAmount: 432000, supplierCode: 'GYS-018', supplierName: '鍖椾含娴疆鐢靛瓙淇℃伅浜т笟鏈夐檺鍏徃', winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-019', name: '鑱旀兂锛堝寳浜級淇℃伅鎶€鏈湁闄愬叕鍙? }, { code: 'GYS-020', name: '涓鏇欏厜淇℃伅浜т笟鑲′唤鏈夐檺鍏徃' }] },
-  { id: 'BD-005', planCode: 'PL-2026-0010', lineNo: 1, target: '涓诲悎鍚?, awardCode: 'DB-2026-005-4', purchaseName: '鍔炲叕璁惧闆嗕腑閲囪喘 - 瀹夊叏璁惧閲囪喘', sectionNo: '4', limitAmount: 452000, winAmount: 428000, supplierCode: 'GYS-022', supplierName: '鏂板崕涓夋妧鏈湁闄愬叕鍙?, winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-023', name: '閿愭嵎缃戠粶鑲′唤鏈夐檺鍏徃' }] }
+  { id: 'BD-001', planCode: 'PL-2026-0002', lineNo: 1, target: '主合同', awardCode: 'DB-2026-003-1', purchaseName: '集团年度物业服务', sectionNo: '1', limitAmount: 1865000, winAmount: 1820000, supplierCode: 'GYS-001', supplierName: '北京金牌物业服务有限公司', winDate: '2026-07-20', otherSuppliers: [{ code: 'GYS-002', name: '上海信诚物业有限公司' }, { code: 'GYS-003', name: '广州华泰物业服务有限公司' }] },
+  { id: 'BD-002', planCode: 'PL-2026-0010', lineNo: 1, target: '主合同', awardCode: 'DB-2026-005-1', purchaseName: '办公设备集中采购 - 服务器采购', sectionNo: '1', limitAmount: 452000, winAmount: 438000, supplierCode: 'GYS-010', supplierName: '上海华讯网络系统有限公司', winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-011', name: '北京神州数码有限公司' }, { code: 'GYS-012', name: '深圳华为技术有限公司' }] },
+  { id: 'BD-003', planCode: 'PL-2026-0010', lineNo: 1, target: '主合同', awardCode: 'DB-2026-005-2', purchaseName: '办公设备集中采购 - 网络设备采购', sectionNo: '2', limitAmount: 452000, winAmount: 445000, supplierCode: 'GYS-015', supplierName: '杭州海康威视数字技术股份有限公司', winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-016', name: '浙江大华技术股份有限公司' }] },
+  { id: 'BD-004', planCode: 'PL-2026-0010', lineNo: 1, target: '主合同', awardCode: 'DB-2026-005-3', purchaseName: '办公设备集中采购 - 存储设备采购', sectionNo: '3', limitAmount: 452000, winAmount: 432000, supplierCode: 'GYS-018', supplierName: '北京浪潮电子信息产业有限公司', winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-019', name: '联想（北京）信息技术有限公司' }, { code: 'GYS-020', name: '中科曙光信息产业股份有限公司' }] },
+  { id: 'BD-005', planCode: 'PL-2026-0010', lineNo: 1, target: '主合同', awardCode: 'DB-2026-005-4', purchaseName: '办公设备集中采购 - 安全设备采购', sectionNo: '4', limitAmount: 452000, winAmount: 428000, supplierCode: 'GYS-022', supplierName: '新华三技术有限公司', winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-023', name: '锐捷网络股份有限公司' }] }
 ];
 var ATTACH_DATA = {
   'BD-001': [
-    { type: '涓爣閫氱煡涔?, name: '涓爣閫氱煡涔閲戠墝鐗╀笟.pdf', comp: '鏂囦欢绠＄悊缁勪欢', fileId: 'F-2026-0720-001', fileType: 'pdf', size: 245760, ts: '2026-07-20 14:30', user: '鏉庣粡鐞? },
-    { type: '涓爣缁撴灉鍏憡', name: '涓爣缁撴灉鍏憡_鐗╀笟.docx', comp: '鏂囦欢绠＄悊缁勪欢', fileId: 'F-2026-0720-002', fileType: 'docx', size: 128000, ts: '2026-07-20 15:10', user: '鏉庣粡鐞? },
-    { type: '璇勬爣鎶ュ憡', name: '璇勬爣鎶ュ憡_鐗╀笟.pdf', comp: '鏂囦欢绠＄悊缁勪欢', fileId: 'F-2026-0718-003', fileType: 'pdf', size: 512000, ts: '2026-07-18 10:00', user: '寮犳槑' }
+    { type: '中标通知书', name: '中标通知书_金牌物业.pdf', comp: '文件管理组件', fileId: 'F-2026-0720-001', fileType: 'pdf', size: 245760, ts: '2026-07-20 14:30', user: '李经理' },
+    { type: '中标结果公告', name: '中标结果公告_物业.docx', comp: '文件管理组件', fileId: 'F-2026-0720-002', fileType: 'docx', size: 128000, ts: '2026-07-20 15:10', user: '李经理' },
+    { type: '评标报告', name: '评标报告_物业.pdf', comp: '文件管理组件', fileId: 'F-2026-0718-003', fileType: 'pdf', size: 512000, ts: '2026-07-18 10:00', user: '张明' }
   ],
   'BD-002': [
-    { type: '涓爣閫氱煡涔?, name: '涓爣閫氱煡涔鍗庤缃戠粶.pdf', comp: '鏂囦欢绠＄悊缁勪欢', fileId: 'F-2026-0718-001', fileType: 'pdf', size: 198000, ts: '2026-07-18 16:00', user: '鐜嬬' },
-    { type: '涓爣缁撴灉鍏憡', name: '涓爣缁撴灉鍏憡_IT鏍囨1.docx', comp: '鏂囦欢绠＄悊缁勪欢', fileId: 'F-2026-0718-002', fileType: 'docx', size: 112000, ts: '2026-07-18 16:30', user: '鐜嬬' }
+    { type: '中标通知书', name: '中标通知书_华讯网络.pdf', comp: '文件管理组件', fileId: 'F-2026-0718-001', fileType: 'pdf', size: 198000, ts: '2026-07-18 16:00', user: '王磊' },
+    { type: '中标结果公告', name: '中标结果公告_IT标段1.docx', comp: '文件管理组件', fileId: 'F-2026-0718-002', fileType: 'docx', size: 112000, ts: '2026-07-18 16:30', user: '王磊' }
   ],
   'BD-003': [
-    { type: '涓爣閫氱煡涔?, name: '涓爣閫氱煡涔娴峰悍濞佽.pdf', comp: '鏂囦欢绠＄悊缁勪欢', fileId: 'F-2026-0718-003', fileType: 'pdf', size: 205000, ts: '2026-07-18 17:00', user: '鐜嬬' },
-    { type: '涓爣缁撴灉鍏憡', name: '涓爣缁撴灉鍏憡_IT鏍囨2.docx', comp: '鏂囦欢绠＄悊缁勪欢', fileId: 'F-2026-0718-004', fileType: 'docx', size: 108000, ts: '2026-07-18 17:15', user: '鐜嬬' }
+    { type: '中标通知书', name: '中标通知书_海康威视.pdf', comp: '文件管理组件', fileId: 'F-2026-0718-003', fileType: 'pdf', size: 205000, ts: '2026-07-18 17:00', user: '王磊' },
+    { type: '中标结果公告', name: '中标结果公告_IT标段2.docx', comp: '文件管理组件', fileId: 'F-2026-0718-004', fileType: 'docx', size: 108000, ts: '2026-07-18 17:15', user: '王磊' }
   ],
   'BD-004': [
-    { type: '涓爣閫氱煡涔?, name: '涓爣閫氱煡涔娴疆淇℃伅.pdf', comp: '鏂囦欢绠＄悊缁勪欢', fileId: 'F-2026-0718-005', fileType: 'pdf', size: 192000, ts: '2026-07-18 17:30', user: '鐜嬬' },
-    { type: '涓爣缁撴灉鍏憡', name: '涓爣缁撴灉鍏憡_IT鏍囨3.docx', comp: '鏂囦欢绠＄悊缁勪欢', fileId: 'F-2026-0718-006', fileType: 'docx', size: 105000, ts: '2026-07-18 17:45', user: '鐜嬬' },
-    { type: '璇勬爣鎶ュ憡', name: '璇勬爣鎶ュ憡_IT璁惧.pdf', comp: '鏂囦欢绠＄悊缁勪欢', fileId: 'F-2026-0717-001', fileType: 'pdf', size: 486000, ts: '2026-07-17 11:00', user: '鐜嬬' }
+    { type: '中标通知书', name: '中标通知书_浪潮信息.pdf', comp: '文件管理组件', fileId: 'F-2026-0718-005', fileType: 'pdf', size: 192000, ts: '2026-07-18 17:30', user: '王磊' },
+    { type: '中标结果公告', name: '中标结果公告_IT标段3.docx', comp: '文件管理组件', fileId: 'F-2026-0718-006', fileType: 'docx', size: 105000, ts: '2026-07-18 17:45', user: '王磊' },
+    { type: '评标报告', name: '评标报告_IT设备.pdf', comp: '文件管理组件', fileId: 'F-2026-0717-001', fileType: 'pdf', size: 486000, ts: '2026-07-17 11:00', user: '王磊' }
   ]
 };
 
-// ===== 鏍煎紡鍖栭噾棰?=====
-function fmtMoney(val) { return '楼' + (val / 10000).toFixed(2) + '涓?; }
+// ===== 格式化金额 =====
+function fmtMoney(val) { return '¥' + (val / 10000).toFixed(2) + '万'; }
 
-// ===== 娓叉煋鏍囨琛ㄦ牸 =====
+// ===== 渲染标段表格 =====
 function renderBidSections() {
   var tbody = document.getElementById('bidSectionBody');
   var html = '';
@@ -170,16 +170,16 @@ function renderBidSections() {
     html += '<td>' + s.supplierCode + '</td>';
     html += '<td>' + s.supplierName + '</td>';
     html += '<td>' + s.winDate + '</td>';
-    html += '<td><span class="supplier-expand" onclick="showOtherSuppliers(\'' + s.id + '\', event)">灞曞紑</span></td>';
+    html += '<td><span class="supplier-expand" onclick="showOtherSuppliers(\'' + s.id + '\', event)">展开</span></td>';
     html += '</tr>';
   }
   tbody.innerHTML = html;
-  // 榛樿閫変腑绗竴琛?
+  // 默认选中第一行
   var firstRow = tbody.querySelector('tr');
   if (firstRow) { firstRow.classList.add('selected'); renderAttachments(BID_SECTIONS[0].id); }
 }
 
-// ===== 閫夋嫨鏍囨锛堣仈鍔ㄩ檮浠讹級 =====
+// ===== 选择标段（联动附件） =====
 function selectSection(row) {
   var allRows = document.querySelectorAll('#bidSectionBody tr');
   allRows.forEach(function(r) { r.classList.remove('selected'); });
@@ -189,7 +189,7 @@ function selectSection(row) {
   renderAttachments(sectionId);
 }
 
-// ===== 娓叉煋闄勪欢琛ㄦ牸 =====
+// ===== 渲染附件表格 =====
 function renderAttachments(sectionId) {
   var tbody = document.getElementById('attachBody');
   var emptyEl = document.getElementById('attachEmpty');
@@ -205,10 +205,10 @@ function renderAttachments(sectionId) {
     var a = list[i];
     html += '<tr>';
     html += '<td><div class="action-btn-group">';
-    html += '<button class="icon-btn upload" disabled title="涓婁紶">馃摛</button>';
-    html += '<button class="icon-btn delete" disabled title="鍒犻櫎">馃棏</button>';
-    html += '<button class="icon-btn download" onclick="downloadFile(\'' + a.fileId + '\', event)" title="涓嬭浇">馃摜</button>';
-    html += '<button class="icon-btn preview" onclick="previewFile(\'' + a.fileId + '\', event)" title="棰勮">馃憗</button>';
+    html += '<button class="icon-btn upload" disabled title="上传">📤</button>';
+    html += '<button class="icon-btn delete" disabled title="删除">🗑</button>';
+    html += '<button class="icon-btn download" onclick="downloadFile(\'' + a.fileId + '\', event)" title="下载">📥</button>';
+    html += '<button class="icon-btn preview" onclick="previewFile(\'' + a.fileId + '\', event)" title="预览">👁</button>';
     html += '</div></td>';
     html += '<td>' + a.type + '</td>';
     html += '<td>' + a.name + '</td>';
@@ -223,28 +223,28 @@ function renderAttachments(sectionId) {
   tbody.innerHTML = html;
 }
 
-// ===== 鏄剧ず鍏朵粬渚涘簲鍟嗭紙寮圭獥锛?=====
+// ===== 显示其他供应商（弹窗） =====
 function showOtherSuppliers(sectionId, ev) {
   ev.stopPropagation();
   var section = null;
   for (var i = 0; i < BID_SECTIONS.length; i++) {
     if (BID_SECTIONS[i].id === sectionId) { section = BID_SECTIONS[i]; break; }
   }
-  if (!section || !section.otherSuppliers || section.otherSuppliers.length === 0) { alert('鏃犲叾浠栦緵搴斿晢淇℃伅'); return; }
-  alert('馃搵 鍏朵粬鎶曟爣渚涘簲鍟哱n' + section.otherSuppliers.map(function(s) { return s.code + ' - ' + s.name; }).join('\n'));
+  if (!section || !section.otherSuppliers || section.otherSuppliers.length === 0) { alert('无其他供应商信息'); return; }
+  alert('📋 其他投标供应商\n' + section.otherSuppliers.map(function(s) { return s.code + ' - ' + s.name; }).join('\n'));
 }
 
-// ===== 涓嬭浇/棰勮锛堟ā鎷燂級 =====
-function downloadFile(fileId, ev) { ev.stopPropagation(); showAlert('馃摜 鏂囦欢 ' + fileId + ' 涓嬭浇涓?..锛堟ā鎷燂級'); }
-function previewFile(fileId, ev) { ev.stopPropagation(); showAlert('馃憗 鏂囦欢 ' + fileId + ' 棰勮锛堟ā鎷燂級'); }
+// ===== 下载/预览（模拟） =====
+function downloadFile(fileId, ev) { ev.stopPropagation(); showAlert('📥 文件 ' + fileId + ' 下载中...（模拟）'); }
+function previewFile(fileId, ev) { ev.stopPropagation(); showAlert('👁 文件 ' + fileId + ' 预览（模拟）'); }
 
-// ===== 鍒濆鍖?=====
+// ===== 初始化 =====
 (function init() {
-  // 灏濊瘯浠?sessionStorage 鑾峰彇椤圭洰鍚嶇О
+  // 尝试从 sessionStorage 获取项目名称
   try {
     var ctx = JSON.parse(sessionStorage.getItem('procurementViewContext') || 'null');
     if (ctx && ctx.projectName) {
-      document.getElementById('pageMainTitle').textContent = ctx.projectName + ' 瀹氭爣缁撴灉';
+      document.getElementById('pageMainTitle').textContent = ctx.projectName + ' 定标结果';
     }
   } catch(e) {}
   renderBidSections();

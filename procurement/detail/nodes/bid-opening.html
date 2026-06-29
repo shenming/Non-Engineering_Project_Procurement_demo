@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -21,82 +21,82 @@
 <body class="content-page" style="padding:0;">
 
 <div class="card" style="margin:0;border:none;box-shadow:none;">
-    <div class="card-header"><h3>馃敁 寮€鏍囦俊鎭?<span class="tag tag-green">瀹℃壒閫氳繃</span></h3></div>
+    <div class="card-header"><h3>🔓 开标信息 <span class="tag tag-green">审批通过</span></h3></div>
     <div class="card-body">
 
-        <!-- ===== 绗?1 灞傦細寮€鏍囧熀纭€淇℃伅锛堝彧璇伙級===== -->
+        <!-- ===== 第 1 层：开标基础信息（只读）===== -->
         <div class="two-col">
             <div>
                 <div class="form-group" style="margin-bottom:12px;">
-                    <label>寮€鏍囦俊鎭儏鍐佃鏄?/label>
-                    <textarea class="form-control" id="bidDesc" rows="4" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;">寮€鏍囨椂闂达細2026-06-20 09:30锛屽湴鐐癸細闆嗗洟鎬婚儴3妤间細璁銆?瀹舵姇鏍囧崟浣嶅潎鎸夋椂瀹屾垚瑙ｅ瘑锛屾姤浠锋湁鏁堛€?/textarea>
+                    <label>开标信息情况说明</label>
+                    <textarea class="form-control" id="bidDesc" rows="4" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;">开标时间：2026-06-20 09:30，地点：集团总部3楼会议室。3家投标单位均按时完成解密，报价有效。</textarea>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
-                    <label>瀹℃壒鐘舵€?/label>
-                    <input class="form-control" value="瀹℃壒閫氳繃" disabled>
+                    <label>审批状态</label>
+                    <input class="form-control" value="审批通过" disabled>
                 </div>
             </div>
             <div>
                 <div class="form-group">
-                    <label>鎶曟爣鍗曚綅鏁伴噺</label>
+                    <label>投标单位数量</label>
                     <input class="form-control" type="number" id="bidderCount" value="3" disabled style="font-size:18px;font-weight:700;text-align:center;">
                 </div>
                 <div class="alert alert-info" style="margin-top:12px;">
-                    <span>馃搶</span>
-                    <div>褰撳墠宸插綍鍏?<strong id="bidderCountDisplay">3</strong> 瀹舵姇鏍囧崟浣?/div>
+                    <span>📌</span>
+                    <div>当前已录入 <strong id="bidderCountDisplay">3</strong> 家投标单位</div>
                 </div>
             </div>
         </div>
 
-        <!-- ===== 绗?2 灞傦細闄勪欢绠＄悊琛ㄦ牸锛堝彧璇伙紝鏃犲垱寤?鍒犻櫎鎸夐挳锛?==== -->
-        <div class="text-sm fw-600" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;margin-bottom:8px;">馃搸 闄勪欢绠＄悊</div>
+        <!-- ===== 第 2 层：附件管理表格（只读，无创建/删除按钮）===== -->
+        <div class="text-sm fw-600" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;margin-bottom:8px;">📎 附件管理</div>
         <div class="table-wrap">
             <table class="attach-table">
                 <thead>
                     <tr>
-                        <th style="width:120px;">鎿嶄綔</th>
-                        <th>闄勪欢绫诲瀷</th>
-                        <th>闄勪欢鏂囨。鍚嶇О</th>
-                        <th>缁勪欢鍚嶇О</th>
-                        <th>鏂囦欢绫诲瀷</th>
-                        <th>鏂囦欢澶у皬锛堝瓧鑺傦級</th>
-                        <th>鏃舵埑缂栫爜</th>
-                        <th>鏂囦欢涓婁紶鏃堕棿</th>
-                        <th>涓婁紶鎿嶄綔鐢ㄦ埛鍚?/th>
+                        <th style="width:120px;">操作</th>
+                        <th>附件类型</th>
+                        <th>附件文档名称</th>
+                        <th>组件名称</th>
+                        <th>文件类型</th>
+                        <th>文件大小（字节）</th>
+                        <th>时戳编码</th>
+                        <th>文件上传时间</th>
+                        <th>上传操作用户名</th>
                     </tr>
                 </thead>
                 <tbody id="attachBody">
                     <tr data-id="a1">
                         <td>
-                            <span class="op-icon disabled" title="涓婁紶锛堜粎鏌ョ湅妯″紡锛?>馃摛</span>
-                            <span class="op-icon disabled" title="鍒犻櫎锛堜粎鏌ョ湅妯″紡锛?>馃棏锔?/span>
-                            <span class="op-icon" onclick="alert('馃憗锔?棰勮鏂囦欢')" title="棰勮">馃憗锔?/span>
-                            <span class="op-icon" onclick="alert('猬囷笍 涓嬭浇')" title="涓嬭浇">猬囷笍</span>
+                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
+                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
+                            <span class="op-icon" onclick="alert('👁️ 预览文件')" title="预览">👁️</span>
+                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
                         </td>
-                        <td>寮€鏍囪褰?/td>
-                        <td>ZB-2026-003-寮€鏍囪褰?pdf</td>
-                        <td>寮€鏍囦俊鎭?/td>
+                        <td>开标记录</td>
+                        <td>ZB-2026-003-开标记录.pdf</td>
+                        <td>开标信息</td>
                         <td>pdf</td>
                         <td>1,245,678</td>
                         <td>TS-20260620-001</td>
                         <td>2026-06-20 09:45</td>
-                        <td>鏉庣粡鐞?/td>
+                        <td>李经理</td>
                     </tr>
                     <tr data-id="a2">
                         <td>
-                            <span class="op-icon disabled" title="涓婁紶锛堜粎鏌ョ湅妯″紡锛?>馃摛</span>
-                            <span class="op-icon disabled" title="鍒犻櫎锛堜粎鏌ョ湅妯″紡锛?>馃棏锔?/span>
-                            <span class="op-icon" onclick="alert('馃憗锔?棰勮鏂囦欢')" title="棰勮">馃憗锔?/span>
-                            <span class="op-icon" onclick="alert('猬囷笍 涓嬭浇')" title="涓嬭浇">猬囷笍</span>
+                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
+                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
+                            <span class="op-icon" onclick="alert('👁️ 预览文件')" title="预览">👁️</span>
+                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
                         </td>
-                        <td>寮€鏍囩幇鍦鸿祫鏂?/td>
-                        <td>ZB-2026-003-鐜板満鐓х墖.jpg</td>
-                        <td>寮€鏍囦俊鎭?/td>
+                        <td>开标现场资料</td>
+                        <td>ZB-2026-003-现场照片.jpg</td>
+                        <td>开标信息</td>
                         <td>jpg</td>
                         <td>3,210,456</td>
                         <td>TS-20260620-002</td>
                         <td>2026-06-20 10:00</td>
-                        <td>鏉庣粡鐞?/td>
+                        <td>李经理</td>
                     </tr>
                 </tbody>
             </table>
@@ -107,7 +107,7 @@
 
 <script src="../../../common/scripts.js"></script>
 <script>
-// 褰撳墠涓哄彧璇绘煡鐪嬫ā寮?
+// 当前为只读查看模式
 </script>
 </body>
 </html>
