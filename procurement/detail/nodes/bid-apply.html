@@ -49,7 +49,7 @@ select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
 </div>
 <script src="../../../common/scripts.js"></script>
 <script>
-(function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=window.parent.DETAIL_DATA;if(!d||!d[m]||!d[m].nodes||!d[m].nodes[s]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted" style="padding:20px;">暂无数据</p></div>';return}var nd=d[m].nodes[s],f=nd.form||{};
+(function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');if(!d||!d[m]||!d[m].nodes||!d[m].nodes[s]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted" style="padding:20px;">暂无数据</p></div>';return}var nd=d[m].nodes[s],f=nd.form||{};
 
 // 渲染表单
 var fh='<div class="form-row"><div class="form-group"><label>招标过程编号</label><input class="form-control" value="'+(f.procCode||'')+'" readonly></div><div class="form-group"><label>招标过程名称</label><input class="form-control" value="'+(f.procName||'')+'" readonly></div></div>';

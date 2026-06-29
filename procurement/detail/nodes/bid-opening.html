@@ -70,7 +70,7 @@
     var params = getParams();
     var method = params.method || '公开招标';
     var step = parseInt(params.step) || 0;
-    var pd = window.parent.DETAIL_DATA;
+    var pd = JSON.parse(sessionStorage.getItem('procNodeData')||'{}');
     if (!pd || !pd[method] || !pd[method].nodes || !pd[method].nodes[step]) { document.getElementById('cardRoot').innerHTML = '<div class="card-body"><p class="text-muted">暂无数据</p></div>'; return; }
     var nd = pd[method].nodes[step];
     var f = nd.form || {};

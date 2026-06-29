@@ -160,6 +160,8 @@ function onStepClick(index) {
 function loadNode(index) {
     var files = cfg.files || [];
     var nodeFile = files[index] || '';
+    // 将当前采购方式全部节点数据存入 sessionStorage，供 iframe 读取
+    try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
     document.getElementById('nodeFrame').src = nodeFile + '?method=' + encodeURIComponent(currentMethod) + '&step=' + index;
 }
 
