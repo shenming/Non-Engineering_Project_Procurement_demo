@@ -149,7 +149,10 @@ function onStepClick(index) {
 }
 
 function loadNode(index) {
-    document.getElementById('nodeFrame').src = PUBLIC_BID_NODE_FILES[index] || '';
+    // 通过 URL 参数传递当前采购方式和步骤索引
+    var nodeFile = PUBLIC_BID_NODE_FILES[index] || '';
+    var method = '公开招标'; // 后续从 ctx 动态获取
+    document.getElementById('nodeFrame').src = nodeFile + '?method=' + encodeURIComponent(method) + '&step=' + index;
 }
 
 function nextStep() {
