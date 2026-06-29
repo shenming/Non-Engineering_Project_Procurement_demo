@@ -4,43 +4,137 @@
 <meta charset="UTF-8">
 <link rel="stylesheet" href="../../common/styles.css">
 <style>
-.field-table { width: 100%; }
-.field-table td { padding: 5px 12px 5px 0; vertical-align: top; }
-.field-table .flabel { width: 140px; color: var(--gray-500); font-size: 12px; white-space: nowrap; }
-.field-table .fvalue { font-size: 13px; font-weight: 500; }
-.attach-section { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--gray-200); }
+    .attach-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .attach-table th { text-align: left; padding: 6px 8px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); font-size: 11px; white-space: nowrap; }
+    .attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
+    .attach-table .op-icon { cursor: pointer; color: var(--primary); font-size: 14px; margin: 0 2px; }
+    .attach-table .op-icon.disabled { color: var(--gray-400); cursor: not-allowed; pointer-events: none; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 </style>
 </head>
 <body class="content-page" style="padding:0;">
 
 <div class="card" style="margin:0;border:none;box-shadow:none;">
-  <div class="card-header"><h3>📣 评标结果公示 <span class="tag tag-yellow">公示中</span></h3></div>
-  <div class="card-body">
-    <div class="alert alert-info" style="margin-bottom:12px;">
-      <span>📌</span>
-      <div>公示期：2026-06-22 ~ 2026-06-25 | 公示媒体：集团采购平台</div>
-    </div>
-    <table class="field-table"><tbody>
-      <tr><td class="flabel">关联招采申请编号</td><td class="fvalue">ZB-2026-003</td></tr>
-      <tr><td class="flabel">招标项目名称</td><td class="fvalue">集团年度物业服务</td></tr>
-      <tr><td class="flabel">第一中标候选人</td><td class="fvalue">供应商A <span class="money">¥1,780,000.00元</span> | 综合得分：95.6</td></tr>
-      <tr><td class="flabel">第二中标候选人</td><td class="fvalue">供应商B <span class="money">¥1,825,000.00元</span> | 综合得分：88.3</td></tr>
-      <tr><td class="flabel">第三中标候选人</td><td class="fvalue">供应商C <span class="money">¥1,865,000.00元</span> | 综合得分：76.1</td></tr>
-      <tr><td class="flabel">公示开始日期</td><td class="fvalue">2026-06-22</td></tr>
-      <tr><td class="flabel">公示截止日期</td><td class="fvalue">2026-06-25 17:00</td></tr>
-      <tr><td class="flabel">异议受理</td><td class="fvalue">集团采购部 · 张明 · 010-8888-6666</td></tr>
-    </tbody></table>
+    <div class="card-header"><h3>📢 评标结果公示 <span class="tag tag-yellow">进行中</span></h3></div>
+    <div class="card-body">
 
-    <div class="attach-section">
-      <div class="text-sm fw-600 mb-4">📎 附件清单</div>
-      <div class="text-sm" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-        <span class="tag tag-green" style="font-size:11px;">📄 中标候选人公示（已发布）.pdf</span>
-        <span class="tag tag-green" style="font-size:11px;">📄 评标报告.pdf</span>
-      </div>
+        <!-- ===== 第 1 层：评标公示基础信息（通栏整栏）===== -->
+        <div class="form-group" style="margin-bottom:12px;">
+            <label>评标结果公示信息说明 <span class="required">*</span></label>
+            <textarea class="form-control" id="evalAnnounceDesc" rows="4" placeholder="请填写评标结果公示信息说明，包括公示期、公示媒介、中标候选人信息等">中标候选人：供应商A，中标金额 1,780,000.00 元。公示期自 2026-07-15 至 2026-07-18，公示媒介为集团官网和中国招标投标公共服务平台。</textarea>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>审批状态</label>
+            <input class="form-control" value="OA审批中" disabled style="background:var(--gray-100);color:var(--gray-600);">
+        </div>
+
+        <!-- ===== 第 2 层：附件操作工具栏 ===== -->
+        <div class="flex-between mb-8" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;">
+            <div class="text-sm fw-600">📎 附件管理</div>
+            <div class="flex gap-8">
+                <button class="btn btn-sm btn-outline" onclick="createAttachRow()">创建</button>
+                <button class="btn btn-sm btn-danger" onclick="batchDeleteAttach()">删除</button>
+            </div>
+        </div>
+
+        <!-- ===== 第 3 层：附件列表（11 列）===== -->
+        <div class="table-wrap">
+            <table class="attach-table">
+                <thead>
+                    <tr>
+                        <th style="width:30px;"><input type="checkbox" onclick="toggleAllAttach(this)"></th>
+                        <th style="width:100px;">操作</th>
+                        <th>附件类型</th>
+                        <th>附件文档名称</th>
+                        <th>组件名称</th>
+                        <th style="width:40px;">预览</th>
+                        <th>文件类型</th>
+                        <th>文件大小（字节）</th>
+                        <th>时戳编码</th>
+                        <th>文件上传时间</th>
+                        <th>上传操作用户名</th>
+                    </tr>
+                </thead>
+                <tbody id="attachBody">
+                    <tr data-id="a1">
+                        <td><input type="checkbox" class="attach-cb"></td>
+                        <td>
+                            <span class="op-icon" onclick="uploadAttach(this)" title="上传">📤</span>
+                            <span class="op-icon" onclick="deleteAttachRow(this)" title="删除">🗑️</span>
+                            <span class="op-icon" onclick="parent.showAlert('⬇️ 下载')" title="下载">⬇️</span>
+                            <span class="op-icon" onclick="parent.showAlert('👁️ 预览')" title="预览">👁️</span>
+                        </td>
+                        <td>中标候选人公示</td>
+                        <td>ZB-2026-003-中标候选人公示.pdf</td>
+                        <td>评标公示</td>
+                        <td><span class="op-icon" onclick="parent.showAlert('👁️ 预览文件')">👁️</span></td>
+                        <td>pdf</td>
+                        <td>1,200,000</td>
+                        <td>TS-20260715-001</td>
+                        <td>2026-07-15 09:00</td>
+                        <td>李经理</td>
+                    </tr>
+                    <tr data-id="a2">
+                        <td><input type="checkbox" class="attach-cb"></td>
+                        <td>
+                            <span class="op-icon" onclick="uploadAttach(this)" title="上传">📤</span>
+                            <span class="op-icon" onclick="deleteAttachRow(this)" title="删除">🗑️</span>
+                            <span class="op-icon" onclick="parent.showAlert('⬇️ 下载')" title="下载">⬇️</span>
+                            <span class="op-icon" onclick="parent.showAlert('👁️ 预览')" title="预览">👁️</span>
+                        </td>
+                        <td contenteditable="true">评标报告</td>
+                        <td contenteditable="true">ZB-2026-003-评标报告公示版.pdf</td>
+                        <td contenteditable="true">评标公示</td>
+                        <td><span class="op-icon" onclick="parent.showAlert('👁️ 预览文件')">👁️</span></td>
+                        <td contenteditable="true">pdf</td>
+                        <td contenteditable="true">1,500,000</td>
+                        <td contenteditable="true">TS-20260715-002</td>
+                        <td contenteditable="true">2026-07-15 09:05</td>
+                        <td contenteditable="true">李经理</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
-  </div>
 </div>
 
 <script src="../../common/scripts.js"></script>
+<script>
+function createAttachRow() {
+    var tbody = document.getElementById('attachBody');
+    var tr = document.createElement('tr');
+    tr.setAttribute('data-id', 'a' + Date.now());
+    tr.innerHTML = '<td><input type="checkbox" class="attach-cb"></td>' +
+        '<td><span class="op-icon" onclick="uploadAttach(this)" title="上传">📤</span><span class="op-icon" onclick="deleteAttachRow(this)" title="删除">🗑️</span><span class="op-icon" onclick="parent.showAlert(\'⬇️ 下载\')" title="下载">⬇️</span><span class="op-icon" onclick="parent.showAlert(\'👁️ 预览\')" title="预览">👁️</span></td>' +
+        '<td contenteditable="true">新附件</td>' +
+        '<td contenteditable="true"></td>' +
+        '<td contenteditable="true">评标公示</td>' +
+        '<td><span class="op-icon" onclick="parent.showAlert(\'👁️ 预览文件\')">👁️</span></td>' +
+        '<td contenteditable="true">pdf</td>' +
+        '<td contenteditable="true"></td>' +
+        '<td contenteditable="true"></td>' +
+        '<td contenteditable="true">' + new Date().toISOString().replace('T',' ').substring(0,19) + '</td>' +
+        '<td contenteditable="true">当前用户</td>';
+    tbody.appendChild(tr);
+}
+
+function uploadAttach(icon) { parent.showAlert('📤 上传附件功能'); }
+
+function deleteAttachRow(icon) { var row = icon.closest('tr'); if (row) row.remove(); }
+
+function batchDeleteAttach() {
+    var cbs = document.querySelectorAll('.attach-cb:checked');
+    if (cbs.length === 0) { parent.showAlert('⚠️ 请先勾选要删除的附件行。'); return; }
+    if (parent.confirm('确认删除选中的 ' + cbs.length + ' 条附件？')) {
+        cbs.forEach(function(cb) { var row = cb.closest('tr'); if (row) row.remove(); });
+    }
+}
+
+function toggleAllAttach(checkbox) {
+    var checked = checkbox.checked;
+    document.querySelectorAll('.attach-cb').forEach(function(cb) { cb.checked = checked; });
+}
+</script>
 </body>
 </html>
