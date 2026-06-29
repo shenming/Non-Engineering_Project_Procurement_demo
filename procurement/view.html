@@ -140,7 +140,7 @@ function renderSteps() {
 }
 
 function onStepClick(index) {
-    if (index <= doneCount) { currentStep = index; loadNode(index); renderSteps(); updateNavButtons(); }
+        if (index <= doneCount) { doneCount = Math.max(doneCount, currentStep + 1); currentStep = index; loadNode(index); renderSteps(); updateNavButtons(); }
 }
 
 function loadNode(index) {
