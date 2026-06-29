@@ -9,87 +9,36 @@
     .attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
     .attach-table .op-icon { cursor: pointer; color: var(--primary); font-size: 14px; margin: 0 2px; }
     .attach-table .op-icon.disabled { color: var(--gray-400); cursor: not-allowed; pointer-events: none; }
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .form-control[readonly],
-    .form-control:disabled { background: var(--gray-50); color: var(--gray-600); cursor: not-allowed; }
+    .form-control[readonly], .form-control:disabled { background: var(--gray-50); color: var(--gray-600); cursor: not-allowed; }
 </style>
 </head>
 <body class="content-page" style="padding:0;">
 
-<div class="card" style="margin:0;border:none;box-shadow:none;">
+<div class="card" style="margin:0;border:none;box-shadow:none;" id="cardRoot">
     <div class="card-header"><h3>📊 评标结果 <span class="tag tag-green">审批通过</span></h3></div>
     <div class="card-body">
-
-        <!-- ===== 第 1 层：评标基础信息（只读）===== -->
         <div class="form-group" style="margin-bottom:12px;">
             <label>评标结果说明</label>
-            <textarea class="form-control" id="evalDesc" rows="5" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;">评标委员会由5人组成（集团采购部3人+外部专家2人），采用综合评分法评审。经评审，供应商A综合得分95.6分排名第一，推荐为中标候选人。公示期至2026-07-18。</textarea>
+            <textarea class="form-control" id="txtDesc" rows="5" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;"></textarea>
         </div>
         <div class="form-group" style="margin-bottom:0;">
             <label>审批状态</label>
-            <input class="form-control" value="审批通过" disabled>
+            <input class="form-control" id="txtStatus" disabled>
         </div>
 
-        <!-- ===== 第 2 层：附件管理表格（只读，无创建/删除按钮）===== -->
         <div class="text-sm fw-600" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;margin-bottom:8px;">📎 附件管理</div>
         <div class="table-wrap">
             <table class="attach-table">
-                <thead>
-                    <tr>
-                        <th style="width:120px;">操作</th>
-                        <th>附件类型</th>
-                        <th>附件文档名称</th>
-                        <th>组件名称</th>
-                        <th>文件类型</th>
-                        <th>文件大小（字节）</th>
-                        <th>时戳编码</th>
-                        <th>文件上传时间</th>
-                        <th>上传操作用户名</th>
-                    </tr>
-                </thead>
-                <tbody id="attachBody">
-                    <tr data-id="a1">
-                        <td>
-                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
-                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
-                            <span class="op-icon" onclick="alert('👁️ 预览文件')" title="预览">👁️</span>
-                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
-                        </td>
-                        <td>评标报告</td>
-                        <td>ZB-2026-003-评标报告.pdf</td>
-                        <td>评标结果</td>
-                        <td>pdf</td>
-                        <td>2,456,789</td>
-                        <td>TS-20260712-001</td>
-                        <td>2026-07-12 14:30</td>
-                        <td>李经理</td>
-                    </tr>
-                    <tr data-id="a2">
-                        <td>
-                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
-                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
-                            <span class="op-icon" onclick="alert('👁️ 预览文件')" title="预览">👁️</span>
-                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
-                        </td>
-                        <td>中标候选人公示</td>
-                        <td>ZB-2026-003-中标候选人公示.pdf</td>
-                        <td>评标结果</td>
-                        <td>pdf</td>
-                        <td>1,023,400</td>
-                        <td>TS-20260712-002</td>
-                        <td>2026-07-12 14:35</td>
-                        <td>李经理</td>
-                    </tr>
-                </tbody>
+                <thead><tr><th style="width:120px;">操作</th><th>附件类型</th><th>附件文档名称</th><th>组件名称</th><th>文件类型</th><th>文件大小（字节）</th><th>时戳编码</th><th>文件上传时间</th><th>上传操作用户名</th></tr></thead>
+                <tbody id="attachBody"></tbody>
             </table>
         </div>
-
     </div>
 </div>
 
 <script src="../../../common/scripts.js"></script>
 <script>
-// 当前为只读查看模式
+(function initNode(){function gp(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var params=gp(),method=params.method||'公开招标',step=parseInt(params.step)||0,pd=window.parent.DETAIL_DATA;if(!pd||!pd[method]||!pd[method].nodes||!pd[method].nodes[step]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted">暂无数据</p></div>';return}var nd=pd[method].nodes[step],f=nd.form||{};document.getElementById('txtDesc').value=f.desc||'';document.getElementById('txtStatus').value=f.approvalStatus||'';var tbody=document.getElementById('attachBody'),atts=nd.attachments||[],html='';for(var i=0;i<atts.length;i++){var a=atts[i];html+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span></td><td>'+(a.type||'')+'</td><td>'+(a.name||'')+'</td><td>'+(a.comp||'')+'</td><td>'+(a.fileType||'')+'</td><td style="text-align:right;">'+(a.size||'')+'</td><td>'+(a.ts||'')+'</td><td>'+(a.time||'')+'</td><td>'+(a.user||'')+'</td></tr>'}tbody.innerHTML=html||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';})();
 </script>
 </body>
 </html>

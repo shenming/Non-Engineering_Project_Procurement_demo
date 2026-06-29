@@ -10,45 +10,37 @@
     .attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
     .attach-table .op-icon { cursor: pointer; color: var(--primary); font-size: 14px; margin: 0 2px; }
     .attach-table .op-icon.disabled { color: var(--gray-400); cursor: not-allowed; pointer-events: none; }
-    .bidder-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .bidder-table th { text-align: left; padding: 8px 10px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
-    .bidder-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-100); }
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .form-control[readonly],
-    .form-control:disabled { background: var(--gray-50); color: var(--gray-600); cursor: not-allowed; }
+    .form-control[readonly], .form-control:disabled { background: var(--gray-50); color: var(--gray-600); cursor: not-allowed; }
 </style>
 </head>
 <body class="content-page" style="padding:0;">
 
-<div class="card" style="margin:0;border:none;box-shadow:none;">
-    <div class="card-header"><h3>🔓 开标信息 <span class="tag tag-green">审批通过</span></h3></div>
+<div class="card" style="margin:0;border:none;box-shadow:none;" id="cardRoot">
+    <div class="card-header"><h3 id="nodeTitle">🔓 开标信息</h3></div>
     <div class="card-body">
-
-        <!-- ===== 第 1 层：开标基础信息（只读）===== -->
         <div class="two-col">
             <div>
                 <div class="form-group" style="margin-bottom:12px;">
                     <label>开标信息情况说明</label>
-                    <textarea class="form-control" id="bidDesc" rows="4" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;">开标时间：2026-06-20 09:30，地点：集团总部3楼会议室。3家投标单位均按时完成解密，报价有效。</textarea>
+                    <textarea class="form-control" id="txtDesc" rows="4" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;"></textarea>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <label>审批状态</label>
-                    <input class="form-control" value="审批通过" disabled>
+                    <input class="form-control" id="txtStatus" disabled>
                 </div>
             </div>
             <div>
                 <div class="form-group">
                     <label>投标单位数量</label>
-                    <input class="form-control" type="number" id="bidderCount" value="3" disabled style="font-size:18px;font-weight:700;text-align:center;">
+                    <input class="form-control" type="number" id="txtBidderCount" disabled style="font-size:18px;font-weight:700;text-align:center;">
                 </div>
                 <div class="alert alert-info" style="margin-top:12px;">
                     <span>📌</span>
-                    <div>当前已录入 <strong id="bidderCountDisplay">3</strong> 家投标单位</div>
+                    <div>当前已录入 <strong id="bidderCountDisplay">0</strong> 家投标单位</div>
                 </div>
             </div>
         </div>
 
-        <!-- ===== 第 2 层：附件管理表格（只读，无创建/删除按钮）===== -->
         <div class="text-sm fw-600" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;margin-bottom:8px;">📎 附件管理</div>
         <div class="table-wrap">
             <table class="attach-table">
@@ -65,49 +57,48 @@
                         <th>上传操作用户名</th>
                     </tr>
                 </thead>
-                <tbody id="attachBody">
-                    <tr data-id="a1">
-                        <td>
-                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
-                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
-                            <span class="op-icon" onclick="alert('👁️ 预览文件')" title="预览">👁️</span>
-                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
-                        </td>
-                        <td>开标记录</td>
-                        <td>ZB-2026-003-开标记录.pdf</td>
-                        <td>开标信息</td>
-                        <td>pdf</td>
-                        <td>1,245,678</td>
-                        <td>TS-20260620-001</td>
-                        <td>2026-06-20 09:45</td>
-                        <td>李经理</td>
-                    </tr>
-                    <tr data-id="a2">
-                        <td>
-                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
-                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
-                            <span class="op-icon" onclick="alert('👁️ 预览文件')" title="预览">👁️</span>
-                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
-                        </td>
-                        <td>开标现场资料</td>
-                        <td>ZB-2026-003-现场照片.jpg</td>
-                        <td>开标信息</td>
-                        <td>jpg</td>
-                        <td>3,210,456</td>
-                        <td>TS-20260620-002</td>
-                        <td>2026-06-20 10:00</td>
-                        <td>李经理</td>
-                    </tr>
-                </tbody>
+                <tbody id="attachBody"></tbody>
             </table>
         </div>
-
     </div>
 </div>
 
 <script src="../../../common/scripts.js"></script>
 <script>
-// 当前为只读查看模式
+(function initNode() {
+    function getParams() { var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p; }
+    var params = getParams();
+    var method = params.method || '公开招标';
+    var step = parseInt(params.step) || 0;
+    var pd = window.parent.DETAIL_DATA;
+    if (!pd || !pd[method] || !pd[method].nodes || !pd[method].nodes[step]) { document.getElementById('cardRoot').innerHTML = '<div class="card-body"><p class="text-muted">暂无数据</p></div>'; return; }
+    var nd = pd[method].nodes[step];
+    var f = nd.form || {};
+
+    document.getElementById('txtDesc').value = f.desc || '';
+    document.getElementById('txtStatus').value = f.approvalStatus || '';
+    document.getElementById('txtBidderCount').value = f.bidderCount || 0;
+    document.getElementById('bidderCountDisplay').textContent = f.bidderCount || 0;
+
+    var tbody = document.getElementById('attachBody');
+    var atts = nd.attachments || [];
+    var html = '';
+    for (var i = 0; i < atts.length; i++) {
+        var a = atts[i];
+        html += '<tr>';
+        html += '<td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑️</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁️</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇️</span></td>';
+        html += '<td>' + (a.type||'') + '</td>';
+        html += '<td>' + (a.name||'') + '</td>';
+        html += '<td>' + (a.comp||'') + '</td>';
+        html += '<td>' + (a.fileType||'') + '</td>';
+        html += '<td style="text-align:right;">' + (a.size||'') + '</td>';
+        html += '<td>' + (a.ts||'') + '</td>';
+        html += '<td>' + (a.time||'') + '</td>';
+        html += '<td>' + (a.user||'') + '</td>';
+        html += '</tr>';
+    }
+    tbody.innerHTML = html || '<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
+})();
 </script>
 </body>
 </html>

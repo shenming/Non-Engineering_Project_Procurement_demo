@@ -10,7 +10,6 @@ body.content-page { padding: 16px; }
 .info-card .card-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
 .info-card .card-body { padding: 16px; }
 .info-card .card-body textarea { width: 100%; min-height: 60px; padding: 8px 10px; border: 1px solid var(--gray-300); border-radius: var(--radius); font-size: 13px; background: var(--gray-50); color: var(--gray-600); resize: none; }
-.info-card .card-body textarea:focus { outline: none; }
 .info-row { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
 .info-row .info-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .info-row .info-item .label { color: var(--gray-500); white-space: nowrap; }
@@ -19,236 +18,53 @@ body.content-page { padding: 16px; }
 .supplier-expand { margin-left: 4px; color: var(--primary-light); cursor: pointer; font-size: 12px; text-decoration: underline; }
 .supplier-expand:hover { color: var(--primary); }
 .action-btn-group { display: flex; gap: 4px; white-space: nowrap; }
-.action-btn-group .icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid var(--gray-300); border-radius: 4px; background: #fff; cursor: pointer; font-size: 13px; color: var(--gray-600); transition: var(--transition); }
-.action-btn-group .icon-btn:hover:not(:disabled) { background: var(--gray-50); border-color: var(--gray-400); }
+.action-btn-group .icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid var(--gray-300); border-radius: 4px; background: #fff; cursor: pointer; font-size: 13px; color: var(--gray-600); }
 .action-btn-group .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.action-btn-group .icon-btn.upload { color: var(--primary-light); }
-.action-btn-group .icon-btn.delete { color: var(--danger); }
-.action-btn-group .icon-btn.download { color: var(--success); }
-.action-btn-group .icon-btn.preview { color: var(--accent); }
 .attach-empty { text-align: center; padding: 24px 16px; color: var(--gray-400); font-size: 13px; }
 </style>
 </head>
 <body class="content-page">
-
-<!-- ===== 页面主标题 ===== -->
-<div class="page-main-title" id="pageMainTitle">集团年度物业服务 定标结果公示</div>
-
-<!-- ===== 顶部基础信息区 ===== -->
-<div class="info-card">
+<div class="page-main-title" id="pageMainTitle">定标结果</div>
+<div class="info-card" id="cardRoot">
   <div class="card-header"><h3>📋 定标基本信息</h3></div>
   <div class="card-body">
     <div class="info-row" style="margin-bottom:12px;">
-      <div class="info-item">
-        <span class="label">审批状态：</span>
-        <span id="approvalStatusTag" class="tag tag-yellow">审批中</span>
-      </div>
-      <div class="info-item">
-        <span class="label">招采申请编号：</span>
-        <span style="font-weight:600;">ZB-2026-003</span>
-      </div>
-      <div class="info-item">
-        <span class="label">所属单位：</span>
-        <span>集团总部</span>
-      </div>
+      <div class="info-item"><span class="label">审批状态：</span><span id="statusTag" class="tag tag-yellow">审批中</span></div>
+      <div class="info-item"><span class="label">招采申请编号：</span><span id="spanApplyCode" style="font-weight:600;"></span></div>
+      <div class="info-item"><span class="label">所属单位：</span><span id="spanUnit"></span></div>
     </div>
     <div>
-      <div class="label" style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">定标结果公示说明：</div>
-      <textarea id="resultNote" readonly>评标委员会已完成全部评审工作，根据综合评分法推荐中标候选人。经定标委员会审议通过，现对中标结果进行公示，公示期 3 个工作日。</textarea>
+      <div class="label" style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">定标结果信息说明：</div>
+      <textarea id="resultNote" readonly></textarea>
     </div>
   </div>
 </div>
-
-<!-- ===== 模块 1：定标标段明细表格 ===== -->
 <div class="info-card">
   <div class="card-header"><h3>📦 定标标段明细</h3></div>
   <div class="card-body" style="padding:0;">
     <div class="sub-table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th style="width:36px;text-align:center;"><!-- 单选框 --></th>
-            <th>招采计划编号</th>
-            <th>行号</th>
-            <th>招采目标</th>
-            <th>定标编号</th>
-            <th>招标采购名称</th>
-            <th>标段号</th>
-            <th>招采限额</th>
-            <th>中标金额(元)</th>
-            <th>中标单位编号</th>
-            <th>中标单位名称</th>
-            <th>中标日期</th>
-            <th>其他供应商</th>
-          </tr>
-        </thead>
-        <tbody id="bidSectionBody"></tbody>
+        <thead><tr><th style="width:36px;"></th><th>招采计划编号</th><th>行号</th><th>招采目标</th><th>定标编号</th><th>招标采购名称</th><th>标段号</th><th>招采限额</th><th>中标金额(元)</th><th>中标单位编号</th><th>中标单位名称</th><th>中标日期</th><th>其他供应商</th></tr></thead>
+        <tbody id="sectionBody"></tbody>
       </table>
     </div>
   </div>
 </div>
-
-<!-- ===== 模块 2：附件管理表格 ===== -->
 <div class="info-card">
   <div class="card-header"><h3>📎 附件管理</h3></div>
   <div class="card-body" style="padding:0;">
     <div class="sub-table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th style="width:120px;">操作</th>
-            <th>附件类型</th>
-            <th>附件文档名称</th>
-            <th>组件名称</th>
-            <th>文件 ID</th>
-            <th>文件类型</th>
-            <th>文件大小(字节)</th>
-            <th>时戳</th>
-            <th>用户名</th>
-          </tr>
-        </thead>
+        <thead><tr><th style="width:120px;">操作</th><th>附件类型</th><th>附件文档名称</th><th>组件名称</th><th>文件 ID</th><th>文件类型</th><th>文件大小(字节)</th><th>时戳</th><th>用户名</th></tr></thead>
         <tbody id="attachBody"></tbody>
       </table>
     </div>
     <div id="attachEmpty" class="attach-empty">请在定标标段明细中选择一条记录查看附件</div>
   </div>
 </div>
-
 <script src="../../../common/scripts.js"></script>
 <script>
-// ===== 模拟数据 =====
-// 集团年度物业服务招标 — 1 个标段
-// IT设备采购招标 — 3 个标段
-// 所有招采目标均为"主合同"
-var BID_SECTIONS = [
-  { id: 'BD-001', planCode: 'PL-2026-0002', lineNo: 1, target: '主合同', awardCode: 'DB-2026-003-1', purchaseName: '集团年度物业服务', sectionNo: '1', limitAmount: 1865000, winAmount: 1820000, supplierCode: 'GYS-001', supplierName: '北京金牌物业服务有限公司', winDate: '2026-07-20', otherSuppliers: [{ code: 'GYS-002', name: '上海信诚物业有限公司' }, { code: 'GYS-003', name: '广州华泰物业服务有限公司' }] },
-  { id: 'BD-002', planCode: 'PL-2026-0010', lineNo: 1, target: '主合同', awardCode: 'DB-2026-005-1', purchaseName: '办公设备集中采购 - 服务器采购', sectionNo: '1', limitAmount: 452000, winAmount: 438000, supplierCode: 'GYS-010', supplierName: '上海华讯网络系统有限公司', winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-011', name: '北京神州数码有限公司' }, { code: 'GYS-012', name: '深圳华为技术有限公司' }] },
-  { id: 'BD-003', planCode: 'PL-2026-0010', lineNo: 1, target: '主合同', awardCode: 'DB-2026-005-2', purchaseName: '办公设备集中采购 - 网络设备采购', sectionNo: '2', limitAmount: 452000, winAmount: 445000, supplierCode: 'GYS-015', supplierName: '杭州海康威视数字技术股份有限公司', winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-016', name: '浙江大华技术股份有限公司' }] },
-  { id: 'BD-004', planCode: 'PL-2026-0010', lineNo: 1, target: '主合同', awardCode: 'DB-2026-005-3', purchaseName: '办公设备集中采购 - 存储设备采购', sectionNo: '3', limitAmount: 452000, winAmount: 432000, supplierCode: 'GYS-018', supplierName: '北京浪潮电子信息产业有限公司', winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-019', name: '联想（北京）信息技术有限公司' }, { code: 'GYS-020', name: '中科曙光信息产业股份有限公司' }] },
-  { id: 'BD-005', planCode: 'PL-2026-0010', lineNo: 1, target: '主合同', awardCode: 'DB-2026-005-4', purchaseName: '办公设备集中采购 - 安全设备采购', sectionNo: '4', limitAmount: 452000, winAmount: 428000, supplierCode: 'GYS-022', supplierName: '新华三技术有限公司', winDate: '2026-07-18', otherSuppliers: [{ code: 'GYS-023', name: '锐捷网络股份有限公司' }] }
-];
-var ATTACH_DATA = {
-  'BD-001': [
-    { type: '中标通知书', name: '中标通知书_金牌物业.pdf', comp: '文件管理组件', fileId: 'F-2026-0720-001', fileType: 'pdf', size: 245760, ts: '2026-07-20 14:30', user: '李经理' },
-    { type: '中标结果公告', name: '中标结果公告_物业.docx', comp: '文件管理组件', fileId: 'F-2026-0720-002', fileType: 'docx', size: 128000, ts: '2026-07-20 15:10', user: '李经理' },
-    { type: '评标报告', name: '评标报告_物业.pdf', comp: '文件管理组件', fileId: 'F-2026-0718-003', fileType: 'pdf', size: 512000, ts: '2026-07-18 10:00', user: '张明' }
-  ],
-  'BD-002': [
-    { type: '中标通知书', name: '中标通知书_华讯网络.pdf', comp: '文件管理组件', fileId: 'F-2026-0718-001', fileType: 'pdf', size: 198000, ts: '2026-07-18 16:00', user: '王磊' },
-    { type: '中标结果公告', name: '中标结果公告_IT标段1.docx', comp: '文件管理组件', fileId: 'F-2026-0718-002', fileType: 'docx', size: 112000, ts: '2026-07-18 16:30', user: '王磊' }
-  ],
-  'BD-003': [
-    { type: '中标通知书', name: '中标通知书_海康威视.pdf', comp: '文件管理组件', fileId: 'F-2026-0718-003', fileType: 'pdf', size: 205000, ts: '2026-07-18 17:00', user: '王磊' },
-    { type: '中标结果公告', name: '中标结果公告_IT标段2.docx', comp: '文件管理组件', fileId: 'F-2026-0718-004', fileType: 'docx', size: 108000, ts: '2026-07-18 17:15', user: '王磊' }
-  ],
-  'BD-004': [
-    { type: '中标通知书', name: '中标通知书_浪潮信息.pdf', comp: '文件管理组件', fileId: 'F-2026-0718-005', fileType: 'pdf', size: 192000, ts: '2026-07-18 17:30', user: '王磊' },
-    { type: '中标结果公告', name: '中标结果公告_IT标段3.docx', comp: '文件管理组件', fileId: 'F-2026-0718-006', fileType: 'docx', size: 105000, ts: '2026-07-18 17:45', user: '王磊' },
-    { type: '评标报告', name: '评标报告_IT设备.pdf', comp: '文件管理组件', fileId: 'F-2026-0717-001', fileType: 'pdf', size: 486000, ts: '2026-07-17 11:00', user: '王磊' }
-  ]
-};
-
-// ===== 格式化金额 =====
-function fmtMoney(val) { return '¥' + (val / 10000).toFixed(2) + '万'; }
-
-// ===== 渲染标段表格 =====
-function renderBidSections() {
-  var tbody = document.getElementById('bidSectionBody');
-  var html = '';
-  for (var i = 0; i < BID_SECTIONS.length; i++) {
-    var s = BID_SECTIONS[i];
-    html += '<tr data-section-id="' + s.id + '" style="cursor:pointer;" onclick="selectSection(this)">';
-    html += '<td style="text-align:center;"><input type="radio" name="sectionRadio" style="pointer-events:none;"' + (i === 0 ? ' checked' : '') + '></td>';
-    html += '<td>' + s.planCode + '</td>';
-    html += '<td>' + s.lineNo + '</td>';
-    html += '<td><strong>' + s.target + '</strong></td>';
-    html += '<td>' + s.awardCode + '</td>';
-    html += '<td>' + s.purchaseName + '</td>';
-    html += '<td>' + s.sectionNo + '</td>';
-    html += '<td><span class="money">' + fmtMoney(s.limitAmount) + '</span></td>';
-    html += '<td>' + s.winAmount.toLocaleString() + '</td>';
-    html += '<td>' + s.supplierCode + '</td>';
-    html += '<td>' + s.supplierName + '</td>';
-    html += '<td>' + s.winDate + '</td>';
-    html += '<td><span class="supplier-expand" onclick="showOtherSuppliers(\'' + s.id + '\', event)">展开</span></td>';
-    html += '</tr>';
-  }
-  tbody.innerHTML = html;
-  // 默认选中第一行
-  var firstRow = tbody.querySelector('tr');
-  if (firstRow) { firstRow.classList.add('selected'); renderAttachments(BID_SECTIONS[0].id); }
-}
-
-// ===== 选择标段（联动附件） =====
-function selectSection(row) {
-  var allRows = document.querySelectorAll('#bidSectionBody tr');
-  allRows.forEach(function(r) { r.classList.remove('selected'); });
-  row.classList.add('selected');
-  row.querySelector('input[type="radio"]').checked = true;
-  var sectionId = row.getAttribute('data-section-id');
-  renderAttachments(sectionId);
-}
-
-// ===== 渲染附件表格 =====
-function renderAttachments(sectionId) {
-  var tbody = document.getElementById('attachBody');
-  var emptyEl = document.getElementById('attachEmpty');
-  var list = ATTACH_DATA[sectionId];
-  if (!list || list.length === 0) {
-    tbody.innerHTML = '';
-    emptyEl.style.display = '';
-    return;
-  }
-  emptyEl.style.display = 'none';
-  var html = '';
-  for (var i = 0; i < list.length; i++) {
-    var a = list[i];
-    html += '<tr>';
-    html += '<td><div class="action-btn-group">';
-    html += '<button class="icon-btn upload" disabled title="上传">📤</button>';
-    html += '<button class="icon-btn delete" disabled title="删除">🗑</button>';
-    html += '<button class="icon-btn download" onclick="downloadFile(\'' + a.fileId + '\', event)" title="下载">📥</button>';
-    html += '<button class="icon-btn preview" onclick="previewFile(\'' + a.fileId + '\', event)" title="预览">👁</button>';
-    html += '</div></td>';
-    html += '<td>' + a.type + '</td>';
-    html += '<td>' + a.name + '</td>';
-    html += '<td>' + a.comp + '</td>';
-    html += '<td style="font-size:11px;font-family:monospace;">' + a.fileId + '</td>';
-    html += '<td>' + a.fileType + '</td>';
-    html += '<td style="text-align:right;">' + a.size.toLocaleString() + '</td>';
-    html += '<td>' + a.ts + '</td>';
-    html += '<td>' + a.user + '</td>';
-    html += '</tr>';
-  }
-  tbody.innerHTML = html;
-}
-
-// ===== 显示其他供应商（弹窗） =====
-function showOtherSuppliers(sectionId, ev) {
-  ev.stopPropagation();
-  var section = null;
-  for (var i = 0; i < BID_SECTIONS.length; i++) {
-    if (BID_SECTIONS[i].id === sectionId) { section = BID_SECTIONS[i]; break; }
-  }
-  if (!section || !section.otherSuppliers || section.otherSuppliers.length === 0) { alert('无其他供应商信息'); return; }
-  alert('📋 其他投标供应商\n' + section.otherSuppliers.map(function(s) { return s.code + ' - ' + s.name; }).join('\n'));
-}
-
-// ===== 下载/预览（模拟） =====
-function downloadFile(fileId, ev) { ev.stopPropagation(); showAlert('📥 文件 ' + fileId + ' 下载中...（模拟）'); }
-function previewFile(fileId, ev) { ev.stopPropagation(); showAlert('👁 文件 ' + fileId + ' 预览（模拟）'); }
-
-// ===== 初始化 =====
-(function init() {
-  // 尝试从 sessionStorage 获取项目名称
-  try {
-    var ctx = JSON.parse(sessionStorage.getItem('procurementViewContext') || 'null');
-    if (ctx && ctx.projectName) {
-      document.getElementById('pageMainTitle').textContent = ctx.projectName + ' 定标结果';
-    }
-  } catch(e) {}
-  renderBidSections();
-})();
+(function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=window.parent.DETAIL_DATA;if(!d||!d[m]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted">暂无数据</p></div>';return}var nd=d[m].nodes[s],f=nd.form||{};if(d[m].info&&d[m].info.projectName)document.getElementById('pageMainTitle').textContent=d[m].info.projectName+' 定标结果';document.getElementById('spanApplyCode').textContent=f.applyCode||'';document.getElementById('spanUnit').textContent=f.unit||'';document.getElementById('resultNote').value=f.resultNote||'';var st=document.getElementById('statusTag');var sv=f.approvalStatus||'审批中';st.textContent=sv;st.className='tag '+(sv==='审批通过'?'tag-green':sv==='审批中'?'tag-yellow':'tag-gray');var secs=nd.sections||[],stb=document.getElementById('sectionBody'),sh='';for(var i=0;i<secs.length;i++){var sc=secs[i];sh+='<tr data-sid="'+sc.id+'" style="cursor:pointer;" onclick="selectSection(this)"><td style="text-align:center;"><input type="radio" name="sRad" style="pointer-events:none;"'+(i===0?' checked':'')+'></td><td>'+sc.planCode+'</td><td>'+sc.lineNo+'</td><td><strong>'+sc.target+'</strong></td><td>'+sc.awardCode+'</td><td>'+sc.purchaseName+'</td><td>'+sc.sectionNo+'</td><td><span class="money">¥'+(sc.limitAmount/10000).toFixed(2)+'万</span></td><td>'+sc.winAmount.toLocaleString()+'</td><td>'+sc.supplierCode+'</td><td>'+sc.supplierName+'</td><td>'+sc.winDate+'</td><td><span class="supplier-expand" onclick="event.stopPropagation();alert(\''+(sc.otherSuppliers?sc.otherSuppliers.map(function(x){return x.code+' - '+x.name}).join('\\n'):'无')+'\')">展开</span></td></tr>'}stb.innerHTML=sh;var ats=nd.attachments||{},tb=document.getElementById('attachBody'),ee=document.getElementById('attachEmpty');function renderAtt(sid){var list=ats[sid];if(!list||list.length===0){tb.innerHTML='';ee.style.display='';return}ee.style.display='none';var h='';for(var i=0;i<list.length;i++){var o=list[i];h+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'📥 下载\')">📥</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.comp||'')+'</td><td style="font-family:monospace;font-size:10px;">'+(o.fileId||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.user||'')+'</td></tr>'}tb.innerHTML=h}window.selectSection=function(row){document.querySelectorAll('#sectionBody tr').forEach(function(r){r.classList.remove('selected')});row.classList.add('selected');row.querySelector('input[type="radio"]').checked=true;renderAtt(row.getAttribute('data-sid'))};if(secs.length>0)renderAtt(secs[0].id)})();
 </script>
 </body>
 </html>

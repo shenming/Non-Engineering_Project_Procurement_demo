@@ -13,327 +13,69 @@ body.content-page { padding: 16px; }
 .form-group { margin-bottom: 16px; }
 .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 4px; }
 .form-group:last-child { margin-bottom: 0; }
+.form-control[readonly], .form-control:disabled { background: var(--gray-50); color: var(--gray-600); cursor: not-allowed; }
+select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
 .attach-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .attach-table th { text-align: left; padding: 6px 8px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); font-size: 11px; white-space: nowrap; }
 .attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
 .attach-table .op-icon { cursor: pointer; color: var(--primary); font-size: 14px; margin: 0 2px; }
 .attach-table .op-icon.disabled { color: var(--gray-400); cursor: not-allowed; pointer-events: none; }
-.form-control[readonly],
-.form-control:disabled { background: var(--gray-50); color: var(--gray-600); cursor: not-allowed; }
-select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
 </style>
 </head>
 <body class="content-page">
-
-<div class="card" style="margin:0;border:none;box-shadow:none;">
-
-    <!-- ===== 模块 1：招采信息（控件只读模式） ===== -->
+<div class="card" style="margin:0;border:none;box-shadow:none;" id="cardRoot">
     <div class="card-header"><h3>📋 招采信息</h3></div>
-    <div class="card-body">
-        <!-- 第1行 -->
-        <div class="form-row">
-            <div class="form-group">
-                <label>招标过程编号</label>
-                <input class="form-control" value="ZB-2026-003" readonly>
-            </div>
-            <div class="form-group">
-                <label>招标过程名称</label>
-                <input class="form-control" value="集团年度物业服务" readonly>
-            </div>
-        </div>
-        <!-- 第2行 -->
-        <div class="form-row">
-            <div class="form-group">
-                <label>公司编号</label>
-                <input class="form-control" value="HQ-001" readonly>
-            </div>
-            <div class="form-group">
-                <label>招采限额</label>
-                <input class="form-control" value="¥1,865,000.00元" readonly>
-            </div>
-        </div>
-        <!-- 第3行 -->
-        <div class="form-row">
-            <div class="form-group">
-                <label>招标方式</label>
-                <select class="form-control" disabled>
-                    <option>公开招标</option>
-                    <option>邀请招标</option>
-                    <option>询比采购</option>
-                    <option>谈判采购</option>
-                    <option>直接采购</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>招采类型</label>
-                <select class="form-control" disabled>
-                    <option>服务类 · 物业服务</option>
-                    <option>服务类 · 法律服务</option>
-                    <option>服务类 · 咨询服务</option>
-                    <option>服务类 · 培训服务</option>
-                    <option>服务类 · 维护服务</option>
-                    <option>货物类 · IT类</option>
-                    <option>货物类 · 办公用品类</option>
-                    <option>货物类 · 设备类</option>
-                    <option>货物类 · 家具类</option>
-                </select>
-            </div>
-        </div>
-        <!-- 第4行 -->
-        <div class="form-row">
-            <div class="form-group">
-                <label>采购项说明</label>
-                <select class="form-control" disabled>
-                    <option value="">— 公开招标不限金额门槛，企业可自主选择</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>经办人</label>
-                <input class="form-control" value="李经理" readonly>
-            </div>
-        </div>
-        <!-- 第5行 -->
-        <div class="form-row">
-            <div class="form-group">
-                <label>申请日期</label>
-                <input class="form-control" value="2026-06-19" readonly>
-            </div>
-            <div class="form-group">
-                <label>招标代理机构</label>
-                <input class="form-control" value="上海XX招标代理有限公司" readonly>
-            </div>
-        </div>
-        <!-- 第6行 -->
-        <div class="form-row">
-            <div class="form-group">
-                <label>拟发标日期</label>
-                <input type="date" class="form-control" value="2026-06-19" disabled>
-            </div>
-            <div class="form-group">
-                <label>招标预计完成日期</label>
-                <input type="date" class="form-control" value="2026-07-25" disabled>
-            </div>
-        </div>
-        <!-- 第7行 -->
-        <div class="form-row">
-            <div class="form-group">
-                <label>是否进场招标</label>
-                <input class="form-control" value="否" readonly>
-            </div>
-            <div class="form-group">
-                <label>审批状态</label>
-                <input class="form-control" value="审批通过" disabled>
-            </div>
-        </div>
-        <!-- 第8行：通栏 -->
-        <div class="form-group" style="margin-bottom:0;">
-            <label>招标范围及相关说明</label>
-            <textarea class="form-control" rows="3" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;resize:none;">集团总部大楼A/B座、园区绿化、安保等物业服务，服务期12个月。</textarea>
-        </div>
-    </div>
-
-    <!-- ===== 模块 2：采购明细（增加采购项说明列） ===== -->
+    <div class="card-body" id="formContainer"></div>
     <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 采购明细</h3></div>
     <div class="card-body" style="padding:0;">
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width:36px;"></th>
-                        <th>招标采购名称</th>
-                        <th>采购计划编号</th>
-                        <th>行号</th>
-                        <th>采购名称</th>
-                        <th>采购金额含税（元）</th>
-                        <th>标段数</th>
-                        <th>招采品类</th>
-                        <th>二级品类</th>
-                        <th>招采目标</th>
-                        <th>采购项说明</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr data-idx="0" data-sections="1" data-amount="1865000.00">
-                        <td><input type="radio" name="purchaseSelect" checked onchange="onPurchaseSelect(this)"></td>
-                        <td>集团年度物业服务</td>
-                        <td>PL-2026-0002</td>
-                        <td>001</td>
-                        <td>集团年度物业服务</td>
-                        <td><span class="money">¥1,865,000.00元</span></td>
-                        <td>1</td>
-                        <td>服务类</td>
-                        <td>物业服务</td>
-                        <td>主合同</td>
-                        <td><select disabled style="font-size:11px;padding:2px 4px;border:1px solid var(--gray-300);border-radius:4px;background:var(--gray-50);color:var(--gray-600);"><option>公开招标不限金额门槛</option></select></td>
-                    </tr>
-                    <tr data-idx="1" data-sections="3" data-amount="2450000.00">
-                        <td><input type="radio" name="purchaseSelect" onchange="onPurchaseSelect(this)"></td>
-                        <td>IT设备采购</td>
-                        <td>PL-2026-0010</td>
-                        <td>001</td>
-                        <td>台式计算机及服务器</td>
-                        <td><span class="money">¥2,450,000.00元</span></td>
-                        <td>3</td>
-                        <td>货物类</td>
-                        <td>IT类</td>
-                        <td>主合同</td>
-                        <td><select disabled style="font-size:11px;padding:2px 4px;border:1px solid var(--gray-300);border-radius:4px;background:var(--gray-50);color:var(--gray-600);"><option>—</option></select></td>
-                    </tr>
-                <tfoot>
-                    <tr><td colspan="11" class="text-sm text-muted" style="padding:6px 10px;">采购金额合计：<span class="money">¥1,865,000.00元</span>｜招采限额：<span class="money">¥1,865,000.00元</span></td></tr>
-                </tfoot>
-            </table>
-        </div>
+        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>招标采购名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th><th>采购项说明</th></tr></thead>
+            <tbody id="purchaseBody"></tbody>
+        </table></div>
     </div>
-
-    <!-- ===== 模块 3：标段明细（增加采购项说明列） ===== -->
     <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 标段明细</h3></div>
     <div class="card-body" style="padding:0;">
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width:36px;"></th>
-                        <th>标段号</th>
-                        <th>招标采购名称</th>
-                        <th>招采限额</th>
-                        <th>采购计划编号</th>
-                        <th>行号</th>
-                        <th>采购名称</th>
-                        <th>采购金额含税</th>
-                        <th>标段数</th>
-                        <th>招采品类</th>
-                        <th>二级品类</th>
-                        <th>招采目标</th>
-                        <th>采购项说明</th>
-                    </tr>
-                </thead>
-                <tbody id="bidSectionBody">
-                    <tr data-purchase-idx="0" data-section-seq="0">
-                        <td><input type="radio" name="sectionSelect" checked onchange="onSectionSelect(this)"></td>
-                        <td>1</td>
-                        <td>集团年度物业服务</td>
-                        <td><span class="money">¥1,865,000.00元</span></td>
-                        <td>PL-2026-0002</td>
-                        <td>001</td>
-                        <td>集团年度物业服务</td>
-                        <td><span class="money">¥1,865,000.00元</span></td>
-                        <td>1</td>
-                        <td>服务类</td>
-                        <td>物业服务</td>
-                        <td>主合同</td>
-                        <td><select disabled style="font-size:11px;padding:2px 4px;border:1px solid var(--gray-300);border-radius:4px;background:var(--gray-50);color:var(--gray-600);"><option>公开招标不限金额门槛</option></select></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>标段号</th><th>招标采购名称</th><th>招采限额</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th><th>采购项说明</th></tr></thead>
+            <tbody id="sectionBody"></tbody>
+        </table></div>
     </div>
-
-    <!-- ===== 模块 4：附件管理（只读模式，上传/删除 disabled） ===== -->
     <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📎 附件管理</h3></div>
     <div class="card-body" style="padding:0;">
         <div class="table-wrap">
-            <table class="attach-table">
-                <thead>
-                    <tr>
-                        <th style="width:120px;">操作</th>
-                        <th>附件类型</th>
-                        <th>附件文档名称</th>
-                        <th>文件名（下载）</th>
-                        <th>文件 ID</th>
-                        <th>文件类型</th>
-                        <th>文件大小（字节）</th>
-                        <th>时戳</th>
-                        <th>用户名</th>
-                    </tr>
-                </thead>
-                <tbody id="attachBody">
-                    <tr data-id="a1">
-                        <td>
-                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
-                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
-                            <span class="op-icon" onclick="alert('👁️ 预览')" title="预览">👁️</span>
-                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
-                        </td>
-                        <td>招标文件</td>
-                        <td>集团物业服务招标文件_v2.pdf</td>
-                        <td>ZB-2026-003-ZB.pdf</td>
-                        <td style="font-family:monospace;font-size:10px;">F202606001</td>
-                        <td>pdf</td>
-                        <td style="text-align:right;">2,456,832</td>
-                        <td>2026-06-19 10:30</td>
-                        <td>李经理</td>
-                    </tr>
-                    <tr data-id="a2">
-                        <td>
-                            <span class="op-icon disabled" title="上传（仅查看模式）">📤</span>
-                            <span class="op-icon disabled" title="删除（仅查看模式）">🗑️</span>
-                            <span class="op-icon" onclick="alert('👁️ 预览')" title="预览">👁️</span>
-                            <span class="op-icon" onclick="alert('⬇️ 下载')" title="下载">⬇️</span>
-                        </td>
-                        <td>招标公告</td>
-                        <td>集团物业服务招标公告.pdf</td>
-                        <td>ZB-2026-003-GG.pdf</td>
-                        <td style="font-family:monospace;font-size:10px;">F202606002</td>
-                        <td>pdf</td>
-                        <td style="text-align:right;">1,023,456</td>
-                        <td>2026-06-19 10:35</td>
-                        <td>李经理</td>
-                    </tr>
-                </tbody>
+            <table class="attach-table"><thead><tr><th style="width:120px;">操作</th><th>附件类型</th><th>附件文档名称</th><th>文件名（下载）</th><th>文件 ID</th><th>文件类型</th><th>文件大小（字节）</th><th>时戳</th><th>用户名</th></tr></thead>
+                <tbody id="attachBody"></tbody>
             </table>
         </div>
     </div>
-
 </div>
-
 <script src="../../../common/scripts.js"></script>
 <script>
-// 采购明细 → 标段明细联动
-var SECTION_DATA = {
-    0: [
-        { seq: 1, name: '集团年度物业服务', limit: 1865000.00, planId: 'PL-2026-0002', planRow: '001', purchaseName: '集团年度物业服务', amount: 1865000.00, sections: 1, cat: '服务类', subCat: '物业服务', target: '主合同', note: '公开招标不限金额门槛' }
-    ],
-    1: [
-        { seq: 1, name: 'IT设备采购-标段1', limit: 1000000.00, planId: 'PL-2026-0010', planRow: '001', purchaseName: '台式计算机', amount: 1000000.00, sections: 1, cat: '货物类', subCat: 'IT类', target: '主合同', note: '—' },
-        { seq: 2, name: 'IT设备采购-标段2', limit: 800000.00, planId: 'PL-2026-0010', planRow: '001', purchaseName: '服务器', amount: 800000.00, sections: 2, cat: '货物类', subCat: 'IT类', target: '主合同', note: '—' },
-        { seq: 3, name: 'IT设备采购-标段3', limit: 650000.00, planId: 'PL-2026-0010', planRow: '001', purchaseName: '网络设备', amount: 650000.00, sections: 3, cat: '货物类', subCat: 'IT类', target: '主合同', note: '—' }
-    ]
-};
+(function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=window.parent.DETAIL_DATA;if(!d||!d[m]||!d[m].nodes||!d[m].nodes[s]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted" style="padding:20px;">暂无数据</p></div>';return}var nd=d[m].nodes[s],f=nd.form||{};
 
-function renderSectionRows(sections, purchaseIdx) {
-    var shtml = '';
-    sections.forEach(function(s, si) {
-        var checked = (si === 0) ? ' checked' : '';
-        shtml += '<tr data-purchase-idx="' + purchaseIdx + '" data-section-seq="' + si + '">';
-        shtml += '<td><input type="radio" name="sectionSelect" onchange="onSectionSelect(this)"' + checked + '></td>';
-        shtml += '<td>' + s.seq + '</td>';
-        shtml += '<td>' + s.name + '</td>';
-        shtml += '<td><span class="money">¥' + s.limit.toLocaleString('en-US', {minimumFractionDigits:2}) + '元</span></td>';
-        shtml += '<td>' + s.planId + '</td>';
-        shtml += '<td>' + s.planRow + '</td>';
-        shtml += '<td>' + s.purchaseName + '</td>';
-        shtml += '<td><span class="money">¥' + s.amount.toLocaleString('en-US', {minimumFractionDigits:2}) + '元</span></td>';
-        shtml += '<td>' + s.sections + '</td>';
-        shtml += '<td>' + s.cat + '</td>';
-        shtml += '<td>' + s.subCat + '</td>';
-        shtml += '<td>' + s.target + '</td>';
-        shtml += '<td><select disabled style="font-size:11px;padding:2px 4px;border:1px solid var(--gray-300);border-radius:4px;background:var(--gray-50);color:var(--gray-600);"><option>' + s.note + '</option></select></td>';
-        shtml += '</tr>';
-    });
-    return shtml;
-}
+// 渲染表单
+var fh='<div class="form-row"><div class="form-group"><label>招标过程编号</label><input class="form-control" value="'+(f.procCode||'')+'" readonly></div><div class="form-group"><label>招标过程名称</label><input class="form-control" value="'+(f.procName||'')+'" readonly></div></div>';
+fh+='<div class="form-row"><div class="form-group"><label>公司编号</label><input class="form-control" value="'+(f.companyCode||'')+'" readonly></div><div class="form-group"><label>招采限额</label><input class="form-control" value="'+(f.limitAmountText||'')+'" readonly></div></div>';
+fh+='<div class="form-row"><div class="form-group"><label>招标方式</label><select class="form-control" disabled><option>'+f.method+'</option></select></div><div class="form-group"><label>招采类型</label><select class="form-control" disabled><option>'+(f.category||'')+'</option></select></div></div>';
+fh+='<div class="form-row"><div class="form-group"><label>采购项说明</label><select class="form-control" disabled><option>'+(f.note||'')+'</option></select></div><div class="form-group"><label>经办人</label><input class="form-control" value="'+(f.handler||'')+'" readonly></div></div>';
+fh+='<div class="form-row"><div class="form-group"><label>申请日期</label><input class="form-control" value="'+(f.applyDate||'')+'" readonly></div><div class="form-group"><label>招标代理机构</label><input class="form-control" value="'+(f.agent||'')+'" readonly></div></div>';
+fh+='<div class="form-row"><div class="form-group"><label>拟发标日期</label><input type="date" class="form-control" value="'+(f.planIssueDate||'')+'" disabled></div><div class="form-group"><label>招标预计完成日期</label><input type="date" class="form-control" value="'+(f.planEndDate||'')+'" disabled></div></div>';
+fh+='<div class="form-row"><div class="form-group"><label>是否进场招标</label><input class="form-control" value="'+(f.inHouse||'')+'" readonly></div><div class="form-group"><label>审批状态</label><input class="form-control" value="'+(f.approvalStatus||'')+'" disabled></div></div>';
+fh+='<div class="form-group" style="margin-bottom:0;"><label>招标范围及相关说明</label><textarea class="form-control" rows="3" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;resize:none;">'+(f.scope||'')+'</textarea></div>';
+document.getElementById('formContainer').innerHTML=fh;
 
-function onPurchaseSelect(radio) {
-    var row = radio.closest('tr');
-    var idx = parseInt(row.getAttribute('data-idx'));
-    var sections = SECTION_DATA[idx] || [];
-    document.getElementById('bidSectionBody').innerHTML = renderSectionRows(sections, idx);
-}
+// 渲染采购明细
+var ps=nd.purchases||[],ptb=document.getElementById('purchaseBody'),ph='';
+for(var i=0;i<ps.length;i++){var p=ps[i];ph+='<tr data-idx="'+p.idx+'" data-sections="'+p.sections+'" style="cursor:pointer;" onclick="onPurchaseSelect(this)"><td style="text-align:center;"><input type="radio" name="pSel" style="pointer-events:none;"'+(i===0?' checked':'')+'></td><td>'+p.name+'</td><td>'+p.planCode+'</td><td>'+p.lineNo+'</td><td>'+p.purchaseName+'</td><td><span class="money">'+p.amountText+'</span></td><td>'+p.sections+'</td><td>'+p.cat+'</td><td>'+p.subCat+'</td><td>'+p.target+'</td><td><select disabled style="font-size:11px;"><option>'+p.note+'</option></select></td></tr>'}ptb.innerHTML=ph;
 
-function onSectionSelect(radio) {
-    // 占位 — 可联动附件
-}
+// 渲染标段明细
+var sd=nd.sectionData||{},stb=document.getElementById('sectionBody');
+window.onPurchaseSelect=function(row){var idx=parseInt(row.getAttribute('data-idx')),secs=sd[idx]||[],sh='';for(var i=0;i<secs.length;i++){var sc=secs[i];sh+='<tr><td><input type="radio" name="sSel"'+(i===0?' checked':'')+'></td><td>'+sc.seq+'</td><td>'+sc.name+'</td><td><span class="money">¥'+(sc.limit/10000).toFixed(2)+'万</span></td><td>'+sc.planCode+'</td><td>'+sc.planRow+'</td><td>'+sc.purchaseName+'</td><td><span class="money">¥'+(sc.amount/10000).toFixed(2)+'万</span></td><td>'+sc.sections+'</td><td>'+sc.cat+'</td><td>'+sc.subCat+'</td><td>'+sc.target+'</td><td><select disabled style="font-size:11px;"><option>'+(sc.note||'')+'</option></select></td></tr>'}stb.innerHTML=sh};
+// 默认选中第1个采购
+var firstPurchase=document.querySelector('#purchaseBody tr');if(firstPurchase)onPurchaseSelect(firstPurchase);
+
+// 渲染附件
+var ats=nd.attachments||[],tb=document.getElementById('attachBody'),ah='';
+for(var i=0;i<ats.length;i++){var o=ats[i];ah+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.file||'')+'</td><td style="font-family:monospace;font-size:10px;">'+(o.fileId||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.user||'')+'</td></tr>'}tb.innerHTML=ah||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
+})();
 </script>
 </body>
 </html>
