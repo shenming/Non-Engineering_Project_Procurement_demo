@@ -24,7 +24,6 @@
         .approval-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .approval-table th { text-align: left; padding: 8px 10px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
         .approval-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-100); }
-        .ver-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; background: var(--primary-lighter); color: var(--primary-light); }
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     </style>
 </head>
@@ -40,17 +39,16 @@
     </span>
 </div>
 
-<!-- 参照 plans/view.html 的 tab-card 布局 -->
 <div class="tab-card">
     <div class="tab-header">
         <div class="tab-title">
             <h3 id="infoTitle">📄 项目名称</h3>
-            <span class="tag tag-yellow" id="infoStatusTag" style="margin-left:8px;">进行中</span>
+            <span class="tag" id="infoStatusTag" style="margin-left:8px;">进行中</span>
         </div>
         <div class="flex gap-8">
-            <button class="btn btn-sm btn-outline" onclick="editProcurement()">✏️ 编辑</button>
-            <button class="btn btn-sm btn-danger" onclick="if(confirm('确认删除？'))showAlert('🗑️ 已删除')">🗑️ 删除</button>
-            <button class="btn btn-sm btn-primary" onclick="submitNode()">📤 提交</button>
+            <button class="btn btn-sm btn-outline" onclick="navTo('procurement', 'procurement/edit/index.html')">✏️ 编辑</button>
+            <button class="btn btn-sm btn-danger" onclick="if(confirm('确认删除？'))alert('🗑️ 已删除')">🗑️ 删除</button>
+            <button class="btn btn-sm btn-primary" onclick="alert('📤 已提交当前节点审批')">📤 提交</button>
         </div>
     </div>
 
@@ -71,28 +69,15 @@
     <div class="tab-body" id="tab-approval">
         <table class="approval-table">
             <thead>
-                <tr>
-                    <th>节点描述</th>
-                    <th>审批状态</th>
-                    <th>审批日期</th>
-                    <th>流程 ID</th>
-                </tr>
+                <tr><th>节点描述</th><th>审批状态</th><th>审批日期</th><th>流程 ID</th></tr>
             </thead>
-            <tbody>
-                <tr><td>招采申请&招采公告</td><td><span class="tag tag-green">审批通过</span></td><td>2026-06-20</td><td>WF-2026-003-01</td></tr>
-                <tr><td>开标信息</td><td><span class="tag tag-green">审批通过</span></td><td>2026-07-10</td><td>WF-2026-003-02</td></tr>
-                <tr><td>上传评标结果&评标结果公示</td><td><span class="tag tag-green">审批通过</span></td><td>2026-07-18</td><td>WF-2026-003-03</td></tr>
-                <tr><td>中标结果</td><td><span class="tag tag-green">审批通过</span></td><td>2026-07-20</td><td>WF-2026-003-04</td></tr>
-                <tr><td>中标结果公示</td><td><span class="tag tag-yellow">审批中</span></td><td>—</td><td>WF-2026-003-05</td></tr>
-            </tbody>
+            <tbody id="approvalBody"></tbody>
         </table>
     </div>
 </div>
 
-<!-- iframe 节点详情（始终可见） -->
 <iframe class="node-frame" id="nodeFrame" src="" style="margin-top:12px;"></iframe>
 
-<!-- 底部全局操作栏 -->
 <div class="flex-between" style="padding:12px 0;border-top:1px solid var(--gray-200);margin-top:12px;">
     <button id="prevBtn" class="btn btn-outline" onclick="prevStep()">← 上一步</button>
     <div class="flex gap-8">
@@ -102,11 +87,9 @@
 </div>
 
 <script src="../../common/scripts.js"></script>
+<script src="../../common/data.js"></script>
+<script src="data.js"></script>
 <script>
-var PUBLIC_BID_STEPS = [
-    '招采申请', '招采公告', '开标信息', '上传评标结果',
-    '评标结果公示', '中标结果', '中标结果公示'
-];
 var currentStep = 6;
 var doneCount = 6;
 
@@ -118,24 +101,14 @@ var doneCount = 6;
             document.getElementById('breadProject').textContent = ctx.projectName;
             document.getElementById('infoTitle').innerHTML = '📄 ' + ctx.projectName;
         }
-        // 优先根据 nodeText 在 PUBLIC_BID_STEPS 中精确匹配
         if (ctx.nodeText) {
             var matchedIndex = -1;
             for (var i = 0; i < PUBLIC_BID_STEPS.length; i++) {
-                if (PUBLIC_BID_STEPS[i] === ctx.nodeText) {
-                    matchedIndex = i;
-                    break;
-                }
+                if (PUBLIC_BID_STEPS[i] === ctx.nodeText) { matchedIndex = i; break; }
             }
-            if (matchedIndex !== -1) {
-                currentStep = matchedIndex;
-                doneCount = matchedIndex;
-            } else if (ctx.status === '已完成') {
-                doneCount = PUBLIC_BID_STEPS.length;
-                currentStep = PUBLIC_BID_STEPS.length;
-            } else {
-                doneCount = 0; currentStep = 0;
-            }
+            if (matchedIndex !== -1) { currentStep = matchedIndex; doneCount = matchedIndex; }
+            else if (ctx.status === '已完成') { doneCount = PUBLIC_BID_STEPS.length; currentStep = PUBLIC_BID_STEPS.length; }
+            else { doneCount = 0; currentStep = 0; }
         } else {
             if (ctx.status === '进行中' || ctx.status === '审批中') { doneCount = 1; currentStep = 1; }
             else if (ctx.status === '已完成') { doneCount = PUBLIC_BID_STEPS.length; currentStep = PUBLIC_BID_STEPS.length; }
@@ -143,6 +116,7 @@ var doneCount = 6;
         sessionStorage.removeItem('procurementViewContext');
     }
     renderSteps();
+    renderApprovalFlow();
     loadNode(currentStep);
 })();
 
@@ -159,23 +133,33 @@ function renderSteps() {
     updateNavButtons();
 }
 
+function renderApprovalFlow() {
+    var tbody = document.getElementById('approvalBody');
+    var html = '';
+    for (var i = 0; i < PUBLIC_BID_APPROVAL_FLOW.length; i++) {
+        var f = PUBLIC_BID_APPROVAL_FLOW[i];
+        var tagCls = f.status === '审批通过' ? 'tag-green' : (f.status === '审批中' ? 'tag-yellow' : 'tag-gray');
+        html += '<tr><td>' + f.node + '</td><td><span class="tag ' + tagCls + '">' + f.status + '</span></td><td>' + f.date + '</td><td>' + f.flowId + '</td></tr>';
+    }
+    tbody.innerHTML = html;
+}
+
 function onStepClick(index) {
-        if (index <= doneCount) { doneCount = Math.max(doneCount, currentStep + 1); currentStep = index; loadNode(index); renderSteps(); updateNavButtons(); }
+    if (index <= doneCount) { doneCount = Math.max(doneCount, currentStep + 1); currentStep = index; loadNode(index); renderSteps(); updateNavButtons(); }
 }
 
 function loadNode(index) {
-    var files = ['nodes/bid-apply.html','nodes/bid-announce.html','nodes/bid-opening.html','nodes/eval-result.html','nodes/eval-announce.html','nodes/award-result.html','nodes/award-announce.html'];
-    document.getElementById('nodeFrame').src = files[index] || '';
+    document.getElementById('nodeFrame').src = PUBLIC_BID_NODE_FILES[index] || '';
 }
 
 function nextStep() {
     if (currentStep < PUBLIC_BID_STEPS.length - 1) { doneCount = currentStep + 1; currentStep = doneCount; renderSteps(); loadNode(currentStep); }
-    else showAlert('🎉 已到达最后一步');
+    else alert('🎉 已到达最后一步');
 }
 
 function prevStep() {
     if (currentStep > 0) { currentStep--; renderSteps(); loadNode(currentStep); }
-    else showAlert('已经第一步');
+    else alert('已经第一步');
 }
 
 function switchTab(tabId, btn) {
@@ -185,14 +169,10 @@ function switchTab(tabId, btn) {
     document.getElementById(tabId).classList.add('active');
 }
 
-function editProcurement() { showAlert('✏️ 进入编辑模式'); }
-
 function updateNavButtons() {
     document.getElementById('prevBtn').disabled = (currentStep === 0);
     document.getElementById('nextBtn').disabled = (currentStep >= doneCount || currentStep >= PUBLIC_BID_STEPS.length - 1);
 }
-
-function submitNode() { showAlert('📤 已提交当前节点审批'); }
 </script>
 </body>
 </html>
