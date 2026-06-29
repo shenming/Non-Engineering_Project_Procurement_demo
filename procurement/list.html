@@ -188,6 +188,20 @@
 var sortCol = -1;
 var sortAsc = true;
 
+// ========== 初始化：根据配置动态更新每行"当前节点"列 ==========
+(function initTableNodes() {
+    var rows = document.querySelectorAll('#procTableBody tr');
+    rows.forEach(function(row) {
+        var method = row.getAttribute('data-method');
+        if (!method) return;
+        var activeName = getActiveStepName(method);
+        if (activeName) {
+            var cell = row.cells[5];
+            if (cell) cell.textContent = activeName;
+        }
+    });
+})();
+
 // ========== 查看详情（携带采购方式）==========
 function viewProcurement(btn) {
     var row = btn.closest('tr');
@@ -199,21 +213,18 @@ function viewProcurement(btn) {
     var nodeText = cells[5] ? cells[5].textContent.trim() : '';
     var status = row.getAttribute('data-status') || '进行中';
 
-    // 根据采购方式映射步骤数来确定 currentStep/doneCount
-    var steps = PROCUREMENT_METHODS[method] ? PROCUREMENT_METHODS[method].steps : [];
+    // 从 cfg.steps 的 state 确定 currentStep/doneCount
+    var cfg = METHOD_CONFIG[method];
+    var steps = cfg ? cfg.steps : [];
     var currentStep = 0;
     var doneCount = 0;
     if (status === '已完成') {
         doneCount = steps.length;
         currentStep = steps.length;
-    } else if (status === '进行中' || status === '审批中') {
-        // 根据当前节点文本估算进度
+    } else {
         for (var i = 0; i < steps.length; i++) {
-            if (steps[i].indexOf(nodeText.replace('&','')) !== -1 || nodeText.indexOf(steps[i]) !== -1) {
-                doneCount = i;
-                currentStep = i;
-                break;
-            }
+            if (steps[i].state === 'done') { doneCount = i + 1; }
+            if (steps[i].state === 'active') { currentStep = i; }
         }
     }
 

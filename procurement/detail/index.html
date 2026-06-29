@@ -103,22 +103,15 @@ var cfg = METHOD_CONFIG[currentMethod];
             document.getElementById('breadProject').textContent = ctx.projectName;
             document.getElementById('infoTitle').innerHTML = '📄 ' + ctx.projectName;
         }
-        // 根据 ctx.method 动态选择采购方式配置
         currentMethod = ctx.method || '公开招标';
         cfg = METHOD_CONFIG[currentMethod] || METHOD_CONFIG['公开招标'];
-        var steps = cfg.steps;
 
-        if (ctx.nodeText) {
-            var matchedIndex = -1;
-            for (var i = 0; i < steps.length; i++) {
-                if (steps[i] === ctx.nodeText) { matchedIndex = i; break; }
-            }
-            if (matchedIndex !== -1) { currentStep = matchedIndex; doneCount = matchedIndex; }
-            else if (ctx.status === '已完成') { doneCount = steps.length; currentStep = steps.length; }
-            else { doneCount = 0; currentStep = 0; }
-        } else {
-            if (ctx.status === '进行中' || ctx.status === '审批中') { doneCount = 1; currentStep = 1; }
-            else if (ctx.status === '已完成') { doneCount = steps.length; currentStep = steps.length; }
+        // 从 cfg.steps 的 state 读取 doneCount 和 currentStep
+        doneCount = 0;
+        currentStep = 0;
+        for (var i = 0; i < cfg.steps.length; i++) {
+            if (cfg.steps[i].state === 'done') doneCount = i + 1;
+            if (cfg.steps[i].state === 'active') currentStep = i;
         }
         sessionStorage.removeItem('procurementViewContext');
     }
@@ -130,12 +123,14 @@ var cfg = METHOD_CONFIG[currentMethod];
 function renderSteps() {
     var steps = cfg.steps;
     var container = document.getElementById('stepsContainer');
-    document.getElementById('procTitle').innerHTML = '📌 招标管理：步骤 ' + (currentStep + 1) + ' / ' + steps.length + ' (' + steps[currentStep] + ')';
+    document.getElementById('procTitle').innerHTML = '📌 招标管理：步骤 ' + (currentStep + 1) + ' / ' + steps.length + ' (' + steps[currentStep].name + ')';
     var html = '';
     for (var i = 0; i < steps.length; i++) {
-        if (i > 0) html += '<span class="step-connector ' + (i <= doneCount ? 'done' : '') + '"></span>';
-        var cls = i === currentStep ? ' active' : (i < doneCount ? ' done' : ' future');
-        html += '<span class="circle-step' + cls + '"' + (i <= doneCount ? ' onclick="onStepClick(' + i + ')"' : '') + '><span class="cnum">' + (i + 1) + '</span><span>' + steps[i] + '</span></span>';
+        var s = steps[i];
+        if (i > 0) html += '<span class="step-connector ' + (s.state === 'future' ? '' : 'done') + '"></span>';
+        var cls = s.state === 'active' ? ' active' : (s.state === 'done' ? ' done' : ' future');
+        var canClick = (s.state !== 'future') ? ' onclick="onStepClick(' + i + ')"' : '';
+        html += '<span class="circle-step' + cls + '"' + canClick + '><span class="cnum">' + (i + 1) + '</span><span>' + s.name + '</span></span>';
     }
     container.innerHTML = html;
     updateNavButtons();
@@ -154,20 +149,20 @@ function renderApprovalFlow() {
 }
 
 function onStepClick(index) {
-    if (index <= doneCount) { doneCount = Math.max(doneCount, currentStep + 1); currentStep = index; loadNode(index); renderSteps(); updateNavButtons(); }
+    var s = cfg.steps[index];
+    if (s.state !== 'future') { currentStep = index; loadNode(index); renderSteps(); updateNavButtons(); }
 }
 
 function loadNode(index) {
     var files = cfg.files || [];
     var nodeFile = files[index] || '';
-    // 将当前采购方式全部节点数据存入 sessionStorage，供 iframe 读取
     try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
     document.getElementById('nodeFrame').src = nodeFile + '?method=' + encodeURIComponent(currentMethod) + '&step=' + index;
 }
 
 function nextStep() {
     var steps = cfg.steps;
-    if (currentStep < steps.length - 1) { doneCount = currentStep + 1; currentStep = doneCount; renderSteps(); loadNode(currentStep); }
+    if (currentStep < steps.length - 1) { currentStep++; renderSteps(); loadNode(currentStep); }
     else alert('🎉 已到达最后一步');
 }
 
@@ -186,7 +181,9 @@ function switchTab(tabId, btn) {
 function updateNavButtons() {
     var steps = cfg.steps;
     document.getElementById('prevBtn').disabled = (currentStep === 0);
-    document.getElementById('nextBtn').disabled = (currentStep >= doneCount || currentStep >= steps.length - 1);
+    var activeIdx = -1;
+    for (var i = 0; i < steps.length; i++) { if (steps[i].state === 'active') activeIdx = i; }
+    document.getElementById('nextBtn').disabled = (currentStep >= activeIdx || currentStep >= steps.length - 1);
 }
 </script>
 </body>
