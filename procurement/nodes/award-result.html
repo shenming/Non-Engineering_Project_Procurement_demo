@@ -4,46 +4,243 @@
 <meta charset="UTF-8">
 <link rel="stylesheet" href="../../common/styles.css">
 <style>
-.field-table { width: 100%; }
-.field-table td { padding: 5px 12px 5px 0; vertical-align: top; }
-.field-table .flabel { width: 140px; color: var(--gray-500); font-size: 12px; white-space: nowrap; }
-.field-table .fvalue { font-size: 13px; font-weight: 500; }
-.attach-section { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--gray-200); }
+body.content-page { padding: 16px; }
+.info-card { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+.info-card .card-header { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+.info-card .card-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.info-card .card-body { padding: 16px; }
+.info-card .card-body textarea { width: 100%; min-height: 60px; padding: 8px 10px; border: 1px solid var(--gray-300); border-radius: var(--radius); font-size: 13px; background: var(--gray-50); color: var(--gray-600); resize: none; }
+.info-card .card-body textarea:focus { outline: none; }
+.info-row { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+.info-row .info-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.info-row .info-item .label { color: var(--gray-500); white-space: nowrap; }
+.page-main-title { font-size: 18px; font-weight: 700; color: var(--gray-800); margin-bottom: 12px; }
+.sub-table-wrap { overflow-x: auto; }
+.supplier-expand { margin-left: 4px; color: var(--primary-light); cursor: pointer; font-size: 12px; text-decoration: underline; }
+.supplier-expand:hover { color: var(--primary); }
+.action-btn-group { display: flex; gap: 4px; white-space: nowrap; }
+.action-btn-group .icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid var(--gray-300); border-radius: 4px; background: #fff; cursor: pointer; font-size: 13px; color: var(--gray-600); transition: var(--transition); }
+.action-btn-group .icon-btn:hover:not(:disabled) { background: var(--gray-50); border-color: var(--gray-400); }
+.action-btn-group .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.action-btn-group .icon-btn.upload { color: var(--primary-light); }
+.action-btn-group .icon-btn.delete { color: var(--danger); }
+.action-btn-group .icon-btn.download { color: var(--success); }
+.action-btn-group .icon-btn.preview { color: var(--accent); }
+.attach-empty { text-align: center; padding: 24px 16px; color: var(--gray-400); font-size: 13px; }
 </style>
 </head>
-<body class="content-page" style="padding:0;">
+<body class="content-page">
 
-<div class="card" style="margin:0;border:none;box-shadow:none;">
-  <div class="card-header"><h3>🎯 中标结果 <span class="tag tag-gray">待推进</span></h3></div>
+<!-- ===== 页面主标题 ===== -->
+<div class="page-main-title" id="pageMainTitle">集团年度物业服务 定标结果</div>
+
+<!-- ===== 顶部基础信息区 ===== -->
+<div class="info-card">
+  <div class="card-header"><h3>📋 定标基本信息</h3></div>
   <div class="card-body">
-    <table class="field-table"><tbody>
-      <tr><td class="flabel">关联招采申请编号</td><td class="fvalue">ZB-2026-003</td></tr>
-      <tr><td class="flabel">情况说明</td><td class="fvalue">待评标完成后确认中标单位</td></tr>
-      <tr><td class="flabel">审批状态</td><td class="fvalue"><span class="tag tag-gray">待提交</span></td></tr>
-    </tbody></table>
-
-    <div style="margin-top:12px;">
-      <div class="text-sm fw-600 mb-4">🎯 定标信息</div>
-      <table class="field-table"><tbody>
-        <tr><td class="flabel">中标单位</td><td class="fvalue">— 待确认 —</td></tr>
-        <tr><td class="flabel">中标金额</td><td class="fvalue">—</td></tr>
-        <tr><td class="flabel">中标通知书编号</td><td class="fvalue">—</td></tr>
-        <tr><td class="flabel">定标时间</td><td class="fvalue">—</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="attach-section">
-      <div class="text-sm fw-600 mb-4">📎 附件要求</div>
-      <div class="text-sm" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-        <span class="text-xs" style="color:var(--gray-500);">必选：</span>
-        <span class="tag tag-red" style="font-size:11px;">📄 拟中标单位投标文件</span>
-        <span class="tag tag-red" style="font-size:11px;">📄 中标结果公告（需用印）</span>
-        <span class="tag tag-red" style="font-size:11px;">📄 中标通知书（需用印）</span>
+    <div class="info-row" style="margin-bottom:12px;">
+      <div class="info-item">
+        <span class="label">审批状态：</span>
+        <span id="approvalStatusTag" class="tag tag-yellow">审批中</span>
       </div>
+      <div class="info-item">
+        <span class="label">招采申请编号：</span>
+        <span style="font-weight:600;">ZB-2026-003</span>
+      </div>
+      <div class="info-item">
+        <span class="label">所属单位：</span>
+        <span>集团总部</span>
+      </div>
+    </div>
+    <div>
+      <div class="label" style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">定标结果信息说明：</div>
+      <textarea id="resultNote" readonly>评标委员会已完成全部评审工作，根据综合评分法推荐中标候选人。经定标委员会审议通过，现对中标结果进行公示，公示期 3 个工作日。</textarea>
     </div>
   </div>
 </div>
 
+<!-- ===== 模块 1：定标标段明细表格 ===== -->
+<div class="info-card">
+  <div class="card-header"><h3>📦 定标标段明细</h3></div>
+  <div class="card-body" style="padding:0;">
+    <div class="sub-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px;text-align:center;"><!-- 单选框 --></th>
+            <th>招采计划编号</th>
+            <th>行号</th>
+            <th>招采目标</th>
+            <th>定标编号</th>
+            <th>招标采购名称</th>
+            <th>标段号</th>
+            <th>招采限额</th>
+            <th>中标金额(元)</th>
+            <th>中标单位编号</th>
+            <th>中标单位名称</th>
+            <th>中标日期</th>
+            <th>其他供应商</th>
+          </tr>
+        </thead>
+        <tbody id="bidSectionBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 模块 2：附件管理表格 ===== -->
+<div class="info-card">
+  <div class="card-header"><h3>📎 附件管理</h3></div>
+  <div class="card-body" style="padding:0;">
+    <div class="sub-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:120px;">操作</th>
+            <th>附件类型</th>
+            <th>附件文档名称</th>
+            <th>组件名称</th>
+            <th>文件 ID</th>
+            <th>文件类型</th>
+            <th>文件大小(字节)</th>
+            <th>时戳</th>
+            <th>用户名</th>
+          </tr>
+        </thead>
+        <tbody id="attachBody"></tbody>
+      </table>
+    </div>
+    <div id="attachEmpty" class="attach-empty">请在定标标段明细中选择一条记录查看附件</div>
+  </div>
+</div>
+
 <script src="../../common/scripts.js"></script>
+<script>
+// ===== 模拟数据 =====
+var BID_SECTIONS = [
+  { id: 'BD-001', planCode: 'PL-2026-0002', lineNo: 1, target: '主合同', awardCode: 'DB-2026-003-1', purchaseName: '集团年度物业服务招标', sectionNo: '1', limitAmount: 1865000, winAmount: 1820000, supplierCode: 'GYS-001', supplierName: '北京金牌物业服务有限公司', winDate: '2026-07-20', otherSuppliers: [{ code: 'GYS-002', name: '上海信诚物业有限公司' }, { code: 'GYS-003', name: '广州华泰物业服务有限公司' }] },
+  { id: 'BD-002', planCode: 'PL-2026-0002', lineNo: 2, target: '主合同', awardCode: 'DB-2026-003-2', purchaseName: '集团年度安保服务招标', sectionNo: '2', limitAmount: 860000, winAmount: 838000, supplierCode: 'GYS-005', supplierName: '中安保实业有限公司', winDate: '2026-07-20', otherSuppliers: [{ code: 'GYS-006', name: '华威保安集团' }] },
+  { id: 'BD-003', planCode: 'PL-2026-0003', lineNo: 1, target: '办公家具采购', awardCode: 'DB-2026-008-1', purchaseName: '办公家具采购招标', sectionNo: '1', limitAmount: 890000, winAmount: 865000, supplierCode: 'GYS-008', supplierName: '上海震旦办公家具有限公司', winDate: '2026-07-22', otherSuppliers: [{ code: 'GYS-009', name: '浙江圣奥家具制造有限公司' }, { code: 'GYS-010', name: '广东中泰家具实业有限公司' }] }
+];
+
+var ATTACH_DATA = {
+  'BD-001': [
+    { type: '中标通知书', name: '中标通知书_金牌物业.pdf', comp: '文件管理组件', fileId: 'F-2026-0720-001', fileType: 'pdf', size: 245760, ts: '2026-07-20 14:30', user: '李经理' },
+    { type: '中标结果公告', name: '中标结果公告_物业.docx', comp: '文件管理组件', fileId: 'F-2026-0720-002', fileType: 'docx', size: 128000, ts: '2026-07-20 15:10', user: '李经理' },
+    { type: '评标报告', name: '评标报告_物业.pdf', comp: '文件管理组件', fileId: 'F-2026-0718-003', fileType: 'pdf', size: 512000, ts: '2026-07-18 10:00', user: '张明' }
+  ],
+  'BD-002': [
+    { type: '中标通知书', name: '中标通知书_中安保.pdf', comp: '文件管理组件', fileId: 'F-2026-0720-003', fileType: 'pdf', size: 198000, ts: '2026-07-20 16:00', user: '李经理' },
+    { type: '中标结果公告', name: '中标结果公告_安保.docx', comp: '文件管理组件', fileId: 'F-2026-0720-004', fileType: 'docx', size: 98000, ts: '2026-07-20 16:20', user: '李经理' }
+  ],
+  'BD-003': [
+    { type: '中标通知书', name: '中标通知书_震旦家具.pdf', comp: '文件管理组件', fileId: 'F-2026-0722-001', fileType: 'pdf', size: 210000, ts: '2026-07-22 09:30', user: '王磊' },
+    { type: '中标结果公告', name: '中标结果公告_家具.docx', comp: '文件管理组件', fileId: 'F-2026-0722-002', fileType: 'docx', size: 105000, ts: '2026-07-22 10:00', user: '王磊' },
+    { type: '澄清文件', name: '澄清回复_供应商A.pdf', comp: '文件管理组件', fileId: 'F-2026-0721-001', fileType: 'pdf', size: 85000, ts: '2026-07-21 11:20', user: '王磊' }
+  ]
+};
+
+// ===== 格式化金额 =====
+function fmtMoney(val) { return '¥' + (val / 10000).toFixed(2) + '万'; }
+
+// ===== 渲染标段表格 =====
+function renderBidSections() {
+  var tbody = document.getElementById('bidSectionBody');
+  var html = '';
+  for (var i = 0; i < BID_SECTIONS.length; i++) {
+    var s = BID_SECTIONS[i];
+    html += '<tr data-section-id="' + s.id + '" style="cursor:pointer;" onclick="selectSection(this)">';
+    html += '<td style="text-align:center;"><input type="radio" name="sectionRadio" style="pointer-events:none;"' + (i === 0 ? ' checked' : '') + '></td>';
+    html += '<td>' + s.planCode + '</td>';
+    html += '<td>' + s.lineNo + '</td>';
+    html += '<td><strong>' + s.target + '</strong></td>';
+    html += '<td>' + s.awardCode + '</td>';
+    html += '<td>' + s.purchaseName + '</td>';
+    html += '<td>' + s.sectionNo + '</td>';
+    html += '<td><span class="money">' + fmtMoney(s.limitAmount) + '</span></td>';
+    html += '<td>' + s.winAmount.toLocaleString() + '</td>';
+    html += '<td>' + s.supplierCode + '</td>';
+    html += '<td>' + s.supplierName + '</td>';
+    html += '<td>' + s.winDate + '</td>';
+    html += '<td><span class="supplier-expand" onclick="showOtherSuppliers(\'' + s.id + '\', event)">展开</span></td>';
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+  // 默认选中第一行
+  var firstRow = tbody.querySelector('tr');
+  if (firstRow) { firstRow.classList.add('selected'); renderAttachments(BID_SECTIONS[0].id); }
+}
+
+// ===== 选择标段（联动附件） =====
+function selectSection(row) {
+  var allRows = document.querySelectorAll('#bidSectionBody tr');
+  allRows.forEach(function(r) { r.classList.remove('selected'); });
+  row.classList.add('selected');
+  row.querySelector('input[type="radio"]').checked = true;
+  var sectionId = row.getAttribute('data-section-id');
+  renderAttachments(sectionId);
+}
+
+// ===== 渲染附件表格 =====
+function renderAttachments(sectionId) {
+  var tbody = document.getElementById('attachBody');
+  var emptyEl = document.getElementById('attachEmpty');
+  var list = ATTACH_DATA[sectionId];
+  if (!list || list.length === 0) {
+    tbody.innerHTML = '';
+    emptyEl.style.display = '';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var a = list[i];
+    html += '<tr>';
+    html += '<td><div class="action-btn-group">';
+    html += '<button class="icon-btn upload" disabled title="上传">📤</button>';
+    html += '<button class="icon-btn delete" disabled title="删除">🗑</button>';
+    html += '<button class="icon-btn download" onclick="downloadFile(\'' + a.fileId + '\', event)" title="下载">📥</button>';
+    html += '<button class="icon-btn preview" onclick="previewFile(\'' + a.fileId + '\', event)" title="预览">👁</button>';
+    html += '</div></td>';
+    html += '<td>' + a.type + '</td>';
+    html += '<td>' + a.name + '</td>';
+    html += '<td>' + a.comp + '</td>';
+    html += '<td style="font-size:11px;font-family:monospace;">' + a.fileId + '</td>';
+    html += '<td>' + a.fileType + '</td>';
+    html += '<td style="text-align:right;">' + a.size.toLocaleString() + '</td>';
+    html += '<td>' + a.ts + '</td>';
+    html += '<td>' + a.user + '</td>';
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+// ===== 显示其他供应商（弹窗） =====
+function showOtherSuppliers(sectionId, ev) {
+  ev.stopPropagation();
+  var section = null;
+  for (var i = 0; i < BID_SECTIONS.length; i++) {
+    if (BID_SECTIONS[i].id === sectionId) { section = BID_SECTIONS[i]; break; }
+  }
+  if (!section || !section.otherSuppliers || section.otherSuppliers.length === 0) { showAlert('无其他供应商信息'); return; }
+  showAlert('📋 其他投标供应商\n' + section.otherSuppliers.map(function(s) { return s.code + ' - ' + s.name; }).join('\n'));
+}
+
+// ===== 下载/预览（模拟） =====
+function downloadFile(fileId, ev) { ev.stopPropagation(); showAlert('📥 文件 ' + fileId + ' 下载中...（模拟）'); }
+function previewFile(fileId, ev) { ev.stopPropagation(); showAlert('👁 文件 ' + fileId + ' 预览（模拟）'); }
+
+// ===== 初始化 =====
+(function init() {
+  // 尝试从 sessionStorage 获取项目名称
+  try {
+    var ctx = JSON.parse(sessionStorage.getItem('procurementViewContext') || 'null');
+    if (ctx && ctx.projectName) {
+      document.getElementById('pageMainTitle').textContent = ctx.projectName + ' 定标结果';
+    }
+  } catch(e) {}
+  renderBidSections();
+})();
+</script>
 </body>
 </html>
