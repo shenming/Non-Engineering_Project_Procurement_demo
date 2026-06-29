@@ -7,12 +7,12 @@
 var PROCUREMENT_METHODS = {
     '公开招标': {
         title: '📢 公开招标 · 流程示意',
-        steps: ['招标申请&公告发布', '开标', '评标&公示', '中标结果', '中标公告'],
+        steps: ['招标申请','公告发布', '开标', '评标', '公示', '中标结果', '中标公告'],
         done: 2
     },
     '邀请招标': {
         title: '📨 邀请招标 · 流程示意',
-        steps: ['招标申请&邀请单位', '开标', '评标', '中标结果'],
+        steps: ['招标申请','邀请单位', '开标', '评标', '中标结果'],
         done: 1
     },
     '询比采购': {
@@ -38,23 +38,33 @@ var CATEGORY_TREE = {
     '服务类': ['物业服务', '咨询服务', '培训服务', '法律服务', '维护服务', '运输服务', '其他服务']
 };
 
-// ===== 公开招标详情页（7步）步骤与节点文件映射 =====
-var PUBLIC_BID_STEPS = [
-    '招采申请', '招采公告', '开标信息', '上传评标结果',
-    '评标结果公示', '中标结果', '中标结果公示'
-];
+// ===== 采购方式 → 步骤/节点文件/审批流 映射表 =====
+var METHOD_CONFIG = {
+    '公开招标': {
+        steps: ['招采申请', '招采公告', '开标信息', '上传评标结果', '评标结果公示', '中标结果', '中标结果公示'],
+        files: ['nodes/bid-apply.html','nodes/bid-announce.html','nodes/bid-opening.html','nodes/eval-result.html','nodes/eval-announce.html','nodes/award-result.html','nodes/award-announce.html'],
+        flow: [
+            { node: '招采申请&招采公告', status: '审批通过', date: '2026-06-20', flowId: 'WF-2026-003-01' },
+            { node: '开标信息', status: '审批通过', date: '2026-07-10', flowId: 'WF-2026-003-02' },
+            { node: '上传评标结果&评标结果公示', status: '审批通过', date: '2026-07-18', flowId: 'WF-2026-003-03' },
+            { node: '中标结果', status: '审批通过', date: '2026-07-20', flowId: 'WF-2026-003-04' },
+            { node: '中标结果公示', status: '审批中', date: '—', flowId: 'WF-2026-003-05' }
+        ]
+    },
+    '邀请招标': {
+        steps: ['招标申请', '发出邀请', '开标', '评标', '中标结果'],
+        files: ['nodes/bid-apply.html','nodes/bid-announce.html','nodes/bid-opening.html','nodes/eval-result.html','nodes/award-result.html'],
+        flow: [
+            { node: '招标申请', status: '审批通过', date: '2026-05-15', flowId: 'WF-2026-011-01' },
+            { node: '发出邀请', status: '审批通过', date: '2026-05-20', flowId: 'WF-2026-011-02' },
+            { node: '开标', status: '审批中', date: '—', flowId: 'WF-2026-011-03' },
+            { node: '评标', status: '待推进', date: '—', flowId: '—' },
+            { node: '中标结果', status: '待推进', date: '—', flowId: '—' }
+        ]
+    }
+};
 
-var PUBLIC_BID_NODE_FILES = [
-    'nodes/bid-apply.html', 'nodes/bid-announce.html', 'nodes/bid-opening.html',
-    'nodes/eval-result.html', 'nodes/eval-announce.html',
-    'nodes/award-result.html', 'nodes/award-announce.html'
-];
-
-// ===== 公开招标审批流预览 =====
-var PUBLIC_BID_APPROVAL_FLOW = [
-    { node: '招采申请&招采公告', status: '审批通过', date: '2026-06-20', flowId: 'WF-2026-003-01' },
-    { node: '开标信息', status: '审批通过', date: '2026-07-10', flowId: 'WF-2026-003-02' },
-    { node: '上传评标结果&评标结果公示', status: '审批通过', date: '2026-07-18', flowId: 'WF-2026-003-03' },
-    { node: '中标结果', status: '审批通过', date: '2026-07-20', flowId: 'WF-2026-003-04' },
-    { node: '中标结果公示', status: '审批中', date: '—', flowId: 'WF-2026-003-05' }
-];
+// 保留向下兼容的全局变量
+var PUBLIC_BID_STEPS = METHOD_CONFIG['公开招标'].steps;
+var PUBLIC_BID_NODE_FILES = METHOD_CONFIG['公开招标'].files;
+var PUBLIC_BID_APPROVAL_FLOW = METHOD_CONFIG['公开招标'].flow;
