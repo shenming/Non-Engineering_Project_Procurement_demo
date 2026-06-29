@@ -59,7 +59,7 @@
                         <td><span class="tag tag-blue">公开招标</span></td>
                         <td><span class="money">¥186.5万</span></td>
                         <td>集团总部</td>
-                        <td>评标&公示</td>
+                        <td>中标结果公示</td>
                         <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
@@ -226,7 +226,8 @@ function viewProcurement(btn) {
         handler: '',
         status: status,
         currentStep: currentStep,
-        doneCount: doneCount
+        doneCount: doneCount,
+        nodeText: nodeText
     };
     sessionStorage.setItem('procurementViewContext', JSON.stringify(ctx));
     navTo('procurement', 'procurement/view.html');

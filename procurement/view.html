@@ -118,8 +118,28 @@ var doneCount = 6;
             document.getElementById('breadProject').textContent = ctx.projectName;
             document.getElementById('infoTitle').innerHTML = '📄 ' + ctx.projectName;
         }
-        if (ctx.status === '进行中' || ctx.status === '审批中') { doneCount = 1; currentStep = 1; }
-        else if (ctx.status === '已完成') { doneCount = PUBLIC_BID_STEPS.length; currentStep = PUBLIC_BID_STEPS.length; }
+        // 优先根据 nodeText 在 PUBLIC_BID_STEPS 中精确匹配
+        if (ctx.nodeText) {
+            var matchedIndex = -1;
+            for (var i = 0; i < PUBLIC_BID_STEPS.length; i++) {
+                if (PUBLIC_BID_STEPS[i] === ctx.nodeText) {
+                    matchedIndex = i;
+                    break;
+                }
+            }
+            if (matchedIndex !== -1) {
+                currentStep = matchedIndex;
+                doneCount = matchedIndex;
+            } else if (ctx.status === '已完成') {
+                doneCount = PUBLIC_BID_STEPS.length;
+                currentStep = PUBLIC_BID_STEPS.length;
+            } else {
+                doneCount = 0; currentStep = 0;
+            }
+        } else {
+            if (ctx.status === '进行中' || ctx.status === '审批中') { doneCount = 1; currentStep = 1; }
+            else if (ctx.status === '已完成') { doneCount = PUBLIC_BID_STEPS.length; currentStep = PUBLIC_BID_STEPS.length; }
+        }
         sessionStorage.removeItem('procurementViewContext');
     }
     renderSteps();
