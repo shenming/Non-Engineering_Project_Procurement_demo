@@ -9,8 +9,8 @@
         .circle-step .cnum { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; font-size: 13px; font-weight: 700; flex-shrink: 0; border: 2px solid var(--gray-300); color: var(--gray-400); background: #fff; }
         .circle-step.done { cursor: pointer; color: var(--primary); }
         .circle-step.done .cnum { border-color: var(--primary); background: #fff; color: var(--primary); }
-        .circle-step.active { cursor: pointer; color: var(--primary); font-weight: 600; }
-        .circle-step.active .cnum { border-color: var(--primary); background: var(--primary); color: #fff; }
+        .circle-step.selected { cursor: pointer; color: var(--primary); font-weight: 600; }
+        .circle-step.selected .cnum { border-color: var(--primary); background: var(--primary); color: #fff; }
         .circle-step.future { color: var(--gray-400); }
         .circle-step.future .cnum { border-color: var(--gray-300); background: #fff; color: var(--gray-400); }
         .step-connector { width: 32px; height: 2px; background: var(--gray-300); flex-shrink: 0; margin: 0 2px; }
@@ -90,7 +90,7 @@
 <script src="../../common/data.js"></script>
 <script src="data.js"></script>
 <script>
-var currentStep = 0;
+var selectedStep = 0;
 var doneCount = 0;
 var currentMethod = '公开招标';
 var cfg = METHOD_CONFIG[currentMethod];
@@ -106,31 +106,41 @@ var cfg = METHOD_CONFIG[currentMethod];
         currentMethod = ctx.method || '公开招标';
         cfg = METHOD_CONFIG[currentMethod] || METHOD_CONFIG['公开招标'];
 
-        // 从 cfg.steps 的 state 读取 doneCount 和 currentStep
+        // 从 cfg.steps 的 state 读取 doneCount 和 selectedStep
         doneCount = 0;
-        currentStep = 0;
+        selectedStep = 0;
         for (var i = 0; i < cfg.steps.length; i++) {
             if (cfg.steps[i].state === 'done') doneCount = i + 1;
-            if (cfg.steps[i].state === 'active') currentStep = i;
+            if (cfg.steps[i].state === 'active' && selectedStep === 0) selectedStep = i;
         }
         sessionStorage.removeItem('procurementViewContext');
     }
     renderSteps();
     renderApprovalFlow();
-    loadNode(currentStep);
+    loadNode(selectedStep);
 })();
 
 function renderSteps() {
     var steps = cfg.steps;
     var container = document.getElementById('stepsContainer');
-    document.getElementById('procTitle').innerHTML = '📌 招标管理：步骤 ' + (currentStep + 1) + ' / ' + steps.length + ' (' + steps[currentStep].name + ')';
+    document.getElementById('procTitle').innerHTML = '📌 招标管理：步骤 ' + (selectedStep + 1) + ' / ' + steps.length + ' (' + steps[selectedStep].name + ')';
     var html = '';
     for (var i = 0; i < steps.length; i++) {
         var s = steps[i];
-        if (i > 0) html += '<span class="step-connector ' + (s.state === 'future' ? '' : 'done') + '"></span>';
-        var cls = s.state === 'active' ? ' active' : (s.state === 'done' ? ' done' : ' future');
-        var canClick = (s.state !== 'future') ? ' onclick="onStepClick(' + i + ')"' : '';
-        html += '<span class="circle-step' + cls + '"' + canClick + '><span class="cnum">' + (i + 1) + '</span><span>' + s.name + '</span></span>';
+        if (i > 0) html += '<span class="step-connector ' + (s.state !== 'future' ? 'done' : '') + '"></span>';
+        var cls, canClick;
+        if (i === selectedStep) {
+            cls = ' selected';
+            canClick = true;
+        } else if (s.state === 'done' || s.state === 'active') {
+            cls = ' done';
+            canClick = true;
+        } else {
+            cls = ' future';
+            canClick = false;
+        }
+        var clickAttr = canClick ? ' onclick="onStepClick(' + i + ')"' : '';
+        html += '<span class="circle-step' + cls + '"' + clickAttr + '><span class="cnum">' + (i + 1) + '</span><span>' + s.name + '</span></span>';
     }
     container.innerHTML = html;
     updateNavButtons();
@@ -150,7 +160,7 @@ function renderApprovalFlow() {
 
 function onStepClick(index) {
     var s = cfg.steps[index];
-    if (s.state !== 'future') { currentStep = index; loadNode(index); renderSteps(); updateNavButtons(); }
+    if (s.state !== 'future') { selectedStep = index; loadNode(index); renderSteps(); updateNavButtons(); }
 }
 
 function loadNode(index) {
@@ -162,12 +172,12 @@ function loadNode(index) {
 
 function nextStep() {
     var steps = cfg.steps;
-    if (currentStep < steps.length - 1) { currentStep++; renderSteps(); loadNode(currentStep); }
+    if (selectedStep < steps.length - 1) { selectedStep++; renderSteps(); loadNode(selectedStep); }
     else alert('🎉 已到达最后一步');
 }
 
 function prevStep() {
-    if (currentStep > 0) { currentStep--; renderSteps(); loadNode(currentStep); }
+    if (selectedStep > 0) { selectedStep--; renderSteps(); loadNode(selectedStep); }
     else alert('已经第一步');
 }
 
@@ -180,10 +190,10 @@ function switchTab(tabId, btn) {
 
 function updateNavButtons() {
     var steps = cfg.steps;
-    document.getElementById('prevBtn').disabled = (currentStep === 0);
+    document.getElementById('prevBtn').disabled = (selectedStep === 0);
     var activeIdx = -1;
     for (var i = 0; i < steps.length; i++) { if (steps[i].state === 'active') activeIdx = i; }
-    document.getElementById('nextBtn').disabled = (currentStep >= activeIdx || currentStep >= steps.length - 1);
+    document.getElementById('nextBtn').disabled = (selectedStep >= activeIdx || selectedStep >= steps.length - 1);
 }
 </script>
 </body>
