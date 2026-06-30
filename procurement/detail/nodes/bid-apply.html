@@ -58,7 +58,9 @@ fh+='<div class="form-row"><div class="form-group"><label>招标方式</label><s
 fh+='<div class="form-row"><div class="form-group"><label>采购项说明</label><select class="form-control" disabled><option>'+(f.note||'')+'</option></select></div><div class="form-group"><label>经办人</label><input class="form-control" value="'+(f.handler||'')+'" readonly></div></div>';
 fh+='<div class="form-row"><div class="form-group"><label>申请日期</label><input class="form-control" value="'+(f.applyDate||'')+'" readonly></div><div class="form-group"><label>招标代理机构</label><input class="form-control" value="'+(f.agent||'')+'" readonly></div></div>';
 fh+='<div class="form-row"><div class="form-group"><label>拟发标日期</label><input type="date" class="form-control" value="'+(f.planIssueDate||'')+'" disabled></div><div class="form-group"><label>招标预计完成日期</label><input type="date" class="form-control" value="'+(f.planEndDate||'')+'" disabled></div></div>';
-fh+='<div class="form-row"><div class="form-group"><label>是否进场招标</label><input class="form-control" value="'+(f.inHouse||'')+'" readonly></div><div class="form-group"><label>审批状态</label><input class="form-control" value="'+(f.approvalStatus||'')+'" disabled></div></div>';
+var statusText = f.approvalStatus || '审批通过';
+var statusColor = (statusText.indexOf('通过')>=0||statusText.indexOf('生效')>=0) ? 'tag tag-green' : (statusText.indexOf('中')>=0 ? 'tag tag-yellow' : 'tag tag-gray');
+fh+='<div class="form-row"><div class="form-group"><label>是否进场招标</label><input class="form-control" value="'+(f.inHouse||'')+'" readonly></div><div class="form-group"><label>审批状态</label><div><span class="'+statusColor+'">'+statusText+'</span></div></div></div>';
 fh+='<div class="form-group" style="margin-bottom:0;"><label>招标范围及相关说明</label><textarea class="form-control" rows="3" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;resize:none;">'+(f.scope||'')+'</textarea></div>';
 document.getElementById('formContainer').innerHTML=fh;
 

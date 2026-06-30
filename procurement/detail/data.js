@@ -45,39 +45,36 @@ var DETAIL_METHOD_CONFIG = {
     '询比采购': {
         steps: [
             { name: '采购申请', state: 'done' },
-            { name: '询比文件编制', state: 'active' },
-            { name: '报价邀请', state: 'future' },
-            { name: '报价评审', state: 'future' },
-            { name: '成交公告', state: 'future' }
+            { name: '拟邀请单位', state: 'active' },
+            { name: '中标结果', state: 'future' }
         ],
-        files: ['nodes/bid-apply.html','nodes/bid-announce.html','nodes/bid-opening.html','nodes/eval-result.html','nodes/award-announce.html'],
+        files: ['nodes/bid-apply.html','nodes/nodes/invite-units.html','nodes/award-result.html'],
         flow: [
             { node: '采购申请', status: '审批通过', date: '2026-06-01', flowId: 'WF-2026-021-01' },
-            { node: '询比文件编制', status: '审批中', date: '—', flowId: 'WF-2026-021-02' }
+            { node: '拟邀请单位', status: '未审批', date: '—', flowId: 'WF-2026-021-02' }
         ]
     },
     '谈判采购': {
         steps: [
             { name: '采购申请', state: 'done' },
-            { name: '谈判邀请', state: 'active' },
-            { name: '谈判评审', state: 'future' },
-            { name: '成交公告', state: 'future' }
+            { name: '拟邀请单位', state: 'active' },
+            { name: '中标结果', state: 'future' }
         ],
-        files: ['nodes/bid-apply.html','nodes/invite-units.html','nodes/eval-result.html','nodes/award-announce.html'],
+        files: ['nodes/bid-apply.html','nodes/nodes/invite-units.html','nodes/award-result.html'],
         flow: [
             { node: '采购申请', status: '审批通过', date: '2026-06-05', flowId: 'WF-2026-022-01' },
-            { node: '谈判邀请', status: '审批中', date: '—', flowId: 'WF-2026-022-02' }
+            { node: '谈判邀请', status: '未审批', date: '—', flowId: 'WF-2026-022-02' }
         ]
     },
+
     '直接采购': {
         steps: [
             { name: '采购申请', state: 'active' },
-            { name: '供应商评审', state: 'future' },
-            { name: '合同签订', state: 'future' }
+            { name: '确定成交供应商', state: 'future' }
         ],
         files: ['nodes/bid-apply.html','nodes/eval-result.html','nodes/award-result.html'],
         flow: [
-            { node: '采购申请', status: '审批中', date: '—', flowId: 'WF-2026-023-01' }
+            { node: '采购申请', status: '未审批', date: '—', flowId: 'WF-2026-023-01' }
         ]
     }
 };
