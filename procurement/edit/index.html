@@ -4,20 +4,209 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../common/styles.css">
     <style>
-        body.content-page { display: flex; align-items: center; justify-content: center; min-height: 400px; }
-        .placeholder { text-align: center; padding: 60px 40px; }
-        .placeholder .icon { font-size: 64px; margin-bottom: 16px; }
-        .placeholder h2 { font-size: 20px; font-weight: 600; color: var(--gray-800); margin-bottom: 8px; }
-        .placeholder p { font-size: 14px; color: var(--gray-500); margin-bottom: 24px; }
+        .circle-steps { display: flex; align-items: center; gap: 0; padding: 16px 0; flex-wrap: nowrap; overflow-x: auto; }
+        .circle-step { display: flex; align-items: center; gap: 6px; font-size: 12px; white-space: nowrap; cursor: default; }
+        .circle-step .cnum { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; font-size: 13px; font-weight: 700; flex-shrink: 0; border: 2px solid var(--gray-300); color: var(--gray-400); background: #fff; }
+        .circle-step.done { cursor: pointer; color: var(--primary); }
+        .circle-step.done .cnum { border-color: var(--primary); background: #fff; color: var(--primary); }
+        .circle-step.selected { cursor: pointer; color: var(--primary); font-weight: 600; }
+        .circle-step.selected .cnum { border-color: var(--primary); background: var(--primary); color: #fff; }
+        .circle-step.future { color: var(--gray-400); }
+        .circle-step.future .cnum { border-color: var(--gray-300); background: #fff; color: var(--gray-400); }
+        .step-connector { width: 32px; height: 2px; background: var(--gray-300); flex-shrink: 0; margin: 0 2px; }
+        .step-connector.done { background: var(--primary); }
+        .node-frame { width: 100%; min-height: 600px; border: 1px solid var(--gray-200); border-radius: var(--radius); background: #fff; }
+        .tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--gray-200); margin-bottom: 0; }
+        .tab-nav .tab-btn { padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--gray-500); background: none; border-top: none; border-left: none; border-right: none; }
+        .tab-nav .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-body { display: none; }
+        .tab-body.active { display: block; }
+        .approval-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .approval-table th { text-align: left; padding: 8px 10px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
+        .approval-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-100); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     </style>
 </head>
 <body class="content-page">
-    <div class="placeholder">
-        <div class="icon">✏️</div>
-        <h2>编辑招采过程</h2>
-        <p>此页面为编辑模式，将在后续开发中完成。</p>
-        <button class="btn btn-primary" onclick="navTo('procurement')">返回列表</button>
+
+<!-- 顶部导航 -->
+<div class="sub-navbar">
+    <button class="btn btn-sm btn-outline" onclick="navTo('procurement')" style="margin-right:8px;">← 返回列表</button>
+    <span class="sub-nav-title">✏️ 编辑招采</span>
+    <span class="breadcrumb">
+        <a onclick="navTo('procurement')">采购过程列表</a><span> › </span>
+        <span id="breadProject">项目名称</span>
+    </span>
+</div>
+
+<div class="tab-card">
+    <div class="tab-header">
+        <div class="tab-title">
+            <h3 id="infoTitle">✏️ 项目名称</h3>
+            <span class="tag" id="infoStatusTag" style="margin-left:8px;">进行中</span>
+        </div>
     </div>
-    <script src="../../common/scripts.js"></script>
+
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('tab-steps', this)">📌 编辑进度</button>
+        <button class="tab-btn" onclick="switchTab('tab-approval', this)">✅ 审批流预览</button>
+    </div>
+
+    <!-- TAB 编辑进度 -->
+    <div class="tab-body active" id="tab-steps" style="padding:12px 16px;">
+        <div style="margin-bottom:8px;">
+            <h3 id="procTitle" style="margin:0;font-size:14px;">📌 招标管理：步骤 1 / 7 (招采申请)</h3>
+        </div>
+        <div class="circle-steps" id="stepsContainer"></div>
+    </div>
+
+    <!-- TAB 审批流预览 -->
+    <div class="tab-body" id="tab-approval">
+        <table class="approval-table">
+            <thead>
+                <tr><th>节点描述</th><th>审批状态</th><th>审批日期</th><th>流程 ID</th></tr>
+            </thead>
+            <tbody id="approvalBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<iframe class="node-frame" id="nodeFrame" src="" style="margin-top:12px;"></iframe>
+
+<div class="flex-between" style="padding:12px 0;border-top:1px solid var(--gray-200);margin-top:12px;">
+    <button id="prevBtn" class="btn btn-outline" onclick="prevStep()">← 上一步</button>
+    <div class="flex gap-8">
+        <button class="btn btn-primary" onclick="saveProcurement()">💾 保存</button>
+        <button class="btn btn-outline" onclick="navTo('procurement')">取消</button>
+    </div>
+</div>
+
+<script src="../../common/scripts.js"></script>
+<script src="../../common/data.js"></script>
+<script src="../detail/data.js"></script>
+<script src="data.js"></script>
+<script>
+var selectedStep = 0;
+var doneCount = 0;
+var currentMethod = '公开招标';
+var cfg = METHOD_CONFIG[currentMethod];
+
+(function init() {
+    var ctx = null;
+    try { ctx = JSON.parse(sessionStorage.getItem('procEditContext') || 'null'); } catch(e) {}
+    if (ctx) {
+        if (ctx.projectName) {
+            document.getElementById('breadProject').textContent = ctx.projectName;
+            document.getElementById('infoTitle').innerHTML = '✏️ ' + ctx.projectName;
+        }
+        currentMethod = ctx.method || '公开招标';
+        cfg = METHOD_CONFIG[currentMethod] || METHOD_CONFIG['公开招标'];
+
+        doneCount = 0;
+        selectedStep = 0;
+        for (var i = 0; i < cfg.steps.length; i++) {
+            if (cfg.steps[i].state === 'done') doneCount = i + 1;
+            if (cfg.steps[i].state === 'active' && selectedStep === 0) selectedStep = i;
+        }
+        sessionStorage.removeItem('procEditContext');
+    }
+    renderSteps();
+    renderApprovalFlow();
+    loadNode(selectedStep);
+})();
+
+function renderSteps() {
+    var steps = cfg.steps;
+    var container = document.getElementById('stepsContainer');
+    document.getElementById('procTitle').innerHTML = '📌 招标管理：步骤 ' + (selectedStep + 1) + ' / ' + steps.length + ' (' + steps[selectedStep].name + ')';
+    var html = '';
+    for (var i = 0; i < steps.length; i++) {
+        var s = steps[i];
+        if (i > 0) html += '<span class="step-connector ' + (s.state !== 'future' ? 'done' : '') + '"></span>';
+        var cls, canClick;
+        if (i === selectedStep) {
+            cls = ' selected';
+            canClick = true;
+        } else if (s.state === 'done' || s.state === 'active') {
+            cls = ' done';
+            canClick = true;
+        } else {
+            cls = ' future';
+            canClick = false;
+        }
+        var clickAttr = canClick ? ' onclick="onStepClick(' + i + ')"' : '';
+        html += '<span class="circle-step' + cls + '"' + clickAttr + '><span class="cnum">' + (i + 1) + '</span><span>' + s.name + '</span></span>';
+    }
+    container.innerHTML = html;
+    updateNavButtons();
+}
+
+function renderApprovalFlow() {
+    var tbody = document.getElementById('approvalBody');
+    var flow = cfg.flow || [];
+    var html = '';
+    for (var i = 0; i < flow.length; i++) {
+        var f = flow[i];
+        var tagCls = f.status === '审批通过' ? 'tag-green' : (f.status === '审批中' ? 'tag-yellow' : 'tag-gray');
+        html += '<tr><td>' + f.node + '</td><td><span class="tag ' + tagCls + '">' + f.status + '</span></td><td>' + f.date + '</td><td>' + f.flowId + '</td></tr>';
+    }
+    tbody.innerHTML = html;
+}
+
+function onStepClick(index) {
+    var s = cfg.steps[index];
+    if (s.state !== 'future') { selectedStep = index; loadNode(index); renderSteps(); updateNavButtons(); }
+}
+
+function loadNode(index) {
+    var files = cfg.files || [];
+    var nodeFile = files[index] || '';
+    try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
+    try { sessionStorage.setItem('editLockedFields', JSON.stringify(EDIT_LOCKED_FIELDS)); } catch(e) {}
+    document.getElementById('nodeFrame').src = nodeFile + '?method=' + encodeURIComponent(currentMethod) + '&step=' + index + '&mode=edit';
+}
+
+function nextStep() {
+    var steps = cfg.steps;
+    if (selectedStep < steps.length - 1) { selectedStep++; renderSteps(); loadNode(selectedStep); }
+    else alert('🎉 已到达最后一步');
+}
+
+function prevStep() {
+    if (selectedStep > 0) { selectedStep--; renderSteps(); loadNode(selectedStep); }
+    else alert('已经第一步');
+}
+
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-body').forEach(function(t) { t.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+}
+
+function updateNavButtons() {
+    var steps = cfg.steps;
+    document.getElementById('prevBtn').disabled = (selectedStep === 0);
+    var activeIdx = -1;
+    for (var i = 0; i < steps.length; i++) { if (steps[i].state === 'active') activeIdx = i; }
+    document.getElementById('nextBtn').disabled = (selectedStep >= activeIdx || selectedStep >= steps.length - 1);
+}
+
+function saveProcurement() {
+    // 从 iframe 收集表单数据
+    try {
+        var frame = document.getElementById('nodeFrame');
+        var frameDoc = frame.contentDocument || frame.contentWindow.document;
+        var allInputs = frameDoc.querySelectorAll('[data-field]');
+        allInputs.forEach(function(el) {
+            var field = el.getAttribute('data-field');
+            var val = el.value || '';
+            console.log('[' + field + '] = ' + val);
+        });
+    } catch(e) {}
+    alert('💾 保存成功！所有修改已提交。');
+    navTo('procurement');
+}
+</script>
 </body>
 </html>

@@ -46,7 +46,7 @@
             <span class="tag" id="infoStatusTag" style="margin-left:8px;">进行中</span>
         </div>
         <div class="flex gap-8">
-            <button class="btn btn-sm btn-outline" onclick="navTo('procurement', 'procurement/edit/index.html')">✏️ 编辑</button>
+            <button class="btn btn-sm btn-outline" onclick="editProcurement()">✏️ 编辑</button>
             <button class="btn btn-sm btn-danger" onclick="if(confirm('确认删除？'))alert('🗑️ 已删除')">🗑️ 删除</button>
             <button class="btn btn-sm btn-primary" onclick="alert('📤 已提交当前节点审批')">📤 提交</button>
         </div>
@@ -194,6 +194,16 @@ function updateNavButtons() {
     var activeIdx = -1;
     for (var i = 0; i < steps.length; i++) { if (steps[i].state === 'active') activeIdx = i; }
     document.getElementById('nextBtn').disabled = (selectedStep >= activeIdx || selectedStep >= steps.length - 1);
+}
+
+function editProcurement() {
+    var ctx = {
+        method: currentMethod,
+        projectName: document.getElementById('infoTitle').textContent.replace('📄 ', ''),
+        status: document.getElementById('infoStatusTag') ? document.getElementById('infoStatusTag').textContent : '进行中'
+    };
+    sessionStorage.setItem('procEditContext', JSON.stringify(ctx));
+    navTo('procurement', 'procurement/edit/index.html');
 }
 </script>
 </body>
