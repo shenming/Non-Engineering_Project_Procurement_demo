@@ -18,7 +18,7 @@
     <div class="card-body">
         <div class="form-group" style="margin-bottom:12px;">
             <label>评标结果公示信息说明</label>
-            <textarea class="form-control" id="txtDesc" rows="4" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;"></textarea>
+            <textarea class="form-control" data-field="desc" id="txtDesc" rows="4" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;"></textarea>
         </div>
         <div class="form-group" style="margin-bottom:0;">
             <label>审批状态</label>
@@ -35,7 +35,26 @@
 </div>
 <script src="../../../common/scripts.js"></script>
 <script>
-(function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');if(!d||!d[m]||!d[m].nodes||!d[m].nodes[s]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted">暂无数据</p></div>';return}var n=d[m].nodes[s],f=n.form||{};document.getElementById('txtDesc').value=f.desc||'';document.getElementById('txtStatus').value=f.approvalStatus||'';var t=document.getElementById('attachBody'),x=n.attachments||[],h='';for(var i=0;i<x.length;i++){var o=x[i];h+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.comp||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.time||'')+'</td><td>'+(o.user||'')+'</td></tr>'}t.innerHTML=h||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';})();
+(function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');if(!d||!d[m]||!d[m].nodes||!d[m].nodes[s]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted">暂无数据</p></div>';return}var n=d[m].nodes[s],f=n.form||{};document.getElementById('txtDesc').value=f.desc||'';var t=document.getElementById('attachBody'),x=n.attachments||[],h='';for(var i=0;i<x.length;i++){var o=x[i];h+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.comp||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.time||'')+'</td><td>'+(o.user||'')+'</td></tr>'}t.innerHTML=h||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
+
+// ===== 编辑模式：解锁可编辑字段 =====
+if (a.mode === 'edit') {
+    try { var locked = JSON.parse(sessionStorage.getItem('editLockedFields') || '{}'); } catch(e) {}
+    if (locked) {
+        var lockedNames = (locked[m] && locked[m][s]) || [];
+        document.querySelectorAll('input,select,textarea').forEach(function(el) {
+            var field = el.getAttribute('data-field') || '';
+            if (lockedNames.indexOf(field) !== -1) return;
+            if (el.tagName === 'SELECT') el.disabled = false;
+            else el.readOnly = false;
+            el.style.background = '';
+            el.style.color = '';
+            el.style.cursor = '';
+        });
+        document.querySelectorAll('.op-icon').forEach(function(el) { el.classList.remove('disabled'); });
+    }
+}
+})();
 </script>
 </body>
 </html>

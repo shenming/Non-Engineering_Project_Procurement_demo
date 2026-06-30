@@ -227,7 +227,7 @@ var DETAIL_DATA = {
                 ]
             },
             1: {
-                form: { inviteNote: '拟邀请供应商A、供应商B、供应商C共3家具有弱电维保资质的企业，均通过资格审查。'},
+                form: { inviteNote: '拟邀请供应商A、供应商B、供应商C共3家具有弱电维保资质的企业，均通过资格审查。', approvalStatus: '审批通过'},
                 attachments: [
                     { type: '邀请函', name: '邀请函_供应商A.pdf', file: '邀请函_A.pdf', fileId: 'F-2026-0515-001', fileType: 'pdf', size: '420,000', ts: '2026-05-15 09:00', user: '陈芳' },
                     { type: '邀请函', name: '邀请函_供应商B.pdf', file: '邀请函_B.pdf', fileId: 'F-2026-0515-002', fileType: 'pdf', size: '420,000', ts: '2026-05-15 09:05', user: '陈芳' },
@@ -235,7 +235,7 @@ var DETAIL_DATA = {
                 ]
             },
             2: {
-                form: { desc: '开标时间：2026-05-25 14:00，地点：集团总部2楼会议室。3家受邀单位均按时投标，标书密封完好。', bidderCount: 3, approvalStatus: '审批中' },
+                form: { desc: '开标时间：2026-05-25 14:00，地点：集团总部2楼会议室。3家受邀单位均按时投标，标书密封完好。', bidderCount: 3, approvalStatus: '草稿' },
                 attachments: [
                     { type: '开标记录', name: 'ZB-2026-011-开标记录.pdf', comp: '开标信息', fileType: 'pdf', size: '980,000', ts: 'TS-20260525-001', time: '2026-05-25 14:30', user: '陈芳' },
                     { type: '投标文件汇总', name: '投标文件汇总表.xlsx', comp: '开标信息', fileType: 'xlsx', size: '560,000', ts: 'TS-20260525-002', time: '2026-05-25 15:00', user: '陈芳' }
@@ -266,8 +266,8 @@ var DETAIL_DATA = {
             projectName: '办公设备集中采购',
             applyCode: 'ZB-2026-005',
             unit: '成员企业A',
-            status: '已完成',
-            statusTag: 'tag-green'
+            status: '草稿',
+            statusTag: 'tag-gray'
         },
         nodes: {
             0: {
@@ -277,7 +277,7 @@ var DETAIL_DATA = {
                     category: '货物类 · IT类', note: '询比采购适用于标准化货品',
                     handler: '王磊', applyDate: '2026-05-15', agent: '—',
                     planIssueDate: '2026-05-18', planEndDate: '2026-06-10', inHouse: '否',
-                    approvalStatus: '审批通过',
+                    approvalStatus: '草稿',
                     scope: '台式计算机、服务器等办公设备集中采购，含安装调试。'
                 },
                 purchases: [
@@ -291,7 +291,7 @@ var DETAIL_DATA = {
                 ]
             },
             1: {
-                form: { inviteNote: '邀请供应商A、供应商B、供应商C共3家参与报价，均通过资格预审。' },
+                form: { inviteNote: '邀请供应商A、供应商B、供应商C共3家参与报价，均通过资格预审。', approvalStatus: '草稿' },
                 attachments: [
                     { type: '报价邀请函', name: '报价邀请函_供应商A.pdf', file: '邀请函_A.pdf', fileId: 'F-2026-0518-001', fileType: 'pdf', size: '320,000', ts: '2026-05-18 10:00', user: '王磊' },
                     { type: '报价邀请函', name: '报价邀请函_供应商B.pdf', file: '邀请函_B.pdf', fileId: 'F-2026-0518-002', fileType: 'pdf', size: '320,000', ts: '2026-05-18 10:05', user: '王磊' },
@@ -299,7 +299,7 @@ var DETAIL_DATA = {
                 ]
             },
             2: {
-                form: { approvalStatus: '审批通过', applyCode: 'ZB-2026-005', unit: '成员企业A', resultNote: '经比价，供应商A报价最低且满足技术要求，推荐为成交供应商。' },
+                form: { approvalStatus: '待推进', applyCode: 'ZB-2026-005', unit: '成员企业A', resultNote: '经比价，供应商A报价最低且满足技术要求，推荐为成交供应商。' },
                 sections: [
                     { id: 'BD-005', planCode: 'PL-2026-0010', lineNo: 1, target: '主合同', awardCode: 'DB-2026-005-1', purchaseName: '办公设备集中采购', sectionNo: '1', limitAmount: 452000, winAmount: 438000, supplierCode: 'GYS-010', supplierName: '上海华讯网络系统有限公司', winDate: '2026-06-05', otherSuppliers: [{ code: 'GYS-011', name: '北京神州数码有限公司' }, { code: 'GYS-012', name: '深圳华为技术有限公司' }] }
                 ],
@@ -317,8 +317,8 @@ var DETAIL_DATA = {
             projectName: 'IT运维服务',
             applyCode: 'ZB-2026-007',
             unit: '成员企业A',
-            status: '进行中',
-            statusTag: 'tag-yellow'
+            status: '草稿',
+            statusTag: 'tag-gray'
         },
         nodes: {
             0: {
@@ -328,7 +328,7 @@ var DETAIL_DATA = {
                     category: '服务类 · 维护服务', note: '谈判采购适用于技术复杂或紧急需求',
                     handler: '陈芳', applyDate: '2026-06-01', agent: '—',
                     planIssueDate: '2026-06-03', planEndDate: '2026-06-30', inHouse: '否',
-                    approvalStatus: '审批通过',
+                    approvalStatus: '草稿',
                     scope: '集团成员企业A的IT系统运维服务，服务期6个月。'
                 },
                 purchases: [
@@ -342,7 +342,7 @@ var DETAIL_DATA = {
                 ]
             },
             1: {
-                form: { inviteNote: '邀请具有IT运维资质的供应商A、供应商B共2家参与谈判。' },
+                form: { inviteNote: '邀请具有IT运维资质的供应商A、供应商B共2家参与谈判。', approvalStatus: '草稿' },
                 attachments: [
                     { type: '谈判邀请函', name: '谈判邀请函_供应商A.pdf', file: '邀请函_A.pdf', fileId: 'F-2026-0604-001', fileType: 'pdf', size: '280,000', ts: '2026-06-04 10:00', user: '陈芳' },
                     { type: '谈判邀请函', name: '谈判邀请函_供应商B.pdf', file: '邀请函_B.pdf', fileId: 'F-2026-0604-002', fileType: 'pdf', size: '280,000', ts: '2026-06-04 10:05', user: '陈芳' }
@@ -362,8 +362,8 @@ var DETAIL_DATA = {
             projectName: '法律顾问服务',
             applyCode: 'ZB-2026-006',
             unit: '集团总部',
-            status: '审批中',
-            statusTag: 'tag-blue'
+            status: '草稿',
+            statusTag: 'tag-gray'
         },
         nodes: {
             0: {
@@ -373,7 +373,7 @@ var DETAIL_DATA = {
                     category: '服务类 · 法律服务', note: '直接采购适用于独家供应或紧急采购',
                     handler: '张明', applyDate: '2026-06-10', agent: '—',
                     planIssueDate: '2026-06-10', planEndDate: '2026-06-25', inHouse: '否',
-                    approvalStatus: '审批中',
+                    approvalStatus: '草稿',
                     scope: '集团2026年度常年法律顾问服务，期限12个月。'
                 },
                 purchases: [
@@ -415,7 +415,7 @@ var DETAIL_DATA = {
                     category: '货物类 · 办公用品类', note: '合同估算价 ＜ 100,000.00 元，可按直接采购方式实施',
                     handler: '赵岩', applyDate: '2026-06-20', agent: '—',
                     planIssueDate: '2026-06-20', planEndDate: '2026-06-30', inHouse: '否',
-                    approvalStatus: '审批通过',
+                    approvalStatus: '审批中',
                     scope: '成员企业B 2026年度办公用品（打印纸、文具、耗材等）集中采购，满足全年办公需求。'
                 },
                 purchases: [

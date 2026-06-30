@@ -46,9 +46,9 @@
             <span class="tag" id="infoStatusTag" style="margin-left:8px;">进行中</span>
         </div>
         <div class="flex gap-8">
-            <button class="btn btn-sm btn-outline" onclick="editProcurement()">✏️ 编辑</button>
-            <button class="btn btn-sm btn-danger" onclick="if(confirm('确认删除？'))alert('🗑️ 已删除')">🗑️ 删除</button>
-            <button class="btn btn-sm btn-primary" onclick="alert('📤 已提交当前节点审批')">📤 提交</button>
+            <button id="btnEdit" class="btn btn-sm btn-outline" onclick="editProcurement()">✏️ 编辑</button>
+            <button id="btnDelete" class="btn btn-sm btn-danger" onclick="confirmDelete()">🗑️ 删除</button>
+            <button id="btnSubmit" class="btn btn-sm btn-primary" onclick="submitNode()">📤 提交</button>
         </div>
     </div>
 
@@ -118,6 +118,7 @@ var cfg = METHOD_CONFIG[currentMethod];
     renderSteps();
     renderApprovalFlow();
     loadNode(selectedStep);
+    updateActionButtons();
 })();
 
 function renderSteps() {
@@ -196,6 +197,40 @@ function updateNavButtons() {
     document.getElementById('nextBtn').disabled = (selectedStep >= activeIdx || selectedStep >= steps.length - 1);
 }
 
+// ===== 权限控制：根据节点审批状态控制按钮 =====
+function updateActionButtons() {
+    var method = currentMethod;
+    var data = DETAIL_DATA[method];
+    if (!data) return;
+
+    var activeStep = -1;
+    for (var i = 0; i < cfg.steps.length; i++) {
+        if (cfg.steps[i].state === 'active') { activeStep = i; break; }
+    }
+    if (activeStep < 0) activeStep = selectedStep;
+
+    // 读取当前 active 步骤节点的审批状态
+    var approvalStatus = (data.nodes && data.nodes[activeStep] && data.nodes[activeStep].form)
+        ? (data.nodes[activeStep].form.approvalStatus || '') : '';
+
+    // 读取 step0（招采申请）的审批状态，用于判断是否可删除
+    var step0Status = (data.nodes && data.nodes[0] && data.nodes[0].form)
+        ? (data.nodes[0].form.approvalStatus || '') : '';
+
+    var editBtn = document.getElementById('btnEdit');
+    var submitBtn = document.getElementById('btnSubmit');
+    var deleteBtn = document.getElementById('btnDelete');
+
+    // 编辑/提交：仅当当前 active 步骤状态为"草稿"或"待推进"时可操作
+    var canEdit = (approvalStatus === '草稿' || approvalStatus === '待推进');
+    if (editBtn) editBtn.disabled = !canEdit;
+    if (submitBtn) submitBtn.disabled = !canEdit;
+
+    // 删除：仅当在招采申请（步骤0）且该步骤状态为"草稿"时可删除
+    var canDelete = (activeStep === 0 && step0Status === '草稿');
+    if (deleteBtn) deleteBtn.disabled = !canDelete;
+}
+
 function editProcurement() {
     var ctx = {
         method: currentMethod,
@@ -204,6 +239,14 @@ function editProcurement() {
     };
     sessionStorage.setItem('procEditContext', JSON.stringify(ctx));
     navTo('procurement', 'procurement/edit/index.html');
+}
+
+function confirmDelete() {
+    if (confirm('确认删除此采购记录？')) alert('🗑️ 已删除');
+}
+
+function submitNode() {
+    alert('📤 已提交当前节点审批');
 }
 </script>
 </body>
