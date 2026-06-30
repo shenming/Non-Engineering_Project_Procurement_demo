@@ -190,7 +190,8 @@ function renderSteps() {
 
 function renderApprovalFlow() {
     var tbody = document.getElementById('approvalBody');
-    var flow = cfg.flow || [];
+    var detailData = (typeof DETAIL_DATA !== 'undefined') ? (DETAIL_DATA[currentMethod] || null) : null;
+    var flow = (detailData && detailData.flow) ? detailData.flow : (cfg.flow || []);
     var html = '';
     for (var i = 0; i < flow.length; i++) {
         var f = flow[i];
