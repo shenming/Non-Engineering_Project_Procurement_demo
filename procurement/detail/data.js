@@ -28,53 +28,50 @@ var DETAIL_METHOD_CONFIG = {
     '邀请招标': {
         steps: [
             { name: '招标申请', state: 'done' },
-            { name: '发出邀请', state: 'done' },
-            { name: '开标', state: 'active' },
-            { name: '评标', state: 'future' },
+            { name: '拟邀请单位', state: 'done' },
+            { name: '开标信息', state: 'active' },
+            { name: '上传评标结果', state: 'future' },
             { name: '中标结果', state: 'future' }
         ],
         files: ['nodes/bid-apply.html','nodes/invite-units.html','nodes/bid-opening.html','nodes/eval-result.html','nodes/award-result.html'],
         flow: [
-            { node: '招标申请', status: '审批通过', date: '2026-05-15', flowId: 'WF-2026-011-01' },
-            { node: '发出邀请', status: '审批通过', date: '2026-05-20', flowId: 'WF-2026-011-02' },
-            { node: '开标', status: '审批中', date: '—', flowId: 'WF-2026-011-03' },
-            { node: '评标', status: '待推进', date: '—', flowId: '—' },
+            { node: '招标申请&拟邀请单位', status: '审批通过', date: '2026-05-15', flowId: 'WF-2026-011-01' },
+            { node: '开标信息', status: '审批中', date: '—', flowId: 'WF-2026-011-03' },
+            { node: '上传评标结果', status: '待推进', date: '—', flowId: '—' },
             { node: '中标结果', status: '待推进', date: '—', flowId: '—' }
         ]
     },
     '询比采购': {
         steps: [
-            { name: '采购申请', state: 'done' },
+            { name: '招标申请', state: 'done' },
             { name: '拟邀请单位', state: 'active' },
             { name: '中标结果', state: 'future' }
         ],
         files: ['nodes/bid-apply.html','nodes/nodes/invite-units.html','nodes/award-result.html'],
         flow: [
-            { node: '采购申请', status: '审批通过', date: '2026-06-01', flowId: 'WF-2026-021-01' },
-            { node: '拟邀请单位', status: '未审批', date: '—', flowId: 'WF-2026-021-02' }
+            { node: '招标申请&拟邀请单位', status: '未审批', date: '—', flowId: '—' }
         ]
     },
     '谈判采购': {
         steps: [
-            { name: '采购申请', state: 'done' },
+            { name: '招标申请', state: 'done' },
             { name: '拟邀请单位', state: 'active' },
             { name: '中标结果', state: 'future' }
         ],
         files: ['nodes/bid-apply.html','nodes/nodes/invite-units.html','nodes/award-result.html'],
         flow: [
-            { node: '采购申请', status: '审批通过', date: '2026-06-05', flowId: 'WF-2026-022-01' },
-            { node: '谈判邀请', status: '未审批', date: '—', flowId: 'WF-2026-022-02' }
+             { node: '招标申请&拟邀请单位', status: '未审批', date: '—', flowId: '—' }
         ]
     },
 
     '直接采购': {
         steps: [
-            { name: '采购申请', state: 'active' },
+            { name: '招标申请', state: 'active' },
             { name: '确定成交供应商', state: 'future' }
         ],
         files: ['nodes/bid-apply.html','nodes/eval-result.html','nodes/award-result.html'],
         flow: [
-            { node: '采购申请', status: '未审批', date: '—', flowId: 'WF-2026-023-01' }
+            { node: '招标申请', status: '未审批', date: '—', flowId: '—' }
         ]
     }
 };
