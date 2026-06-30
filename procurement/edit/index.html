@@ -148,11 +148,18 @@ var cfg = METHOD_CONFIG[currentMethod];
     }
     renderSteps();
     renderApprovalFlow();
-    // 先写入 sessionStorage
+    // 先写入 sessionStorage，再加载 iframe
     try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
     try { sessionStorage.setItem('editLockedFields', JSON.stringify(EDIT_LOCKED_FIELDS)); } catch(e) {}
-    // 再异步加载 iframe，确保 sessionStorage 在 iframe 渲染时已就绪
+    // 确保 cfg 已就绪后再加载 iframe
+    sessionStorage.setItem('edit_method', currentMethod);
+    sessionStorage.setItem('edit_step', selectedStep);
     loadNode(selectedStep);
+    // iframe 加载后重新确保数据同步（应对首次加载竞态条件）
+    document.getElementById('nodeFrame').onload = function() {
+        try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
+        try { sessionStorage.setItem('editLockedFields', JSON.stringify(EDIT_LOCKED_FIELDS)); } catch(e) {}
+    };
 })();
 
 function renderSteps() {
@@ -203,13 +210,12 @@ function loadNode(index) {
     var nodeFile = files[index] || '';
     // 将相对路径从 edit/nodes/ 重定向到 detail/nodes/
     var editNodeFile = nodeFile.replace('nodes/', '../detail/nodes/');
-    // 先写入 sessionStorage，再异步设置 iframe.src，确保子页面读取时数据已就绪
+    // sessionStorage.setItem 是同步操作，直接写入后设置 src 即可
     try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
     try { sessionStorage.setItem('editLockedFields', JSON.stringify(EDIT_LOCKED_FIELDS)); } catch(e) {}
-    // 使用 setTimeout(0) 确保 sessionStorage 写入完成后再触发 iframe 导航
-    setTimeout(function() {
-        document.getElementById('nodeFrame').src = editNodeFile + '?method=' + encodeURIComponent(currentMethod) + '&step=' + index + '&mode=edit';
-    }, 0);
+    sessionStorage.setItem('edit_method', currentMethod);
+    sessionStorage.setItem('edit_step', index);
+    document.getElementById('nodeFrame').src = editNodeFile + '?method=' + encodeURIComponent(currentMethod) + '&step=' + index + '&mode=edit';
 }
 
 function nextStep() {

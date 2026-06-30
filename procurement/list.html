@@ -213,6 +213,35 @@ var sortAsc = true;
             var cell = row.cells[5];
             if (cell) cell.textContent = activeName;
         }
+        // 从 DETAIL_DATA 读取状态
+        var dal = (typeof DETAIL_DATA !== 'undefined') ? (DETAIL_DATA[method] || null) : null;
+        if (dal && dal.info && dal.info.status) {
+            var statusCell = row.cells[6];
+            if (statusCell) {
+                var oldTag = statusCell.querySelector('.tag');
+                if (oldTag) {
+                    var s = dal.info.status;
+                    var tagClass = s==='已完成'?'tag-green':s==='审批中'?'tag-blue':s==='进行中'?'tag-yellow':'tag-gray';
+                    oldTag.className = 'tag ' + tagClass;
+                    oldTag.textContent = s;
+                }
+            }
+        }
+        // 草稿状态增加删除按钮
+        var dalNode0 = (dal && dal.nodes && dal.nodes[0] && dal.nodes[0].form) ? dal.nodes[0].form : null;
+        var isDraft = (dalNode0 && dalNode0.approvalStatus === '草稿');
+        if (isDraft) {
+            var actionCell = row.cells[7];
+            if (actionCell && !actionCell.querySelector('.btn-danger')) {
+                var delBtn = document.createElement('button');
+                delBtn.className = 'btn btn-xs btn-danger';
+                delBtn.textContent = '🗑️ 删除';
+                delBtn.setAttribute('data-proc-id', row.getAttribute('data-id') || '');
+                delBtn.setAttribute('data-plan-item-id', row.getAttribute('data-plan-item-id') || '');
+                delBtn.onclick = function() { deleteProcurement(this); };
+                actionCell.appendChild(delBtn);
+            }
+        }
     });
 })();
 
