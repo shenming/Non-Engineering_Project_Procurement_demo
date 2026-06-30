@@ -65,8 +65,8 @@ var DETAIL_METHOD_CONFIG = {
         steps: buildSteps('直接采购-小额', ['done','active']),
         files: ['nodes/bid-apply.html','nodes/eval-result.html'],
         flow: [
-            { node: '招标申请', status: '审批通过', date: '2026-06-25', flowId: 'WF-2026-013-01' },
-            { node: '确定成交供应商', status: '审批中', date: '—', flowId: '—' }
+            { node: '招标申请&确定成交供应商', status: '未审批', date: '—', flowId: '—' },
+
         ]
     }
 };
