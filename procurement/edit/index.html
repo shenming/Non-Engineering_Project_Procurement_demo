@@ -31,7 +31,7 @@
 
 <!-- 顶部导航 -->
 <div class="sub-navbar">
-    <button class="btn btn-sm btn-outline" onclick="navTo('procurement')" style="margin-right:8px;">← 返回列表</button>
+    <button class="btn btn-sm btn-outline" onclick="navTOLastPage()" style="margin-right:8px;">← 返回详情</button>
     <span class="sub-nav-title">✏️ 编辑招采</span>
     <span class="breadcrumb">
         <a onclick="navTo('procurement')">采购过程列表</a><span> › </span>
@@ -81,7 +81,7 @@
     <div class="flex gap-8">
 
          <button id="nextBtn" class="btn btn-primary" onclick="nextStep()">下一步 →</button>
-        <button class="btn btn-outline" onclick="navTo('procurement','procurement/detail/index.html')">← 返回详情</button>
+        <button class="btn btn-outline" onclick="navTOLastPage()">← 返回详情</button>
     </div>
 </div>
 
@@ -270,6 +270,14 @@ function saveProcurement() {
     } catch(e) {}
     alert('💾 保存成功！所有修改已提交。');
     // 设置详情页上下文，保存后跳转到详情页
+    var ctx = {
+        method: currentMethod,
+        projectName: document.getElementById('infoTitle').textContent.replace('✏️ ', '')
+    };
+    try { sessionStorage.setItem('procurementViewContext', JSON.stringify(ctx)); } catch(e) {}
+    navTo('procurement', 'procurement/detail/index.html');
+}
+function navTOLastPage() {
     var ctx = {
         method: currentMethod,
         projectName: document.getElementById('infoTitle').textContent.replace('✏️ ', '')
