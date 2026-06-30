@@ -1,21 +1,26 @@
 /**
  * 招采过程 - 详情模式数据
  * 包含：详情配置（步骤状态/节点文件/审批流）+ 详情表单数据（供 iframe 节点页面使用）
+ *
+ * 注意：步骤名从 common/data.js 的 METHOD_STEPS 自动读取，
+ *       修改步骤名只需改 common/data.js 一处。
  */
+
+// ==================== 辅助函数：从 METHOD_STEPS 生成带状态的 steps ====================
+
+function buildSteps(method, states) {
+    var names = METHOD_STEPS[method];
+    if (!names) return [];
+    return names.map(function(name, i) {
+        return { name: name, state: (states[i] || 'future') };
+    });
+}
 
 // ==================== 一、详情配置 ====================
 
 var DETAIL_METHOD_CONFIG = {
     '公开招标': {
-        steps: [
-            { name: '招采申请', state: 'done' },
-            { name: '招采公告', state: 'done' },
-            { name: '开标信息', state: 'done' },
-            { name: '上传评标结果', state: 'done' },
-            { name: '评标结果公示', state: 'done' },
-            { name: '中标结果', state: 'done' },
-            { name: '中标结果公示', state: 'active' }
-        ],
+        steps: buildSteps('公开招标', ['done','done','done','done','done','done','active']),
         files: ['nodes/bid-apply.html','nodes/bid-announce.html','nodes/bid-opening.html','nodes/eval-result.html','nodes/eval-announce.html','nodes/award-result.html','nodes/award-announce.html'],
         flow: [
             { node: '招采申请&招采公告', status: '审批通过', date: '2026-06-20', flowId: 'WF-2026-003-01' },
@@ -26,13 +31,7 @@ var DETAIL_METHOD_CONFIG = {
         ]
     },
     '邀请招标': {
-        steps: [
-            { name: '招标申请', state: 'done' },
-            { name: '拟邀请单位', state: 'done' },
-            { name: '开标信息', state: 'active' },
-            { name: '上传评标结果', state: 'future' },
-            { name: '中标结果', state: 'future' }
-        ],
+        steps: buildSteps('邀请招标', ['done','done','active','future','future']),
         files: ['nodes/bid-apply.html','nodes/invite-units.html','nodes/bid-opening.html','nodes/eval-result.html','nodes/award-result.html'],
         flow: [
             { node: '招标申请&拟邀请单位', status: '审批通过', date: '2026-05-15', flowId: 'WF-2026-011-01' },
@@ -42,33 +41,21 @@ var DETAIL_METHOD_CONFIG = {
         ]
     },
     '询比采购': {
-        steps: [
-            { name: '招标申请', state: 'done' },
-            { name: '拟邀请单位', state: 'active' },
-            { name: '中标结果', state: 'future' }
-        ],
-        files: ['nodes/bid-apply.html','nodes/nodes/invite-units.html','nodes/award-result.html'],
+        steps: buildSteps('询比采购', ['done','active','future']),
+        files: ['nodes/bid-apply.html','nodes/invite-units.html','nodes/award-result.html'],
         flow: [
             { node: '招标申请&拟邀请单位', status: '未审批', date: '—', flowId: '—' }
         ]
     },
     '谈判采购': {
-        steps: [
-            { name: '招标申请', state: 'done' },
-            { name: '拟邀请单位', state: 'active' },
-            { name: '中标结果', state: 'future' }
-        ],
-        files: ['nodes/bid-apply.html','nodes/nodes/invite-units.html','nodes/award-result.html'],
+        steps: buildSteps('谈判采购', ['done','active','future']),
+        files: ['nodes/bid-apply.html','nodes/invite-units.html','nodes/award-result.html'],
         flow: [
-             { node: '招标申请&拟邀请单位', status: '未审批', date: '—', flowId: '—' }
+            { node: '招标申请&拟邀请单位', status: '未审批', date: '—', flowId: '—' }
         ]
     },
-
     '直接采购': {
-        steps: [
-            { name: '招标申请', state: 'active' },
-            { name: '确定成交供应商', state: 'future' }
-        ],
+        steps: buildSteps('直接采购', ['active','future']),
         files: ['nodes/bid-apply.html','nodes/eval-result.html','nodes/award-result.html'],
         flow: [
             { node: '招标申请', status: '未审批', date: '—', flowId: '—' }
