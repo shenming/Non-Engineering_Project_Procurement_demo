@@ -157,5 +157,23 @@
     }
 })();
 </script>
+<script>
+    // ===== 监听父页面 postMessage 推送数据（兼容 file:// 协议）=====
+    window.addEventListener('message', function(e) {
+        if (e.data && e.data.type === 'editData') {
+            var pd = JSON.parse(sessionStorage.getItem('procNodeData') || '{}');
+            if (!pd || Object.keys(pd).length === 0) {
+                try { sessionStorage.setItem('procNodeData', JSON.stringify(e.data.procNodeData)); } catch(e2) {}
+            }
+            var lf = JSON.parse(sessionStorage.getItem('editLockedFields') || '{}');
+            if (!lf || Object.keys(lf).length === 0) {
+                try { sessionStorage.setItem('editLockedFields', JSON.stringify(e.data.editLockedFields)); } catch(e2) {}
+            }
+            // 重新加载本页面数据
+            if (typeof window.reloadNodeData === 'function') window.reloadNodeData();
+            else if (typeof location !== 'undefined') location.reload();
+        }
+    });
+</script>
 </body>
 </html>
