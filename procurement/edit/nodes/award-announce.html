@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../../common/styles.css">
+<style>
+body.content-page { padding: 16px; }
+.info-card { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+.info-card .card-header { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+.info-card .card-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.info-card .card-body { padding: 16px; }
+.info-card .card-body textarea { width: 100%; min-height: 60px; padding: 8px 10px; border: 1px solid var(--gray-300); border-radius: var(--radius); font-size: 13px; resize: vertical; }
+.info-row { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+.info-row .info-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.info-row .info-item .label { color: var(--gray-500); white-space: nowrap; }
+.page-main-title { font-size: 18px; font-weight: 700; color: var(--gray-800); margin-bottom: 12px; }
+.sub-table-wrap { overflow-x: auto; }
+.supplier-expand { margin-left: 4px; color: var(--primary-light); cursor: pointer; font-size: 12px; text-decoration: underline; }
+.supplier-expand:hover { color: var(--primary); }
+.action-btn-group { display: flex; gap: 4px; white-space: nowrap; }
+.action-btn-group .icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid var(--gray-300); border-radius: 4px; background: #fff; cursor: pointer; font-size: 13px; color: var(--gray-600); }
+.action-btn-group .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.attach-empty { text-align: center; padding: 24px 16px; color: var(--gray-400); font-size: 13px; }
+</style>
+</head>
+<body class="content-page">
+<div class="page-main-title" id="pageMainTitle">定标结果</div>
+<div class="info-card" id="cardRoot">
+  <div class="card-header"><h3>📋 定标基本信息</h3></div>
+  <div class="card-body">
+    <div class="info-row" style="margin-bottom:12px;">
+      <div class="info-item"><span class="label">审批状态：</span><span id="statusTag" class="tag tag-yellow">审批中</span></div>
+      <div class="info-item"><span class="label">招采申请编号：</span><span id="spanApplyCode" style="font-weight:600;"></span></div>
+      <div class="info-item"><span class="label">所属单位：</span><span id="spanUnit"></span></div>
+    </div>
+    <div>
+      <div class="label" style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">定标结果信息说明：</div>
+      <textarea data-field="resultNote" id="resultNote" style="resize:vertical;"></textarea>
+    </div>
+  </div>
+</div>
+<div class="info-card">
+  <div class="card-header"><h3>📦 定标标段明细</h3></div>
+  <div class="card-body" style="padding:0;">
+    <div class="sub-table-wrap">
+      <table>
+        <thead><tr><th style="width:36px;"></th><th>招采计划编号</th><th>行号</th><th>招采目标</th><th>定标编号</th><th>招标采购名称</th><th>标段号</th><th>招采限额</th><th>中标金额(元)</th><th>中标单位编号</th><th>中标单位名称</th><th>中标日期</th><th>其他供应商</th></tr></thead>
+        <tbody id="sectionBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="info-card">
+  <div class="card-header"><h3>📎 附件管理</h3></div>
+  <div class="card-body" style="padding:0;">
+    <div class="sub-table-wrap">
+      <table>
+        <thead><tr><th style="width:120px;">操作</th><th>附件类型</th><th>附件文档名称</th><th>组件名称</th><th>文件 ID</th><th>文件类型</th><th>文件大小(字节)</th><th>时戳</th><th>用户名</th></tr></thead>
+        <tbody id="attachBody"></tbody>
+      </table>
+    </div>
+    <div id="attachEmpty" class="attach-empty">请在定标标段明细中选择一条记录查看附件</div>
+  </div>
+</div>
+<script src="../../../common/scripts.js"></script>
+<script>
+(function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');if(!d||!d[m]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted">暂无数据</p></div>';return}var nd=d[m].nodes[s],f=nd.form||{};if(d[m].info&&d[m].info.projectName)document.getElementById('pageMainTitle').textContent=d[m].info.projectName+' 定标结果';document.getElementById('spanApplyCode').textContent=f.applyCode||'';document.getElementById('spanUnit').textContent=f.unit||'';document.getElementById('resultNote').value=f.resultNote||'';var st=document.getElementById('statusTag'),sv=f.approvalStatus||'审批中';st.textContent=sv;st.className='tag '+(sv==='审批通过'?'tag-green':sv==='审批中'?'tag-yellow':'tag-gray');var secs=nd.sections||[],stb=document.getElementById('sectionBody'),sh='';for(var i=0;i<secs.length;i++){var sc=secs[i];sh+='<tr data-sid="'+sc.id+'" style="cursor:pointer;" onclick="selectSection(this)"><td style="text-align:center;"><input type="radio" name="sRad" style="pointer-events:none;"'+(i===0?' checked':'')+'></td><td>'+sc.planCode+'</td><td>'+sc.lineNo+'</td><td><strong>'+sc.target+'</strong></td><td>'+sc.awardCode+'</td><td>'+sc.purchaseName+'</td><td>'+sc.sectionNo+'</td><td><span class="money">¥'+(sc.limitAmount/10000).toFixed(2)+'万</span></td><td>'+sc.winAmount.toLocaleString()+'</td><td>'+sc.supplierCode+'</td><td>'+sc.supplierName+'</td><td>'+sc.winDate+'</td><td><span class="supplier-expand" onclick="event.stopPropagation();alert(\''+(sc.otherSuppliers?sc.otherSuppliers.map(function(x){return x.code+' - '+x.name}).join('\\n'):'无')+'\')">展开</span></td></tr>'}stb.innerHTML=sh;var ats=nd.attachments||{},tb=document.getElementById('attachBody'),ee=document.getElementById('attachEmpty');function renderAtt(sid){var list=ats[sid];if(!list||list.length===0){tb.innerHTML='';ee.style.display='';return}ee.style.display='none';var h='';for(var i=0;i<list.length;i++){var o=list[i];h+='<tr><td><span class="op-icon" onclick="alert(\'📤 上传\')">📤</span><span class="op-icon" onclick="this.closest(\'tr\').remove()">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'📥 下载\')">📥</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.comp||'')+'</td><td style="font-family:monospace;font-size:10px;">'+(o.fileId||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.user||'')+'</td></tr>'}tb.innerHTML=h}window.selectSection=function(row){document.querySelectorAll('#sectionBody tr').forEach(function(r){r.classList.remove('selected')});row.classList.add('selected');row.querySelector('input[type="radio"]').checked=true;renderAtt(row.getAttribute('data-sid'))};if(secs.length>0)renderAtt(secs[0].id)})();
+</script>
+</body>
+</html>

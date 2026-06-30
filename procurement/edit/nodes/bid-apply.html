@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../../common/styles.css">
+<style>
+body.content-page { padding: 16px; }
+.info-card { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+.info-card .card-header { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+.info-card .card-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.info-card .card-body { padding: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 4px; }
+.form-group:last-child { margin-bottom: 0; }
+.form-control[readonly], .form-control:disabled { background: var(--gray-50); color: var(--gray-600); cursor: not-allowed; }
+select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
+.attach-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.attach-table th { text-align: left; padding: 6px 8px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); font-size: 11px; white-space: nowrap; }
+.attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
+.attach-table .op-icon { cursor: pointer; color: var(--primary); font-size: 14px; margin: 0 2px; }
+.attach-table .op-icon.disabled { color: var(--gray-400); cursor: not-allowed; pointer-events: none; }
+</style>
+</head>
+<body class="content-page">
+<div class="card" style="margin:0;border:none;box-shadow:none;" id="cardRoot">
+    <div class="card-header"><h3>📋 招采信息</h3></div>
+    <div class="card-body" id="formContainer"></div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 采购明细</h3></div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>招标采购名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th><th>采购项说明</th></tr></thead>
+            <tbody id="purchaseBody"></tbody>
+        </table></div>
+    </div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 标段明细</h3></div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>标段号</th><th>招标采购名称</th><th>招采限额</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th><th>采购项说明</th></tr></thead>
+            <tbody id="sectionBody"></tbody>
+        </table></div>
+    </div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📎 附件管理</h3></div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table class="attach-table"><thead><tr><th style="width:120px;">操作</th><th>附件类型</th><th>附件文档名称</th><th>文件名（下载）</th><th>文件 ID</th><th>文件类型</th><th>文件大小（字节）</th><th>时戳</th><th>用户名</th></tr></thead>
+                <tbody id="attachBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="../../../common/scripts.js"></script>
+<script>
+(function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');if(!d||!d[m]||!d[m].nodes||!d[m].nodes[s]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted" style="padding:20px;">暂无数据</p></div>';return}var nd=d[m].nodes[s],f=nd.form||{};
+
+// 渲染表单（编辑模式：默认可编辑）
+var fh='<div class="form-row"><div class="form-group"><label>招标过程编号</label><input class="form-control" data-field="procCode" value="'+(f.procCode||'')+'" readonly></div><div class="form-group"><label>招标过程名称</label><input class="form-control" data-field="procName" value="'+(f.procName||'')+'" ></div></div>';
+fh+='<div class="form-row"><div class="form-group"><label>公司编号</label><input class="form-control" data-field="companyCode" value="'+(f.companyCode||'')+'" readonly></div><div class="form-group"><label>招采限额</label><input class="form-control" data-field="limitAmountText" value="'+(f.limitAmountText||'')+'" ></div></div>';
+fh+='<div class="form-row"><div class="form-group"><label>招标方式</label><select class="form-control" data-field="method" disabled><option>'+f.method+'</option></select></div><div class="form-group"><label>招采类型</label><select class="form-control" data-field="category" disabled><option>'+(f.category||'')+'</option></select></div></div>';
+fh+='<div class="form-row"><div class="form-group"><label>采购项说明</label><select class="form-control" data-field="note" ><option>'+(f.note||'')+'</option></select></div><div class="form-group"><label>经办人</label><input class="form-control" data-field="handler" value="'+(f.handler||'')+'" ></div></div>';
+fh+='<div class="form-row"><div class="form-group"><label>申请日期</label><input class="form-control" data-field="applyDate" value="'+(f.applyDate||'')+'" readonly></div><div class="form-group"><label>招标代理机构</label><input class="form-control" data-field="agent" value="'+(f.agent||'')+'" ></div></div>';
+fh+='<div class="form-row"><div class="form-group"><label>拟发标日期</label><input type="date" class="form-control" data-field="planIssueDate" value="'+(f.planIssueDate||'')+'" ></div><div class="form-group"><label>招标预计完成日期</label><input type="date" class="form-control" data-field="planEndDate" value="'+(f.planEndDate||'')+'" ></div></div>';
+var statusText = f.approvalStatus || '审批通过';
+var statusColor = (statusText.indexOf('通过')>=0||statusText.indexOf('生效')>=0) ? 'tag tag-green' : (statusText.indexOf('中')>=0 ? 'tag tag-yellow' : 'tag tag-gray');
+fh+='<div class="form-row"><div class="form-group"><label>是否进场招标</label><input class="form-control" data-field="inHouse" value="'+(f.inHouse||'')+'" ></div><div class="form-group"><label>审批状态</label><div><span class="'+statusColor+'">'+statusText+'</span></div></div></div>';
+fh+='<div class="form-group" style="margin-bottom:0;"><label>招标范围及相关说明</label><textarea class="form-control" data-field="scope" rows="3" style="resize:vertical;">'+(f.scope||'')+'</textarea></div>';
+document.getElementById('formContainer').innerHTML=fh;
+
+// 渲染采购明细
+var ps=nd.purchases||[],ptb=document.getElementById('purchaseBody'),ph='';
+for(var i=0;i<ps.length;i++){var p=ps[i];ph+='<tr data-idx="'+p.idx+'" data-sections="'+p.sections+'" style="cursor:pointer;" onclick="onPurchaseSelect(this)"><td style="text-align:center;"><input type="radio" name="pSel" style="pointer-events:none;"'+(i===0?' checked':'')+'></td><td>'+p.name+'</td><td>'+p.planCode+'</td><td>'+p.lineNo+'</td><td>'+p.purchaseName+'</td><td><span class="money">'+p.amountText+'</span></td><td>'+p.sections+'</td><td>'+p.cat+'</td><td>'+p.subCat+'</td><td>'+p.target+'</td><td><select style="font-size:11px;"><option>'+p.note+'</option></select></td></tr>'}ptb.innerHTML=ph;
+
+// 渲染标段明细
+var sd=nd.sectionData||{},stb=document.getElementById('sectionBody');
+window.onPurchaseSelect=function(row){var idx=parseInt(row.getAttribute('data-idx')),secs=sd[idx]||[],sh='';for(var i=0;i<secs.length;i++){var sc=secs[i];sh+='<tr><td><input type="radio" name="sSel"'+(i===0?' checked':'')+'></td><td>'+sc.seq+'</td><td>'+sc.name+'</td><td><span class="money">¥'+(sc.limit/10000).toFixed(2)+'万</span></td><td>'+sc.planCode+'</td><td>'+sc.planRow+'</td><td>'+sc.purchaseName+'</td><td><span class="money">¥'+(sc.amount/10000).toFixed(2)+'万</span></td><td>'+sc.sections+'</td><td>'+sc.cat+'</td><td>'+sc.subCat+'</td><td>'+sc.target+'</td><td><select style="font-size:11px;"><option>'+(sc.note||'')+'</option></select></td></tr>'}stb.innerHTML=sh};
+var firstPurchase=document.querySelector('#purchaseBody tr');if(firstPurchase)onPurchaseSelect(firstPurchase);
+
+// 渲染附件
+var ats=nd.attachments||[],tb=document.getElementById('attachBody'),ah='';
+for(var i=0;i<ats.length;i++){var o=ats[i];ah+='<tr><td><span class="op-icon" onclick="alert(\'📤 上传\')">📤</span><span class="op-icon" onclick="this.closest(\'tr\').remove()">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.file||'')+'</td><td style="font-family:monospace;font-size:10px;">'+(o.fileId||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.user||'')+'</td></tr>'}tb.innerHTML=ah||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
+
+// 应用锁定字段
+(function(){var locked;try{locked=JSON.parse(sessionStorage.getItem('editLockedFields')||'{}')}catch(e){return}if(!locked)return;var lockedNames=(locked[m]&&locked[m][s])||[];document.querySelectorAll('input,select,textarea').forEach(function(el){var field=el.getAttribute('data-field')||'';if(lockedNames.indexOf(field)===-1)return;if(el.tagName==='SELECT')el.disabled=true;else el.readOnly=true;el.style.background='var(--gray-50)';el.style.color='var(--gray-600)';el.style.cursor='not-allowed'});})();
+})();
+</script>
+</body>
+</html>
