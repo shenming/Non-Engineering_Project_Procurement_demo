@@ -27,7 +27,7 @@ var DETAIL_METHOD_CONFIG = {
             { node: '开标信息', status: '审批通过', date: '2026-07-10', flowId: 'WF-2026-003-02' },
             { node: '上传评标结果&评标结果公示', status: '审批通过', date: '2026-07-18', flowId: 'WF-2026-003-03' },
             { node: '中标结果', status: '审批通过', date: '2026-07-20', flowId: 'WF-2026-003-04' },
-            { node: '中标结果公示', status: '审批中', date: '—', flowId: 'WF-2026-003-05' }
+            { node: '中标结果公示', status: '审批中', date: '2026-07-20', flowId: 'WF-2026-003-05' }
         ]
     },
     '邀请招标': {
@@ -35,7 +35,7 @@ var DETAIL_METHOD_CONFIG = {
         files: ['nodes/bid-apply.html','nodes/invite-units.html','nodes/bid-opening.html','nodes/eval-result.html','nodes/award-result.html'],
         flow: [
             { node: '招标申请&拟邀请单位', status: '审批通过', date: '2026-05-15', flowId: 'WF-2026-011-01' },
-            { node: '开标信息', status: '审批中', date: '—', flowId: 'WF-2026-011-03' },
+            { node: '开标信息', status: '未审批', date: '—', flowId: '-' },
             { node: '上传评标结果', status: '待推进', date: '—', flowId: '—' },
             { node: '中标结果', status: '待推进', date: '—', flowId: '—' }
         ]
@@ -65,7 +65,7 @@ var DETAIL_METHOD_CONFIG = {
         steps: buildSteps('直接采购-小额', ['done','active']),
         files: ['nodes/bid-apply.html','nodes/eval-result.html'],
         flow: [
-            { node: '招标申请&确定成交供应商', status: '未审批', date: '—', flowId: '—' },
+            { node: '招标申请&确定成交供应商', status: '审批中',  date: '2026-05-15', flowId: 'WF-2026-015-01' },
 
         ]
     }

@@ -77,7 +77,7 @@
 
     document.getElementById('txtDesc').value = f.desc || '';
     document.getElementById('txtBidderCount').value = f.bidderCount || 0;
-    document.getElementById('bidderCountDisplay').textContent = f.bidderCount || 0;
+    document.getElementById('bidderCountDisplay').textContent = f.bidderCount || 0;var st=document.getElementById('statusTag'),sv=f.approvalStatus||'审批通过';if(st){st.textContent=sv;st.className='tag '+(sv==='审批通过'||sv==='已生效'?'tag-green':sv.indexOf('中')>=0?'tag-yellow':'tag-gray')}
 
     var tbody = document.getElementById('attachBody');
     var atts = nd.attachments || [];

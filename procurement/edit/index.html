@@ -77,7 +77,8 @@
     <button id="prevBtn" class="btn btn-outline" onclick="prevStep()">← 上一步</button>
     <div class="flex gap-8">
         <button class="btn btn-primary" onclick="saveProcurement()">💾 保存</button>
-        <button class="btn btn-outline" onclick="navTo('procurement')">取消</button>
+        <button class="btn btn-outline" onclick="draftProcurement()">📋 暂存</button>
+        <button class="btn btn-outline" onclick="navTo('procurement','procurement/detail/index.html')">← 返回详情</button>
     </div>
 </div>
 
@@ -236,6 +237,10 @@ function updateNavButtons() {
     var activeIdx = -1;
     for (var i = 0; i < steps.length; i++) { if (steps[i].state === 'active') activeIdx = i; }
     document.getElementById('nextBtn').disabled = (selectedStep >= activeIdx || selectedStep >= steps.length - 1);
+}
+
+function draftProcurement() {
+    alert('📋 已暂存当前编辑');
 }
 
 function saveProcurement() {

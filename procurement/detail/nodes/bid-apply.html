@@ -28,13 +28,13 @@ select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
     <div class="card-body" id="formContainer"></div>
     <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 采购明细</h3></div>
     <div class="card-body" style="padding:0;">
-        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>招标采购名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th><th>采购项说明</th></tr></thead>
+        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>招标采购名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th></tr></thead>
             <tbody id="purchaseBody"></tbody>
         </table></div>
     </div>
     <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 标段明细</h3></div>
     <div class="card-body" style="padding:0;">
-        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>标段号</th><th>招标采购名称</th><th>招采限额</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th><th>采购项说明</th></tr></thead>
+        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>标段号</th><th>招标采购名称</th><th>招采限额</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th></tr></thead>
             <tbody id="sectionBody"></tbody>
         </table></div>
     </div>
@@ -66,11 +66,11 @@ document.getElementById('formContainer').innerHTML=fh;
 
 // 渲染采购明细
 var ps=nd.purchases||[],ptb=document.getElementById('purchaseBody'),ph='';
-for(var i=0;i<ps.length;i++){var p=ps[i];ph+='<tr data-idx="'+p.idx+'" data-sections="'+p.sections+'" style="cursor:pointer;" onclick="onPurchaseSelect(this)"><td style="text-align:center;"><input type="radio" name="pSel" style="pointer-events:none;"'+(i===0?' checked':'')+'></td><td>'+p.name+'</td><td>'+p.planCode+'</td><td>'+p.lineNo+'</td><td>'+p.purchaseName+'</td><td><span class="money">'+p.amountText+'</span></td><td>'+p.sections+'</td><td>'+p.cat+'</td><td>'+p.subCat+'</td><td>'+p.target+'</td><td><select disabled style="font-size:11px;"><option>'+p.note+'</option></select></td></tr>'}ptb.innerHTML=ph;
+for(var i=0;i<ps.length;i++){var p=ps[i];ph+='<tr data-idx="'+p.idx+'" data-sections="'+p.sections+'" style="cursor:pointer;" onclick="onPurchaseSelect(this)"><td style="text-align:center;"><input type="radio" name="pSel"'+(i===0?' checked':'')+'></td><td>'+p.name+'</td><td>'+p.planCode+'</td><td>'+p.lineNo+'</td><td>'+p.purchaseName+'</td><td><span class="money">'+p.amountText+'</span></td><td>'+p.sections+'</td><td>'+p.cat+'</td><td>'+p.subCat+'</td><td>'+p.target+'</td></tr>'}ptb.innerHTML=ph;
 
 // 渲染标段明细
 var sd=nd.sectionData||{},stb=document.getElementById('sectionBody');
-window.onPurchaseSelect=function(row){var idx=parseInt(row.getAttribute('data-idx')),secs=sd[idx]||[],sh='';for(var i=0;i<secs.length;i++){var sc=secs[i];sh+='<tr><td><input type="radio" name="sSel"'+(i===0?' checked':'')+'></td><td>'+sc.seq+'</td><td>'+sc.name+'</td><td><span class="money">¥'+(sc.limit/10000).toFixed(2)+'万</span></td><td>'+sc.planCode+'</td><td>'+sc.planRow+'</td><td>'+sc.purchaseName+'</td><td><span class="money">¥'+(sc.amount/10000).toFixed(2)+'万</span></td><td>'+sc.sections+'</td><td>'+sc.cat+'</td><td>'+sc.subCat+'</td><td>'+sc.target+'</td><td><select disabled style="font-size:11px;"><option>'+(sc.note||'')+'</option></select></td></tr>'}stb.innerHTML=sh};
+window.onPurchaseSelect=function(row){document.querySelectorAll('#purchaseBody tr').forEach(function(r){r.classList.remove('selected')});row.classList.add('selected');row.querySelector('input[type="radio"]').checked=true;var idx=parseInt(row.getAttribute('data-idx')),secs=sd[idx]||[],sh='';for(var i=0;i<secs.length;i++){var sc=secs[i];sh+='<tr><td><input type="radio" name="sSel"'+(i===0?' checked':'')+'></td><td>'+sc.seq+'</td><td>'+sc.name+'</td><td><span class="money">¥'+(sc.limit/10000).toFixed(2)+'万</span></td><td>'+sc.planCode+'</td><td>'+sc.planRow+'</td><td>'+sc.purchaseName+'</td><td><span class="money">¥'+(sc.amount/10000).toFixed(2)+'万</span></td><td>'+sc.sections+'</td><td>'+sc.cat+'</td><td>'+sc.subCat+'</td><td>'+sc.target+'</td></tr>'}stb.innerHTML=sh};
 // 默认选中第1个采购
 var firstPurchase=document.querySelector('#purchaseBody tr');if(firstPurchase)onPurchaseSelect(firstPurchase);
 
