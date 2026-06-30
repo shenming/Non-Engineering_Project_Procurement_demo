@@ -45,6 +45,9 @@
             <h3 id="infoTitle">✏️ 项目名称</h3>
             <span class="tag" id="infoStatusTag" style="margin-left:8px;">进行中</span>
         </div>
+         <div class="flex gap-8">
+            <button id="btnSave" class="btn btn-sm btn-outline" onclick="saveProcurement()">💾 保存</button>
+        </div>
     </div>
 
     <div class="tab-nav">
@@ -76,7 +79,8 @@
 <div class="flex-between" style="padding:12px 0;border-top:1px solid var(--gray-200);margin-top:12px;">
     <button id="prevBtn" class="btn btn-outline" onclick="prevStep()">← 上一步</button>
     <div class="flex gap-8">
-        <button class="btn btn-primary" onclick="saveProcurement()">💾 保存</button>
+
+         <button id="nextBtn" class="btn btn-primary" onclick="nextStep()">下一步 →</button>
         <button class="btn btn-outline" onclick="navTo('procurement','procurement/detail/index.html')">← 返回详情</button>
     </div>
 </div>
@@ -128,8 +132,10 @@ var currentMethod = '公开招标';
 var cfg = METHOD_CONFIG[currentMethod];
 
 (function init() {
+    
     var ctx = null;
     try { ctx = JSON.parse(sessionStorage.getItem('procEditContext') || 'null'); } catch(e) {}
+    
     if (ctx) {
         if (ctx.projectName) {
             document.getElementById('breadProject').textContent = ctx.projectName;
@@ -146,6 +152,7 @@ var cfg = METHOD_CONFIG[currentMethod];
         }
         sessionStorage.removeItem('procEditContext');
     }
+
     renderSteps();
     renderApprovalFlow();
     // 先写入 sessionStorage，再加载 iframe
