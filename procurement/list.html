@@ -12,7 +12,7 @@
 
 <div class="flex-between mb-16">
     <div>
-        <span class="text-muted">共 <strong id="totalCount">9</strong> 条采购记录</span>
+        <span class="text-muted">共 <strong id="totalCount">10</strong> 条采购记录</span>
     </div>
     <div class="flex gap-8">
         <button class="btn btn-sm btn-outline">📥 导出</button>
@@ -97,6 +97,18 @@
                         <td>集团总部</td>
                         <td>采购申请</td>
                         <td><span class="tag tag-blue">审批中</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
+                        </td>
+                    </tr>
+                    <tr data-id="ZB-2026-013" data-plan-item-id="PL-2026-0025-1" data-status="进行中" data-method="直接采购-小额">
+                        <td><strong>ZB-2026-013</strong></td>
+                        <td>办公用品采购</td>
+                        <td><span class="tag tag-orange">直接采购</span></td>
+                        <td><span class="money">¥9.8万</span></td>
+                        <td>成员企业B</td>
+                        <td>确定成交供应商</td>
+                        <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>

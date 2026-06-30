@@ -60,6 +60,14 @@ var DETAIL_METHOD_CONFIG = {
         flow: [
             { node: '招标申请', status: '未审批', date: '—', flowId: '—' }
         ]
+    },
+    '直接采购-小额': {
+        steps: buildSteps('直接采购-小额', ['done','active']),
+        files: ['nodes/bid-apply.html','nodes/eval-result.html'],
+        flow: [
+            { node: '招标申请', status: '审批通过', date: '2026-06-25', flowId: 'WF-2026-013-01' },
+            { node: '确定成交供应商', status: '审批中', date: '—', flowId: '—' }
+        ]
     }
 };
 
@@ -188,7 +196,6 @@ var DETAIL_DATA = {
             }
         }
     },
-    // ==================== 邀请招标 ====================
     '邀请招标': {
         info: {
             projectName: '弱电系统维保服务',
@@ -254,7 +261,6 @@ var DETAIL_DATA = {
             }
         }
     },
-    // ==================== 询比采购（3步：采购申请→拟邀请单位→中标结果） ====================
     '询比采购': {
         info: {
             projectName: '办公设备集中采购',
@@ -306,7 +312,6 @@ var DETAIL_DATA = {
             }
         }
     },
-    // ==================== 谈判采购（3步：采购申请→拟邀请单位→中标结果） ====================
     '谈判采购': {
         info: {
             projectName: 'IT运维服务',
@@ -352,7 +357,6 @@ var DETAIL_DATA = {
             }
         }
     },
-    // ==================== 直接采购（2步：采购申请→确定成交供应商） ====================
     '直接采购': {
         info: {
             projectName: '法律顾问服务',
@@ -390,6 +394,48 @@ var DETAIL_DATA = {
                 attachments: {
                     'BD-006': [
                         { type: '供应商评审表', name: '供应商评审表_法律顾问.pdf', comp: '文件管理组件', fileId: 'F-2026-0612-001', fileType: 'pdf', size: 320000, ts: '2026-06-12 11:00', user: '张明' }
+                    ]
+                }
+            }
+        }
+    },
+    '直接采购-小额': {
+        info: {
+            projectName: '办公用品采购',
+            applyCode: 'ZB-2026-013',
+            unit: '成员企业B',
+            status: '进行中',
+            statusTag: 'tag-yellow'
+        },
+        nodes: {
+            0: {
+                form: {
+                    procCode: 'ZB-2026-013', procName: '办公用品采购', companyCode: 'MEMBER-002',
+                    limitAmount: 98000, limitAmountText: '¥98,000.00元', method: '直接采购',
+                    category: '货物类 · 办公用品类', note: '合同估算价 ＜ 100,000.00 元，可按直接采购方式实施',
+                    handler: '赵岩', applyDate: '2026-06-20', agent: '—',
+                    planIssueDate: '2026-06-20', planEndDate: '2026-06-30', inHouse: '否',
+                    approvalStatus: '审批通过',
+                    scope: '成员企业B 2026年度办公用品（打印纸、文具、耗材等）集中采购，满足全年办公需求。'
+                },
+                purchases: [
+                    { idx: 0, name: '办公用品采购', planCode: 'PL-2026-0025', lineNo: '001', purchaseName: '办公用品采购', amount: 98000, amountText: '¥98,000.00元', sections: 1, cat: '货物类', subCat: '办公用品类', target: '主合同', note: '合同估算价 ＜ 100,000.00 元' }
+                ],
+                sectionData: {
+                    0: [{ seq: 1, name: '办公用品采购', limit: 98000, planCode: 'PL-2026-0025', planRow: '001', purchaseName: '办公用品采购', amount: 98000, sections: 1, cat: '货物类', subCat: '办公用品类', target: '主合同', note: '合同估算价 ＜ 100,000.00 元' }]
+                },
+                attachments: [
+                    { type: '采购说明', name: '直接采购说明_办公用品.pdf', file: 'ZB-2026-013-SM.pdf', fileId: 'F202606010', fileType: 'pdf', size: '420,000', ts: '2026-06-20 09:00', user: '赵岩' }
+                ]
+            },
+            1: {
+                form: { approvalStatus: '审批中', applyCode: 'ZB-2026-013', unit: '成员企业B', resultNote: '完成供应商评审，确定成交供应商。' },
+                sections: [
+                    { id: 'BD-013', planCode: 'PL-2026-0025', lineNo: 1, target: '主合同', awardCode: 'DB-2026-013-1', purchaseName: '办公用品采购', sectionNo: '1', limitAmount: 98000, winAmount: 95500, supplierCode: 'GYS-050', supplierName: '上海晨光办公用品有限公司', winDate: '—', otherSuppliers: [{ code: 'GYS-051', name: '北京齐心办公用品有限公司' }] }
+                ],
+                attachments: {
+                    'BD-013': [
+                        { type: '供应商评审表', name: '供应商评审表_办公用品.pdf', comp: '文件管理组件', fileId: 'F-2026-0622-001', fileType: 'pdf', size: '280,000', ts: '2026-06-22 10:00', user: '赵岩' }
                     ]
                 }
             }
