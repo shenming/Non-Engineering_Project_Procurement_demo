@@ -50,7 +50,9 @@ select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
 <script src="../../../common/scripts.js"></script>
 <script>
     // ===== 编辑模式：附件管理创建+批量删除 =====
-    if (a.mode === 'edit' || (typeof params !== 'undefined' && params.mode === 'edit')) {
+    alert()
+    alert(a.mode )
+    if ((function(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p.mode==='edit'})()) {
         // 添加工具条
         var tb = document.getElementById('attachBody');
         if (tb) {
