@@ -62,7 +62,47 @@ body.content-page { padding: 16px; }
     <div id="attachEmpty" class="attach-empty">请在定标标段明细中选择一条记录查看附件</div>
   </div>
 </div>
-<script src="../../../common/scripts.js"></script>
+<script src="../../../common/scripts.js">
+    // ===== 编辑模式：附件管理创建+批量删除 =====
+    if (a.mode === 'edit' || (typeof params !== 'undefined' && params.mode === 'edit')) {
+        // 添加工具条
+        var tb = document.getElementById('attachBody');
+        if (tb) {
+            var wrap = tb.closest('.table-wrap') || tb.parentNode;
+            if (wrap && !wrap.querySelector('.attach-toolbar')) {
+                var bar = document.createElement('div');
+                bar.className = 'attach-toolbar';
+                bar.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
+                bar.innerHTML = '<button class="btn btn-xs btn-outline" onclick="createAttachRow()">＋ 创建</button>'
+                    + '<button class="btn btn-xs btn-danger" onclick="batchDeleteAttach()">🗑 批量删除</button>';
+                wrap.parentNode.insertBefore(bar, wrap);
+            }
+        }
+        window.createAttachRow = window.createAttachRow || function() {
+            var tb = document.getElementById('attachBody');
+            if (!tb) return;
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td><input type="checkbox" class="attach-cb"></td>'
+                + '<td><span class="op-icon" onclick="if(confirm(\'确认删除？\'))this.closest(\'tr\').remove()">🗑</span></td>'
+                + '<td contenteditable="true">新附件</td>'
+                + '<td contenteditable="true"></td>'
+                + '<td contenteditable="true"></td>'
+                + '<td contenteditable="true"></td>'
+                + '<td contenteditable="true"></td>'
+                + '<td contenteditable="true"></td>'
+                + '<td contenteditable="true">' + new Date().toISOString().replace('T',' ').substring(0,19) + '</td>'
+                + '<td contenteditable="true">当前用户</td>';
+            tb.appendChild(tr);
+        };
+        window.batchDeleteAttach = window.batchDeleteAttach || function() {
+            var cbs = document.querySelectorAll('.attach-cb:checked');
+            if (cbs.length === 0) { alert('⚠️ 请先勾选要删除的附件行'); return; }
+            if (confirm('确认删除选中的 ' + cbs.length + ' 条附件？')) {
+                cbs.forEach(function(cb) { var r = cb.closest('tr'); if (r) r.remove(); });
+            }
+        };
+    }
+</script>
 <script>
 (function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');if(!d||!d[m]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted">暂无数据</p></div>';return}var nd=d[m].nodes[s],f=nd.form||{};if(d[m].info&&d[m].info.projectName)document.getElementById('pageMainTitle').textContent=d[m].info.projectName+' 定标结果';document.getElementById('spanApplyCode').textContent=f.applyCode||'';document.getElementById('spanUnit').textContent=f.unit||'';document.getElementById('resultNote').value=f.resultNote||'';var st=document.getElementById('statusTag');var sv=f.approvalStatus||'审批中';st.textContent=sv;st.className='tag '+(sv==='审批通过'?'tag-green':sv==='审批中'?'tag-yellow':'tag-gray');var secs=nd.sections||[],stb=document.getElementById('sectionBody'),sh='';for(var i=0;i<secs.length;i++){var sc=secs[i];sh+='<tr data-sid="'+sc.id+'" style="cursor:pointer;" onclick="selectSection(this)"><td style="text-align:center;"><input type="radio" name="sRad" style="pointer-events:none;"'+(i===0?' checked':'')+'></td><td>'+sc.planCode+'</td><td>'+sc.lineNo+'</td><td><strong>'+sc.target+'</strong></td><td>'+sc.awardCode+'</td><td>'+sc.purchaseName+'</td><td>'+sc.sectionNo+'</td><td><span class="money">¥'+(sc.limitAmount/10000).toFixed(2)+'万</span></td><td>'+sc.winAmount.toLocaleString()+'</td><td>'+sc.supplierCode+'</td><td>'+sc.supplierName+'</td><td>'+sc.winDate+'</td><td><span class="supplier-expand" onclick="event.stopPropagation();alert(\''+(sc.otherSuppliers?sc.otherSuppliers.map(function(x){return x.code+' - '+x.name}).join('\\n'):'无')+'\')">展开</span></td></tr>'}stb.innerHTML=sh;var ats=nd.attachments||{},tb=document.getElementById('attachBody'),ee=document.getElementById('attachEmpty');function renderAtt(sid){var list=ats[sid];if(!list||list.length===0){tb.innerHTML='';ee.style.display='';return}ee.style.display='none';var h='';for(var i=0;i<list.length;i++){var o=list[i];h+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'📥 下载\')">📥</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.comp||'')+'</td><td style="font-family:monospace;font-size:10px;">'+(o.fileId||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.user||'')+'</td></tr>'}tb.innerHTML=h}window.selectSection=function(row){document.querySelectorAll('#sectionBody tr').forEach(function(r){r.classList.remove('selected')});row.classList.add('selected');row.querySelector('input[type="radio"]').checked=true;renderAtt(row.getAttribute('data-sid'))};if(secs.length>0)renderAtt(secs[0].id)
 

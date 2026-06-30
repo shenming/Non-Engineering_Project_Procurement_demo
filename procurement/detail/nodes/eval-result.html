@@ -23,7 +23,7 @@
         </div>
         <div class="form-group" style="margin-bottom:0;">
             <label>审批状态</label>
-            <div><span class="tag tag-yellow">审批中</span></div>
+            <div><span id="statusTag" class="tag tag-yellow">审批中</span></div>
         </div>
 
         <div class="text-sm fw-600" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;margin-bottom:8px;">📎 附件管理</div>
@@ -36,7 +36,47 @@
     </div>
 </div>
 
-<script src="../../../common/scripts.js"></script>
+<script src="../../../common/scripts.js">
+    // ===== 编辑模式：附件管理创建+批量删除 =====
+    if (a.mode === 'edit' || (typeof params !== 'undefined' && params.mode === 'edit')) {
+        // 添加工具条
+        var tb = document.getElementById('attachBody');
+        if (tb) {
+            var wrap = tb.closest('.table-wrap') || tb.parentNode;
+            if (wrap && !wrap.querySelector('.attach-toolbar')) {
+                var bar = document.createElement('div');
+                bar.className = 'attach-toolbar';
+                bar.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
+                bar.innerHTML = '<button class="btn btn-xs btn-outline" onclick="createAttachRow()">＋ 创建</button>'
+                    + '<button class="btn btn-xs btn-danger" onclick="batchDeleteAttach()">🗑 批量删除</button>';
+                wrap.parentNode.insertBefore(bar, wrap);
+            }
+        }
+        window.createAttachRow = window.createAttachRow || function() {
+            var tb = document.getElementById('attachBody');
+            if (!tb) return;
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td><input type="checkbox" class="attach-cb"></td>'
+                + '<td><span class="op-icon" onclick="if(confirm(\'确认删除？\'))this.closest(\'tr\').remove()">🗑</span></td>'
+                + '<td contenteditable="true">新附件</td>'
+                + '<td contenteditable="true"></td>'
+                + '<td contenteditable="true"></td>'
+                + '<td contenteditable="true"></td>'
+                + '<td contenteditable="true"></td>'
+                + '<td contenteditable="true"></td>'
+                + '<td contenteditable="true">' + new Date().toISOString().replace('T',' ').substring(0,19) + '</td>'
+                + '<td contenteditable="true">当前用户</td>';
+            tb.appendChild(tr);
+        };
+        window.batchDeleteAttach = window.batchDeleteAttach || function() {
+            var cbs = document.querySelectorAll('.attach-cb:checked');
+            if (cbs.length === 0) { alert('⚠️ 请先勾选要删除的附件行'); return; }
+            if (confirm('确认删除选中的 ' + cbs.length + ' 条附件？')) {
+                cbs.forEach(function(cb) { var r = cb.closest('tr'); if (r) r.remove(); });
+            }
+        };
+    }
+</script>
 <script>
 (function initNode(){function gp(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var params=gp(),method=params.method||'公开招标',step=parseInt(params.step)||0,pd=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');if(!pd||!pd[method]||!pd[method].nodes||!pd[method].nodes[step]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted">暂无数据</p></div>';return}var nd=pd[method].nodes[step],f=nd.form||{};document.getElementById('txtDesc').value=f.desc||'';var st=document.getElementById('statusTag'),sv=f.approvalStatus||'审批中';if(st){st.textContent=sv;st.className='tag '+(sv==='审批通过'||sv==='已生效'?'tag-green':sv.indexOf('中')>=0?'tag-yellow':'tag-gray')}var tbody=document.getElementById('attachBody'),atts=nd.attachments||[],html='';for(var i=0;i<atts.length;i++){var a=atts[i];html+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span></td><td>'+(a.type||'')+'</td><td>'+(a.name||'')+'</td><td>'+(a.comp||'')+'</td><td>'+(a.fileType||'')+'</td><td style="text-align:right;">'+(a.size||'')+'</td><td>'+(a.ts||'')+'</td><td>'+(a.time||'')+'</td><td>'+(a.user||'')+'</td></tr>'}tbody.innerHTML=html||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
 
