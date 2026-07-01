@@ -453,7 +453,7 @@ function confirmPlanSelection() {
     var itemData = JSON.parse(decodeURIComponent(checkedRow.getAttribute('data-item')));
     sessionStorage.setItem('selectedPlanItem', JSON.stringify(itemData));
     closePlanModal();
-    navTo('procurement', 'procurement/create.html');
+    navTo('procurement', 'procurement/create/index.html');
 }
 </script>
 </body>
