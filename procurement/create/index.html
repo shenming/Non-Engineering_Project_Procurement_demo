@@ -17,6 +17,8 @@
         .attach-table .op-icon { cursor: pointer; color: var(--primary); font-size: 14px; margin: 0 2px; }
         .attach-table .op-icon:hover { color: var(--primary-dark); }
         .inline-small { width: 70px; display: inline-block; }
+        .selected-plans { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: var(--radius); padding: 10px 14px; margin-bottom: 12px; font-size: 12px; }
+        .selected-plans strong { color: var(--primary); }
     </style>
 </head>
 <body class="content-page">
@@ -26,29 +28,34 @@
     <span class="breadcrumb"><a onclick="navTo('procurement','procurement/list.html')">采购过程列表</a><span> › </span>发起申请</span>
 </div>
 
+<!-- 已选招采项提示 -->
+<div class="selected-plans" id="selectedPlansBanner">
+    已选 <strong id="selectedCount">0</strong> 条招采项
+</div>
+
 <div class="card">
     <div class="card-header"><h3>📋 招采信息</h3></div>
     <div class="card-body">
         <div class="info-grid">
             <div class="info-item"><label class="info-label">招标过程编号</label><input class="form-control field-locked" id="procNo" disabled></div>
             <div class="info-item"><label class="info-label">招标过程名称 <span class="required">*</span></label><input class="form-control" id="procName"></div>
-            <div class="info-item"><label class="info-label">公司编号</label><input class="form-control" value="HQ-001"></div>
-            <div class="info-item"><label class="info-label">招采限额（元）<span class="required">*</span></label><input class="form-control" type="number" id="procAmount" step="0.01" oninput="validateLimit()"><span class="text-xs" id="limitHint" style="color:var(--gray-500);">计划上限：<span id="limitMax"></span> 元</span></div>
-            <div class="info-item"><label class="info-label">招标方式</label><select class="form-control field-locked" id="procMethod" disabled><option>公开招标</option><option>邀请招标</option><option>询比采购</option><option>谈判采购</option><option>直接采购</option></select></div>
+            <div class="info-item"><label class="info-label">公司编号</label><input class="form-control" id="companyCode" disabled></div>
+            <div class="info-item"><label class="info-label">招采限额（元）<span class="required">*</span></label><input class="form-control" type="number" id="procAmount" step="0.01" oninput="validateLimit()"><span class="text-xs" id="limitHint" style="color:var(--gray-500);">合计：<span id="limitMax"></span> 元</span></div>
+            <div class="info-item"><label class="info-label">招标方式</label><input class="form-control field-locked" id="procMethod" disabled></div>
             <div class="info-item"><label class="info-label">招采类型</label><input class="form-control field-locked" id="procCat" disabled></div>
-            <div class="info-item"><label class="info-label">经办人</label><input class="form-control" value="李经理"></div>
+            <div class="info-item"><label class="info-label">经办人</label><input class="form-control" id="handler" value="李经理"></div>
             <div class="info-item"><label class="info-label">申请日期</label><input class="form-control field-locked" id="applyDate" disabled></div>
-            <div class="info-item"><label class="info-label">招标代理机构</label><input class="form-control" value="上海XX招标代理有限公司"></div>
+            <div class="info-item"><label class="info-label">招标代理机构</label><input class="form-control" id="agent" value="上海XX招标代理有限公司"></div>
             <div class="info-item"><label class="info-label">招标预计开始日期</label><input class="form-control" type="date" id="estStartDate"></div>
             <div class="info-item"><label class="info-label">拟发标日期</label><input class="form-control" type="date" id="bidIssueDate"></div>
             <div class="info-item"><label class="info-label">招标预计完成日期</label><input class="form-control" type="date" id="estEndDate"></div>
             <div class="info-item"><label class="info-label">审批状态</label><input class="form-control field-locked" value="待提交" disabled></div>
             <div class="info-item"><label class="info-label">是否进场招标</label><select class="form-control"><option value="否" selected>否</option><option value="是">是</option></select></div>
-            <div class="full-width"><label class="info-label">招标范围及相关说明</label><textarea class="form-control" rows="3" placeholder="请描述本次采购的具体范围、服务/货物要求等" style="margin-top:2px;"></textarea></div>
+            <div class="full-width"><label class="info-label">招标范围及相关说明</label><textarea class="form-control" rows="3" id="procScope" placeholder="请描述本次采购的具体范围、服务/货物要求等" style="margin-top:2px;"></textarea></div>
         </div>
     </div>
 
-    <!-- ===== 直接采购原因 ==== -->
+    <!-- 直接采购原因 -->
     <div id="directPurchaseSection" style="display:none;padding:0 20px 20px;">
         <div class="card" style="margin-bottom:0;border-color:var(--warning);">
             <div class="card-header" style="background:#fffbeb;"><h3>📌 直接采购原因选择</h3></div>
@@ -58,34 +65,34 @@
     <div class="text-xs text-muted" id="dpFlowHint" style="display:none;padding:0 20px 12px;"></div>
 </div>
 
-<!-- 模块 2：采购明细 -->
+<!-- 采购明细 -->
 <div class="card">
-    <div class="card-header"><h3>📋 采购明细</h3><button class="btn btn-sm btn-outline" onclick="addPurchaseRow()">＋ 添加采购明细</button></div>
+    <div class="card-header"><h3>📋 采购明细</h3></div>
     <div class="card-body" style="padding:0;">
         <div class="table-wrap"><table>
             <thead><tr>
-                <th style="width:36px;"></th><th>招标采购名称</th><th>采购计划编号</th><th>采购计划行编号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段数</th><th>招采品类</th><th>招采二级品类</th><th>招采目标</th><th style="width:60px;">操作</th>
+                <th>招标采购名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段数</th><th>招采品类</th><th>招采二级品类</th><th>招采目标</th>
             </tr></thead>
             <tbody id="purchaseBody"></tbody>
-            <tfoot><tr id="purchaseFoot"><td colspan="11" class="text-sm text-muted" style="padding:6px 10px;">采购金额合计：<span class="money">¥0.00</span>｜招采限额：<span class="money" id="footLimit">¥0.00</span></td></tr></tfoot>
+            <tfoot><tr id="purchaseFoot"><td colspan="9" class="text-sm text-muted" style="padding:6px 10px;">采购金额合计：<span class="money">¥0.00</span></td></tr></tfoot>
         </table></div>
     </div>
 </div>
 
-<!-- 模块 2.2：标段明细 -->
+<!-- 标段明细 -->
 <div class="card">
-    <div class="card-header"><h3>📋 标段明细</h3><button class="btn btn-sm btn-outline" onclick="addSectionRow()">＋ 添加标段</button></div>
+    <div class="card-header"><h3>📋 标段明细</h3></div>
     <div class="card-body" style="padding:0;">
         <div class="table-wrap"><table>
             <thead><tr>
-                <th style="width:36px;"></th><th>标段号</th><th>招标采购名称</th><th>招采限额</th><th>采购计划编号</th><th>采购计划行编号</th><th>采购名称</th><th>采购金额含税</th><th>标段数</th><th>招采品类</th><th>招采二级品类</th><th>招采目标</th><th style="width:60px;">操作</th>
+                <th>标段号</th><th>招标采购名称</th><th>招采限额</th><th>采购计划编号</th><th>采购计划行编号</th><th>采购名称</th><th>采购金额含税</th><th>招采品类</th><th>招采二级品类</th><th>招采目标</th>
             </tr></thead>
             <tbody id="sectionBody"></tbody>
         </table></div>
     </div>
 </div>
 
-<!-- 模块 3：附件管理 -->
+<!-- 附件管理 -->
 <div class="card">
     <div class="card-header"><h3>📎 附件管理</h3><button class="btn btn-sm btn-outline" onclick="addAttachRow()">＋ 添加附件</button></div>
     <div class="card-body" style="padding:0;">
@@ -103,131 +110,98 @@
 </div>
 
 <script src="../../common/scripts.js"></script>
+<script src="../../common/data.js"></script>
 <script>
-var planLimit = 0;
+var selectedItems = [];
+var totalLimit = 0;
 
-// ===== 初始化：从 sessionStorage 读取计划数据 =====
 (function initFromPlan() {
-    var raw = sessionStorage.getItem('selectedPlanItem');
+    var raw = sessionStorage.getItem('selectedPlanItems');
     if (!raw) { showAlert('⚠️ 未选择关联招采项，请从列表页发起申请。'); return; }
-    var item = JSON.parse(raw);
-    sessionStorage.removeItem('selectedPlanItem');
+    selectedItems = JSON.parse(raw);
+    sessionStorage.removeItem('selectedPlanItems');
 
-    // 置灰字段
+    if (!selectedItems || selectedItems.length === 0) { showAlert('⚠️ 未选择招采项'); return; }
+
+    var firstItem = selectedItems[0];
+
+    // 生成编号和填充基本信息
     document.getElementById('procNo').value = 'ZB-2026-' + String(Math.floor(Math.random()*900+100));
-    document.getElementById('procName').value = item.content || '';
-    document.getElementById('procCat').value = item.cat || '';
-    document.getElementById('procMethod').value = item.method || '';
+    document.getElementById('procName').value = firstItem.content || '';
+    document.getElementById('companyCode').value = (firstItem.unit === '集团总部') ? 'HQ-001' : 'MEMBER-XXX';
+
+    // 固定字段
+    document.getElementById('procCat').value = firstItem.cat || '';
+    document.getElementById('procMethod').value = firstItem.method || '';
     document.getElementById('applyDate').value = new Date().toISOString().split('T')[0];
 
-    // 可编辑受限字段
-    planLimit = item.limit * 10000;
-    document.getElementById('procAmount').value = planLimit.toFixed(2);
-    document.getElementById('limitMax').textContent = planLimit.toFixed(2);
-    document.getElementById('footLimit').textContent = '¥' + planLimit.toFixed(2);
+    // 显示已选数量
+    document.getElementById('selectedCount').textContent = selectedItems.length;
+
+    // 填充采购明细表
+    fillPurchaseTable();
 
     // 直接采购
-    if (item.method === '直接采购') initDirectPurchaseSection();
-
-    // 初始采购明细（自动添加计划项）
-    addPurchaseRow(item);
+    if (firstItem.method === '直接采购') initDirectPurchaseSection();
 
     // 初始附件
     if (!document.getElementById('attachBody').querySelector('tr')) {
         addAttachRow('*招标文件', '招标文件.pdf', '2,456,832');
         addAttachRow('*招标公告', '招标公告.pdf', '1,023,456');
     }
-
-    bindMethodRecommendation('procMethod', 'procAmount', 'procMethod', null, null);
 })();
 
-// ===== 采购明细 =====
-function addPurchaseRow(item) {
+function fillPurchaseTable() {
     var tbody = document.getElementById('purchaseBody');
-    var idx = tbody.querySelectorAll('tr').length;
-    var row = document.createElement('tr');
-    row.setAttribute('data-idx', idx);
-    row.setAttribute('data-sections', '1');
-    row.setAttribute('data-amount', planLimit.toFixed(2));
-    var itemName = (item && item.content) ? item.content : '';
-    var planId = (item && item.planId) ? item.planId : '';
-    var cat = (item && item.cat) ? item.cat : '';
-    var subCat = (item && item.subCat) ? item.subCat : '';
-    row.innerHTML = '<td><input type="radio" name="purchaseSelect" onchange="onPurchaseSelect(this)"'+(idx===0?' checked':'')+'></td>' +
-        '<td contenteditable="true" class="text-sm" style="min-width:120px;">'+itemName+'</td>' +
-        '<td contenteditable="true" class="text-sm">'+planId+'</td>' +
-        '<td contenteditable="true" class="text-sm">'+(planId?planId+'-001':'')+'</td>' +
-        '<td contenteditable="true" class="text-sm" style="min-width:100px;">'+itemName+'</td>' +
-        '<td contenteditable="true" class="text-sm" style="min-width:90px;">'+planLimit.toFixed(2)+'</td>' +
-        '<td contenteditable="true" class="text-sm" style="min-width:50px;">1</td>' +
-        '<td contenteditable="true" class="text-sm">'+extractParentCategory(cat)+'</td>' +
-        '<td contenteditable="true" class="text-sm">'+extractSubCategory(cat||'')+'</td>' +
-        '<td contenteditable="true" class="text-sm">主合同</td>' +
-        '<td><button class="btn btn-xs btn-danger" onclick="this.closest(\'tr\').remove();recalcTotal()">删除</button></td>';
-    tbody.appendChild(row);
-    recalcTotal();
+    var sectionBody = document.getElementById('sectionBody');
+    var total = 0;
+    var ph = '';
+    var sh = '';
+
+    selectedItems.forEach(function(item, idx) {
+        var amount = (item.amount || 0) * 10000;
+        total += amount;
+        var cat = item.cat || '';
+        var parentCat = extractParentCategory(cat);
+        var subCat = item.subCat || extractSubCategory(cat) || '';
+
+        // 采购明细行
+        ph += '<tr>';
+        ph += '<td class="text-sm">' + (item.content || '') + '</td>';
+        ph += '<td class="text-sm">' + (item.planId || '') + '</td>';
+        ph += '<td class="text-sm">' + (item.lineNo || '001') + '</td>';
+        ph += '<td class="text-sm">' + (item.purchaseName || item.content || '') + '</td>';
+        ph += '<td class="text-sm" style="text-align:right;"><span class="money">¥' + amount.toFixed(2) + '</span></td>';
+        ph += '<td class="text-sm" style="text-align:center;">1</td>';
+        ph += '<td class="text-sm">' + parentCat + '</td>';
+        ph += '<td class="text-sm">' + subCat + '</td>';
+        ph += '<td class="text-sm">主合同</td>';
+        ph += '</tr>';
+
+        // 标段明细行
+        sh += '<tr>';
+        sh += '<td class="text-sm" style="text-align:center;">1</td>';
+        sh += '<td class="text-sm">' + (item.content || '') + '</td>';
+        sh += '<td class="text-sm"><span class="money">¥' + amount.toFixed(2) + '元</span></td>';
+        sh += '<td class="text-sm">' + (item.planId || '') + '</td>';
+        sh += '<td class="text-sm">' + (item.lineNo || '001') + '</td>';
+        sh += '<td class="text-sm">' + (item.purchaseName || item.content || '') + '</td>';
+        sh += '<td class="text-sm"><span class="money">¥' + amount.toFixed(2) + '元</span></td>';
+        sh += '<td class="text-sm">' + parentCat + '</td>';
+        sh += '<td class="text-sm">' + subCat + '</td>';
+        sh += '<td class="text-sm">主合同</td>';
+        sh += '</tr>';
+    });
+
+    tbody.innerHTML = ph || '<tr><td colspan="9" class="text-muted text-sm" style="text-align:center;padding:12px;">无采购明细</td></tr>';
+    sectionBody.innerHTML = sh || '<tr><td colspan="10" class="text-muted text-sm" style="text-align:center;padding:12px;">无标段明细</td></tr>';
+
+    // 合计
+    totalLimit = total;
+    document.getElementById('limitMax').textContent = total.toFixed(2);
+    document.getElementById('procAmount').value = total.toFixed(2);
+    document.getElementById('purchaseFoot').innerHTML = '采购金额合计：<span class="money">¥' + total.toFixed(2) + '</span>';
 }
-
-function onPurchaseSelect(radio) {
-    var row = radio.closest('tr');
-    var idx = parseInt(row.getAttribute('data-idx'));
-    // 联动标段明细
-    var amount = parseFloat(row.getAttribute('data-amount')) || 0;
-    var secCount = parseInt(row.getAttribute('data-sections')) || 1;
-    var name = row.cells[1].textContent.trim();
-    var planId = row.cells[2].textContent.trim();
-    var planRow = row.cells[3].textContent.trim();
-    var purName = row.cells[4].textContent.trim();
-    var cat = row.cells[7].textContent.trim();
-    var subCat = row.cells[8].textContent.trim();
-    var perSection = amount / secCount;
-
-    var secBody = document.getElementById('sectionBody');
-    secBody.innerHTML = '';
-    for (var s = 0; s < secCount; s++) {
-        var sr = document.createElement('tr');
-        sr.setAttribute('data-purchase-idx', idx);
-        sr.setAttribute('data-section-seq', s);
-        sr.innerHTML = '<td><input type="radio" name="sectionSelect" onchange="onSectionSelect(this)"'+(s===0?' checked':'')+'></td>' +
-            '<td contenteditable="true" class="text-sm">'+(s+1)+'</td>' +
-            '<td contenteditable="true" class="text-sm" style="min-width:120px;">'+name+'</td>' +
-            '<td contenteditable="true" class="text-sm"><span class="money">¥'+perSection.toFixed(2)+'元</span></td>' +
-            '<td contenteditable="true" class="text-sm">'+planId+'</td>' +
-            '<td contenteditable="true" class="text-sm">'+planRow+'</td>' +
-            '<td contenteditable="true" class="text-sm">'+purName+'</td>' +
-            '<td contenteditable="true" class="text-sm"><span class="money">¥'+perSection.toFixed(2)+'元</span></td>' +
-            '<td contenteditable="true" class="text-sm">'+secCount+'</td>' +
-            '<td contenteditable="true" class="text-sm">'+cat+'</td>' +
-            '<td contenteditable="true" class="text-sm">'+subCat+'</td>' +
-            '<td contenteditable="true" class="text-sm">主合同</td>' +
-            '<td><button class="btn btn-xs btn-danger" onclick="this.closest(\'tr\').remove()">删除</button></td>';
-        secBody.appendChild(sr);
-    }
-}
-
-function addSectionRow() {
-    var body = document.getElementById('sectionBody');
-    var idx = body.querySelectorAll('tr').length;
-    var sr = document.createElement('tr');
-    sr.setAttribute('data-purchase-idx', '0');
-    sr.setAttribute('data-section-seq', idx);
-    sr.innerHTML = '<td><input type="radio" name="sectionSelect" onchange="onSectionSelect(this)"></td>' +
-        '<td contenteditable="true" class="text-sm">'+(idx+1)+'</td>' +
-        '<td contenteditable="true" class="text-sm" style="min-width:120px;"></td>' +
-        '<td contenteditable="true" class="text-sm"></td>' +
-        '<td contenteditable="true" class="text-sm"></td>' +
-        '<td contenteditable="true" class="text-sm"></td>' +
-        '<td contenteditable="true" class="text-sm"></td>' +
-        '<td contenteditable="true" class="text-sm"></td>' +
-        '<td contenteditable="true" class="text-sm"></td>' +
-        '<td contenteditable="true" class="text-sm"></td>' +
-        '<td contenteditable="true" class="text-sm"></td>' +
-        '<td contenteditable="true" class="text-sm">主合同</td>' +
-        '<td><button class="btn btn-xs btn-danger" onclick="this.closest(\'tr\').remove()">删除</button></td>';
-    body.appendChild(sr);
-}
-
-function onSectionSelect(radio) {}
 
 // ===== 附件管理 =====
 function addAttachRow(type, name, size) {
@@ -246,17 +220,6 @@ function addAttachRow(type, name, size) {
         '<td>'+now+'</td>' +
         '<td contenteditable="true">当前用户</td>';
     tbody.appendChild(row);
-}
-
-// ===== 合计 =====
-function recalcTotal() {
-    var total = 0;
-    document.querySelectorAll('#purchaseBody tr').forEach(function(r) {
-        var amt = parseFloat(r.cells[5].textContent.replace(/[^0-9.]/g,'')) || 0;
-        total += amt;
-    });
-    document.getElementById('purchaseFoot').innerHTML = '采购金额合计：<span class="money">¥'+total.toFixed(2)+'</span>｜招采限额：<span class="money">¥'+planLimit.toFixed(2)+'</span>';
-    document.getElementById('footLimit').textContent = '¥'+planLimit.toFixed(2);
 }
 
 // ===== 直接采购 =====
@@ -292,18 +255,18 @@ function onDpConditionChange() {
 function validateLimit() {
     var input = document.getElementById('procAmount');
     var val = parseFloat(input.value);
-    if (!isNaN(val) && val > planLimit) {
+    if (!isNaN(val) && val > totalLimit) {
         input.classList.add('limit-exceeded');
-        document.getElementById('limitHint').innerHTML = '<span style="color:var(--danger);">⚠ 超出计划限价（≤'+planLimit.toFixed(2)+' 元）</span>';
+        document.getElementById('limitHint').innerHTML = '<span style="color:var(--danger);">⚠ 超出招采限额（≤'+totalLimit.toFixed(2)+' 元）</span>';
     } else {
         input.classList.remove('limit-exceeded');
-        document.getElementById('limitHint').innerHTML = '计划上限：<span>'+planLimit.toFixed(2)+'</span> 元';
+        document.getElementById('limitHint').innerHTML = '合计：<span>'+totalLimit.toFixed(2)+'</span> 元';
     }
 }
 
 function submitProcurement() {
     var limitVal = parseFloat(document.getElementById('procAmount').value);
-    if (limitVal > planLimit) { showAlert('⚠️ 采购限额超出计划限价，请调整后提交。'); return; }
+    if (limitVal > totalLimit) { showAlert('⚠️ 采购限额超出招采限额，请调整后提交。'); return; }
     var method = document.getElementById('procMethod').value;
     if (method === '直接采购') {
         var checked = document.querySelector('input[name="dpCond"]:checked');
