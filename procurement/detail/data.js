@@ -6,16 +6,6 @@
  *       修改步骤名只需改 common/data.js 一处。
  */
 
-// ==================== 辅助函数：从 METHOD_STEPS 生成带状态的 steps ====================
-
-function buildSteps(method, states) {
-    var names = METHOD_STEPS[method];
-    if (!names) return [];
-    return names.map(function(name, i) {
-        return { name: name, state: (states[i] || 'future') };
-    });
-}
-
 // ==================== 一、详情配置 ====================
 
 var DETAIL_METHOD_CONFIG = {

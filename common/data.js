@@ -22,3 +22,12 @@ var METHOD_STEPS = {
 function getStepNames(method) {
     return METHOD_STEPS[method] || [];
 }
+
+// 从 METHOD_STEPS 和 states 数组生成带状态的 steps（供 DETAIL_METHOD_CONFIG 调用）
+function buildSteps(method, states) {
+    var names = METHOD_STEPS[method];
+    if (!names) return [];
+    return names.map(function(name, i) {
+        return { name: name, state: (states[i] || 'future') };
+    });
+}

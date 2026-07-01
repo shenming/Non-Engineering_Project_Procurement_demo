@@ -79,7 +79,6 @@
 <div class="flex-between" style="padding:12px 0;border-top:1px solid var(--gray-200);margin-top:12px;">
     <button id="prevBtn" class="btn btn-outline" onclick="prevStep()">← 上一步</button>
     <div class="flex gap-8">
-
          <button id="nextBtn" class="btn btn-primary" onclick="nextStep()">下一步 →</button>
         <button class="btn btn-outline" onclick="navTOLastPage()">← 返回详情</button>
     </div>
@@ -87,7 +86,6 @@
 
 <script src="../../common/scripts.js"></script>
 <script src="../../common/data.js"></script>
-<script src="../detail/data.js"></script>
 <script src="data.js"></script>
 <script>
 var selectedStep = 0;
@@ -96,10 +94,8 @@ var currentMethod = '公开招标';
 var cfg = METHOD_CONFIG[currentMethod];
 
 (function init() {
-    
     var ctx = null;
     try { ctx = JSON.parse(sessionStorage.getItem('procEditContext') || 'null'); } catch(e) {}
-    
     if (ctx) {
         if (ctx.projectName) {
             document.getElementById('breadProject').textContent = ctx.projectName;
@@ -107,7 +103,6 @@ var cfg = METHOD_CONFIG[currentMethod];
         }
         currentMethod = ctx.method || '公开招标';
         cfg = METHOD_CONFIG[currentMethod] || METHOD_CONFIG['公开招标'];
-
         doneCount = 0;
         selectedStep = 0;
         for (var i = 0; i < cfg.steps.length; i++) {
@@ -116,16 +111,13 @@ var cfg = METHOD_CONFIG[currentMethod];
         }
         sessionStorage.removeItem('procEditContext');
     }
-
     renderSteps();
     renderApprovalFlow();
-    try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
     try { sessionStorage.setItem('editEditableSteps', JSON.stringify(EDITABLE_STEPS)); } catch(e) {}
     sessionStorage.setItem('edit_method', currentMethod);
     sessionStorage.setItem('edit_step', selectedStep);
     loadNode(selectedStep);
     document.getElementById('nodeFrame').onload = function() {
-        try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
         try { sessionStorage.setItem('editEditableSteps', JSON.stringify(EDITABLE_STEPS)); } catch(e) {}
     };
 })();
@@ -158,8 +150,7 @@ function renderSteps() {
 
 function renderApprovalFlow() {
     var tbody = document.getElementById('approvalBody');
-    var detailData = (typeof DETAIL_DATA !== 'undefined') ? (DETAIL_DATA[currentMethod] || null) : null;
-    var flow = (detailData && detailData.flow) ? detailData.flow : (cfg.flow || []);
+    var flow = cfg.flow || [];
     var html = '';
     for (var i = 0; i < flow.length; i++) {
         var f = flow[i];
@@ -178,7 +169,6 @@ function loadNode(index) {
     var files = cfg.files || [];
     var nodeFile = files[index] || '';
     var editNodeFile = nodeFile.replace('nodes/', '../detail/nodes/');
-    try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
     try { sessionStorage.setItem('editEditableSteps', JSON.stringify(EDITABLE_STEPS)); } catch(e) {}
     sessionStorage.setItem('edit_method', currentMethod);
     sessionStorage.setItem('edit_step', index);
@@ -211,24 +201,16 @@ function updateNavButtons() {
     document.getElementById('nextBtn').disabled = (selectedStep >= activeIdx || selectedStep >= steps.length - 1);
 }
 
-function draftProcurement() {
-    alert('📋 已暂存当前编辑');
-}
-
 function saveProcurement() {
     var frame = document.getElementById('nodeFrame');
-    // 校验（针对含有采购明细标段的节点，如招采申请 step 0）
     var validationTimeout = null;
     var validated = false;
-    var validationPassed = false;
 
     function doSave() {
-        // 先通知 iframe 回写数据到 sessionStorage
         try {
             var fw = frame.contentWindow || frame.contentDocument.defaultView;
             fw.postMessage({ type: 'flushSectionData' }, '*');
         } catch(e) {}
-        // 收集表单数据
         try {
             var frameDoc = frame.contentDocument || frame.contentWindow.document;
             var allInputs = frameDoc.querySelectorAll('[data-field]');
@@ -247,33 +229,26 @@ function saveProcurement() {
         navTo('procurement', 'procurement/detail/index.html');
     }
 
-    // 发送校验消息到 iframe
     try {
         var fw = frame.contentWindow || frame.contentDocument.defaultView;
         fw.postMessage({ type: 'validateSection', method: currentMethod, step: selectedStep }, '*');
-        // 设置 1 秒超时，无响应则直接保存
         validationTimeout = setTimeout(function() {
             if (!validated) { validated = true; doSave(); }
         }, 1000);
-        // 监听校验结果
         var handler = function(e) {
             if (e.data && e.data.type === 'validationResult') {
                 clearTimeout(validationTimeout);
                 if (validated) return;
                 validated = true;
                 window.removeEventListener('message', handler);
-                if (e.data.ok) {
-                    doSave();
-                } else {
-                    alert(e.data.msg || '⚠️ 校验不通过，保存已取消。');
-                }
+                if (e.data.ok) { doSave(); }
+                else { alert(e.data.msg || '⚠️ 校验不通过，保存已取消。'); }
             }
         };
         window.addEventListener('message', handler);
-    } catch(e) {
-        doSave();
-    }
+    } catch(e) { doSave(); }
 }
+
 function navTOLastPage() {
     var ctx = {
         method: currentMethod,
