@@ -280,7 +280,7 @@ function createSupplement() {
         projectName: document.getElementById('infoTitle').textContent.replace('📄 ', '')
     };
     sessionStorage.setItem('supplementContext', JSON.stringify(ctx));
-    navTo('procurement', '../../supplementary/create.html');
+    navTo('procurement', 'supplementary/create.html');
 }
 
 function renderSupplementTab() {
@@ -304,7 +304,7 @@ function renderSupplementTab() {
         html += '<td class="text-sm">' + reasonShort + '</td>';
         html += '<td>' + s.createDate + '</td>';
         html += '<td><span class="tag ' + tagCls + '">' + s.status + '</span></td>';
-        html += '<td><button class="btn btn-xs btn-outline" onclick="navTo(\'procurement\',\'../../supplementary/detail.html?method=' + encodeURIComponent(currentMethod) + '&version=' + s.version + '\')">查看</button></td>';
+        html += '<td><button class="btn btn-xs btn-outline" onclick="navTo(\'procurement\',\'supplementary/detail.html?method=' + encodeURIComponent(currentMethod) + '&version=' + s.version + '\')">查看</button></td>';
         html += '</tr>';
     }
     html += '</tbody></table>';
