@@ -216,23 +216,63 @@ function draftProcurement() {
 }
 
 function saveProcurement() {
+    var frame = document.getElementById('nodeFrame');
+    // 校验（针对含有采购明细标段的节点，如招采申请 step 0）
+    var validationTimeout = null;
+    var validated = false;
+    var validationPassed = false;
+
+    function doSave() {
+        // 先通知 iframe 回写数据到 sessionStorage
+        try {
+            var fw = frame.contentWindow || frame.contentDocument.defaultView;
+            fw.postMessage({ type: 'flushSectionData' }, '*');
+        } catch(e) {}
+        // 收集表单数据
+        try {
+            var frameDoc = frame.contentDocument || frame.contentWindow.document;
+            var allInputs = frameDoc.querySelectorAll('[data-field]');
+            allInputs.forEach(function(el) {
+                var field = el.getAttribute('data-field');
+                var val = el.value || '';
+                console.log('[' + field + '] = ' + val);
+            });
+        } catch(e) {}
+        alert('💾 保存成功！所有修改已提交。');
+        var ctx = {
+            method: currentMethod,
+            projectName: document.getElementById('infoTitle').textContent.replace('✏️ ', '')
+        };
+        try { sessionStorage.setItem('procurementViewContext', JSON.stringify(ctx)); } catch(e) {}
+        navTo('procurement', 'procurement/detail/index.html');
+    }
+
+    // 发送校验消息到 iframe
     try {
-        var frame = document.getElementById('nodeFrame');
-        var frameDoc = frame.contentDocument || frame.contentWindow.document;
-        var allInputs = frameDoc.querySelectorAll('[data-field]');
-        allInputs.forEach(function(el) {
-            var field = el.getAttribute('data-field');
-            var val = el.value || '';
-            console.log('[' + field + '] = ' + val);
-        });
-    } catch(e) {}
-    alert('💾 保存成功！所有修改已提交。');
-    var ctx = {
-        method: currentMethod,
-        projectName: document.getElementById('infoTitle').textContent.replace('✏️ ', '')
-    };
-    try { sessionStorage.setItem('procurementViewContext', JSON.stringify(ctx)); } catch(e) {}
-    navTo('procurement', 'procurement/detail/index.html');
+        var fw = frame.contentWindow || frame.contentDocument.defaultView;
+        fw.postMessage({ type: 'validateSection', method: currentMethod, step: selectedStep }, '*');
+        // 设置 1 秒超时，无响应则直接保存
+        validationTimeout = setTimeout(function() {
+            if (!validated) { validated = true; doSave(); }
+        }, 1000);
+        // 监听校验结果
+        var handler = function(e) {
+            if (e.data && e.data.type === 'validationResult') {
+                clearTimeout(validationTimeout);
+                if (validated) return;
+                validated = true;
+                window.removeEventListener('message', handler);
+                if (e.data.ok) {
+                    doSave();
+                } else {
+                    alert(e.data.msg || '⚠️ 校验不通过，保存已取消。');
+                }
+            }
+        };
+        window.addEventListener('message', handler);
+    } catch(e) {
+        doSave();
+    }
 }
 function navTOLastPage() {
     var ctx = {

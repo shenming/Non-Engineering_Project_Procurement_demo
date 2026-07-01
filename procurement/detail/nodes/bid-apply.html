@@ -20,6 +20,8 @@ select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
 .attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
 .attach-table .op-icon { cursor: pointer; color: var(--primary); font-size: 14px; margin: 0 2px; }
 .attach-table .op-icon.disabled { color: var(--gray-400); cursor: not-allowed; pointer-events: none; }
+.section-toolbar { display: flex; gap: 8px; }
+.section-toolbar button { font-size: 12px; }
 </style>
 </head>
 <body class="content-page">
@@ -28,13 +30,18 @@ select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
     <div class="card-body" id="formContainer"></div>
     <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 采购明细</h3></div>
     <div class="card-body" style="padding:0;">
-        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>招标采购名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th></tr></thead>
+        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>招标采购项名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th></tr></thead>
             <tbody id="purchaseBody"></tbody>
         </table></div>
     </div>
-    <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 标段明细</h3></div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 标段明细</h3>
+        <span id="sectionToolbar" class="section-toolbar" style="display:none;margin-left:auto;">
+            <button class="btn btn-xs btn-outline" onclick="addSectionRow()">＋ 新增标段</button>
+            <button class="btn btn-xs btn-danger" onclick="deleteSectionRow()">🗑 删除选中</button>
+        </span>
+    </div>
     <div class="card-body" style="padding:0;">
-        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>标段号</th><th>招标采购名称</th><th>招采限额</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th></tr></thead>
+        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>招标采购项名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段号</th><th>招采品类</th><th>二级品类</th><th>招采目标</th></tr></thead>
             <tbody id="sectionBody"></tbody>
         </table></div>
     </div>
@@ -94,34 +101,171 @@ select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
     })();
 </script>
 <script>
-(function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');if(!d||!d[m]||!d[m].nodes||!d[m].nodes[s]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted" style="padding:20px;">暂无数据</p></div>';return}var nd=d[m].nodes[s],f=nd.form||{};
+(function(){
+    function getParams(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}
+    var a = getParams(), m = a.method || '公开招标', step = parseInt(a.step) || 0;
+    var d = JSON.parse(sessionStorage.getItem('procNodeData')||'{}');
+    if(!d||!d[m]||!d[m].nodes||!d[m].nodes[step]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted" style="padding:20px;">暂无数据</p></div>';return}
+    var nd = d[m].nodes[step], f = nd.form||{};
+    var _editMode = (a.mode === 'edit');
+    var _editable = _editMode;
+    try { var _es = JSON.parse(sessionStorage.getItem('editEditableSteps') || '{}'); _editable = _editable && _es && _es[m] && _es[m][step]===true; } catch(e){ _editable=false; }
 
-// 渲染表单
-var fh='<div class="form-row"><div class="form-group"><label>招标过程编号</label><input class="form-control" data-field="procCode" value="'+(f.procCode||'')+'" readonly></div><div class="form-group"><label>招标过程名称</label><input class="form-control" data-field="procName" value="'+(f.procName||'')+'" readonly></div></div>';
-fh+='<div class="form-row"><div class="form-group"><label>公司编号</label><input class="form-control" data-field="companyCode" value="'+(f.companyCode||'')+'" readonly></div><div class="form-group"><label>招采限额</label><input class="form-control" data-field="limitAmountText" value="'+(f.limitAmountText||'')+'" readonly></div></div>';
-fh+='<div class="form-row"><div class="form-group"><label>招标方式</label><select class="form-control" data-field="method" disabled><option>'+f.method+'</option></select></div><div class="form-group"><label>招采类型</label><select class="form-control" data-field="category" disabled><option>'+(f.category||'')+'</option></select></div></div>';
-fh+='<div class="form-row"><div class="form-group"><label>采购项说明</label><select class="form-control" data-field="note" disabled><option>'+(f.note||'')+'</option></select></div><div class="form-group"><label>经办人</label><input class="form-control" data-field="handler" value="'+(f.handler||'')+'" readonly></div></div>';
-fh+='<div class="form-row"><div class="form-group"><label>申请日期</label><input class="form-control" data-field="applyDate" value="'+(f.applyDate||'')+'" readonly></div><div class="form-group"><label>招标代理机构</label><input class="form-control" data-field="agent" value="'+(f.agent||'')+'" readonly></div></div>';
-fh+='<div class="form-row"><div class="form-group"><label>拟发标日期</label><input type="date" class="form-control" data-field="planIssueDate" value="'+(f.planIssueDate||'')+'" disabled></div><div class="form-group"><label>招标预计完成日期</label><input type="date" class="form-control" data-field="planEndDate" value="'+(f.planEndDate||'')+'" disabled></div></div>';
-var statusText = f.approvalStatus || '审批通过';
-var statusColor = (statusText.indexOf('通过')>=0||statusText.indexOf('生效')>=0) ? 'tag tag-green' : (statusText.indexOf('中')>=0 ? 'tag tag-yellow' : 'tag tag-gray');
-fh+='<div class="form-row"><div class="form-group"><label>是否进场招标</label><input class="form-control" data-field="inHouse" value="'+(f.inHouse||'')+'" readonly></div><div class="form-group"><label>审批状态</label><div><span class="'+statusColor+'">'+statusText+'</span></div></div></div>';
-fh+='<div class="form-group" style="margin-bottom:0;"><label>招标范围及相关说明</label><textarea class="form-control" data-field="scope" rows="3" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;resize:none;">'+(f.scope||'')+'</textarea></div>';
-document.getElementById('formContainer').innerHTML=fh;
+    // 渲染表单
+    var fh='<div class="form-row"><div class="form-group"><label>招标过程编号</label><input class="form-control" data-field="procCode" value="'+(f.procCode||'')+'" readonly></div><div class="form-group"><label>招标过程名称</label><input class="form-control" data-field="procName" value="'+(f.procName||'')+'" readonly></div></div>';
+    fh+='<div class="form-row"><div class="form-group"><label>公司编号</label><input class="form-control" data-field="companyCode" value="'+(f.companyCode||'')+'" readonly></div><div class="form-group"><label>招采限额</label><input class="form-control" data-field="limitAmountText" value="'+(f.limitAmountText||'')+'" readonly></div></div>';
+    fh+='<div class="form-row"><div class="form-group"><label>招标方式</label><select class="form-control" data-field="method" disabled><option>'+f.method+'</option></select></div><div class="form-group"><label>招采类型</label><select class="form-control" data-field="category" disabled><option>'+(f.category||'')+'</option></select></div></div>';
+    fh+='<div class="form-row"><div class="form-group"><label>采购项说明</label><select class="form-control" data-field="note" disabled><option>'+(f.note||'')+'</option></select></div><div class="form-group"><label>经办人</label><input class="form-control" data-field="handler" value="'+(f.handler||'')+'" readonly></div></div>';
+    fh+='<div class="form-row"><div class="form-group"><label>申请日期</label><input class="form-control" data-field="applyDate" value="'+(f.applyDate||'')+'" readonly></div><div class="form-group"><label>招标代理机构</label><input class="form-control" data-field="agent" value="'+(f.agent||'')+'" readonly></div></div>';
+    fh+='<div class="form-row"><div class="form-group"><label>拟发标日期</label><input type="date" class="form-control" data-field="planIssueDate" value="'+(f.planIssueDate||'')+'" disabled></div><div class="form-group"><label>招标预计完成日期</label><input type="date" class="form-control" data-field="planEndDate" value="'+(f.planEndDate||'')+'" disabled></div></div>';
+    var statusText = f.approvalStatus || '审批通过';
+    var statusColor = (statusText.indexOf('通过')>=0||statusText.indexOf('生效')>=0) ? 'tag tag-green' : (statusText.indexOf('中')>=0 ? 'tag tag-yellow' : 'tag tag-gray');
+    fh+='<div class="form-row"><div class="form-group"><label>是否进场招标</label><input class="form-control" data-field="inHouse" value="'+(f.inHouse||'')+'" readonly></div><div class="form-group"><label>审批状态</label><div><span class="'+statusColor+'">'+statusText+'</span></div></div></div>';
+    fh+='<div class="form-group" style="margin-bottom:0;"><label>招标范围及相关说明</label><textarea class="form-control" data-field="scope" rows="3" readonly style="background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;resize:none;">'+(f.scope||'')+'</textarea></div>';
+    document.getElementById('formContainer').innerHTML=fh;
 
-// 渲染采购明细
-var ps=nd.purchases||[],ptb=document.getElementById('purchaseBody'),ph='';
-for(var i=0;i<ps.length;i++){var p=ps[i];ph+='<tr data-idx="'+p.idx+'" data-sections="'+p.sections+'" style="cursor:pointer;" onclick="onPurchaseSelect(this)"><td style="text-align:center;"><input type="radio" name="pSel"'+(i===0?' checked':'')+'></td><td>'+p.name+'</td><td>'+p.planCode+'</td><td>'+p.lineNo+'</td><td>'+p.purchaseName+'</td><td><span class="money">'+p.amountText+'</span></td><td>'+p.sections+'</td><td>'+p.cat+'</td><td>'+p.subCat+'</td><td>'+p.target+'</td></tr>'}ptb.innerHTML=ph;
+    // 渲染采购明细
+    var ps = nd.purchases||[], ptb = document.getElementById('purchaseBody'), ph = '';
+    for(var i=0;i<ps.length;i++){
+        var p = ps[i];
+        var amtTd = _editable ? '<input type="number" class="form-control" style="width:100px;height:28px;font-size:12px;" value="'+(p.amount||0)+'" onchange="updatePurAmt('+i+',this.value)">' : p.amountText;
+        var secTd = _editable ? '<input type="number" class="form-control" style="width:50px;height:28px;font-size:12px;" value="'+p.sections+'" onchange="updatePurSecs('+i+',this.value)">' : p.sections;
+        ph+='<tr data-idx="'+p.idx+'" style="cursor:pointer;" onclick="onPurchaseSelect(this)">'
+            +'<td style="text-align:center;"><input type="radio" name="pSel"'+(i===0?' checked':'')+'></td>'
+            +'<td>'+p.name+'</td><td>'+p.planCode+'</td><td>'+p.lineNo+'</td><td>'+p.purchaseName+'</td>'
+            +'<td>'+amtTd+'</td><td>'+secTd+'</td>'
+            +'<td>'+p.cat+'</td><td>'+p.subCat+'</td><td>'+p.target+'</td></tr>';
+    }
+    ptb.innerHTML = ph;
 
-// 渲染标段明细
-var sd=nd.sectionData||{},stb=document.getElementById('sectionBody');
-window.onPurchaseSelect=function(row){document.querySelectorAll('#purchaseBody tr').forEach(function(r){r.classList.remove('selected')});row.classList.add('selected');row.querySelector('input[type="radio"]').checked=true;var idx=parseInt(row.getAttribute('data-idx')),secs=sd[idx]||[],sh='';for(var i=0;i<secs.length;i++){var sc=secs[i];sh+='<tr><td><input type="radio" name="sSel"'+(i===0?' checked':'')+'></td><td>'+sc.seq+'</td><td>'+sc.name+'</td><td><span class="money">¥'+(sc.limit/10000).toFixed(2)+'万</span></td><td>'+sc.planCode+'</td><td>'+sc.planRow+'</td><td>'+sc.purchaseName+'</td><td><span class="money">¥'+(sc.amount/10000).toFixed(2)+'万</span></td><td>'+sc.sections+'</td><td>'+sc.cat+'</td><td>'+sc.subCat+'</td><td>'+sc.target+'</td></tr>'}stb.innerHTML=sh};
-// 默认选中第1个采购
-var firstPurchase=document.querySelector('#purchaseBody tr');if(firstPurchase)onPurchaseSelect(firstPurchase);
+    // 采购明细更新函数
+    window.updatePurAmt = function(idx,val){ if(ps[idx]) ps[idx].amount = parseFloat(val)||0; };
+    window.updatePurSecs = function(idx,val){ if(ps[idx]) ps[idx].sections = parseInt(val)||0; };
 
-// 渲染附件
-var ats=nd.attachments||[],tb=document.getElementById('attachBody'),ah='';
-for(var i=0;i<ats.length;i++){var o=ats[i];ah+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.file||'')+'</td><td style="font-family:monospace;font-size:10px;">'+(o.fileId||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.user||'')+'</td></tr>'}tb.innerHTML=ah||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
+    // 渲染标段明细
+    var sd = nd.sectionData||{}, stb = document.getElementById('sectionBody');
+    window._selectedPurIdx = (ps.length>0) ? ps[0].idx : undefined;
+    window.renderSections = function(idx){
+        var secs = (sd[idx]||[]);
+        var sh = '';
+        for(var i=0;i<secs.length;i++){
+            var sc = secs[i];
+            var nmTd = _editable ? '<input class="form-control" style="width:100px;height:28px;font-size:12px;" value="'+(sc.purchaseName||'')+'" onchange="updateSec('+idx+','+i+',\'purchaseName\',this.value)">' : (sc.purchaseName||'');
+            var amtTd = _editable ? '<input type="number" class="form-control" style="width:100px;height:28px;font-size:12px;" value="'+(sc.amount||0)+'" onchange="updateSec('+idx+','+i+',\'amount\',parseFloat(this.value)||0)">' : '<span class="money">¥'+(sc.amount||0).toLocaleString()+'</span>';
+            var secNoTd = _editable ? '<input class="form-control" style="width:60px;height:28px;font-size:12px;" value="'+(sc.sectionNo||'')+'" onchange="updateSec('+idx+','+i+',\'sectionNo\',this.value)">' : (sc.sectionNo||'');
+            sh+='<tr data-sidx="'+i+'"><td style="text-align:center;"><input type="radio" name="sSel" style="pointer-events:none;"></td>'
+                +'<td>'+(sc.name||'')+'</td><td>'+(sc.planCode||'')+'</td><td>'+(sc.planRow||'')+'</td>'
+                +'<td>'+nmTd+'</td><td>'+amtTd+'</td><td>'+secNoTd+'</td>'
+                +'<td>'+(sc.cat||'')+'</td><td>'+(sc.subCat||'')+'</td><td>'+(sc.target||'')+'</td></tr>';
+        }
+        stb.innerHTML = sh;
+    };
+    window.updateSec = function(idx,si,field,val){
+        var secs = sd[idx]||[];
+        if(secs[si]) secs[si][field] = val;
+    };
+    window.onPurchaseSelect = function(row){
+        document.querySelectorAll('#purchaseBody tr').forEach(function(r){r.classList.remove('selected')});
+        row.classList.add('selected');
+        row.querySelector('input[type="radio"]').checked = true;
+        var idx = parseInt(row.getAttribute('data-idx'));
+        window._selectedPurIdx = idx;
+        renderSections(idx);
+    };
+    // 新增标段
+    window.addSectionRow = function(){
+        var idx = window._selectedPurIdx;
+        if(idx===undefined && ps.length>0) idx = ps[0].idx;
+        if(idx===undefined){ alert('请先选择一条采购明细'); return; }
+        var pur = null;
+        for(var k=0;k<ps.length;k++){ if(ps[k].idx===idx){ pur=ps[k]; break; } }
+        if(!pur) pur = ps[0];
+        var secs = sd[idx]||[];
+        secs.push({
+            purchaseName: pur.purchaseName||'', planCode: pur.planCode||'', planRow: pur.lineNo||'',
+            name: pur.purchaseName||'', cat: pur.cat||'', subCat: pur.subCat||'', target: pur.target||'',
+            amount: 0, sectionNo: ''
+        });
+        sd[idx] = secs;
+        renderSections(idx);
+    };
+    // 删除选中标段
+    window.deleteSectionRow = function(){
+        var idx = window._selectedPurIdx;
+        if(idx===undefined){ alert('请先选择一条采购明细'); return; }
+        var checked = document.querySelector('#sectionBody input[name="sSel"]:checked');
+        if(!checked){ alert('请先勾选要删除的标段行'); return; }
+        var tr = checked.closest('tr');
+        var si = parseInt(tr.getAttribute('data-sidx'));
+        if(isNaN(si)) return;
+        if(confirm('确认删除选中标段？')){
+            var secs = sd[idx]||[];
+            secs.splice(si,1);
+            sd[idx] = secs;
+            renderSections(idx);
+        }
+    };
+    // 默认选中第1个采购
+    var firstPurchase = document.querySelector('#purchaseBody tr');
+    if(firstPurchase) onPurchaseSelect(firstPurchase);
+    // 显示标段工具栏
+    if(_editable) document.getElementById('sectionToolbar').style.display = 'flex';
+
+    // 渲染附件
+    var ats = nd.attachments||[], tb = document.getElementById('attachBody'), ah = '';
+    for(var i=0;i<ats.length;i++){var o=ats[i];ah+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.file||'')+'</td><td style="font-family:monospace;font-size:10px;">'+(o.fileId||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.user||'')+'</td></tr>';}
+    tb.innerHTML = ah||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
+
+    // ===== 保存校验 + 数据回写（监听父页面消息）=====
+    if(_editMode){
+        // 校验
+        window.addEventListener('message', function(e){
+            if(e.data && e.data.type === 'validateSection'){
+                var errors = [];
+                // 重新读取最新数据
+                var curD = JSON.parse(sessionStorage.getItem('procNodeData')||'{}');
+                var curNd = curD[m] && curD[m].nodes && curD[m].nodes[step];
+                if(!curNd) return;
+                var curPs = curNd.purchases||[];
+                var curSd = curNd.sectionData||{};
+                for(var pi=0;pi<curPs.length;pi++){
+                    var pur = curPs[pi];
+                    var secs = curSd[pur.idx]||[];
+                    var exp = parseInt(pur.sections)||0;
+                    if(secs.length !== exp){
+                        errors.push('采购明细 "'+pur.purchaseName+'" 标段数填写为 '+exp+'，标段明细表中有 '+secs.length+' 条');
+                        continue;
+                    }
+                    var total = 0, nos = [];
+                    for(var sj=0;sj<secs.length;sj++){
+                        total += parseFloat(secs[sj].amount)||0;
+                        var sn = secs[sj].sectionNo;
+                        if(sn){
+                            if(nos.indexOf(sn)!==-1) errors.push('采购明细 "'+pur.purchaseName+'" 下标段号 "'+sn+'" 重复');
+                            else nos.push(sn);
+                        }
+                    }
+                    var purAmt = parseFloat(pur.amount)||0;
+                    if(Math.abs(total - purAmt) > 0.01){
+                        errors.push('采购明细 "'+pur.purchaseName+'" 金额 '+purAmt+' 元，标段汇总 '+total+' 元，不一致');
+                    }
+                }
+                if(errors.length>0) parent.postMessage({type:'validationResult', ok:false, msg:'⚠️ 校验不通过：\n\n'+errors.join('\n')}, '*');
+                else parent.postMessage({type:'validationResult', ok:true}, '*');
+            }
+        });
+        // 回写最新数据
+        window.addEventListener('message', function(e){
+            if(e.data && e.data.type === 'flushSectionData'){
+                var curD = JSON.parse(sessionStorage.getItem('procNodeData')||'{}');
+                if(curD[m] && curD[m].nodes && curD[m].nodes[step]){
+                    curD[m].nodes[step].purchases = nd.purchases;
+                    curD[m].nodes[step].sectionData = nd.sectionData;
+                }
+                try { sessionStorage.setItem('procNodeData', JSON.stringify(curD)); } catch(e2){}
+            }
+        });
+    }
 })();
 
 // ========== 编辑模式：页面级控制 ==========
