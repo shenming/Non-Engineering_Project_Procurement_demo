@@ -94,23 +94,6 @@ var currentMethod = '公开招标';
 var cfg = METHOD_CONFIG[currentMethod];
 
 (function init() {
-    var ctx = null;
-    try { ctx = JSON.parse(sessionStorage.getItem('procEditContext') || 'null'); } catch(e) {}
-    if (ctx) {
-        if (ctx.projectName) {
-            document.getElementById('breadProject').textContent = ctx.projectName;
-            document.getElementById('infoTitle').innerHTML = '✏️ ' + ctx.projectName;
-        }
-        currentMethod = ctx.method || '公开招标';
-        cfg = METHOD_CONFIG[currentMethod] || METHOD_CONFIG['公开招标'];
-        doneCount = 0;
-        selectedStep = 0;
-        for (var i = 0; i < cfg.steps.length; i++) {
-            if (cfg.steps[i].state === 'done') doneCount = i + 1;
-            if (cfg.steps[i].state === 'active' && selectedStep === 0) selectedStep = i;
-        }
-        sessionStorage.removeItem('procEditContext');
-    }
     renderSteps();
     renderApprovalFlow();
     try { sessionStorage.setItem('editEditableSteps', JSON.stringify(EDITABLE_STEPS)); } catch(e) {}
