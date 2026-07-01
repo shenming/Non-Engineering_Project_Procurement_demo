@@ -65,7 +65,7 @@ var DETAIL_METHOD_CONFIG = {
         steps: buildSteps('直接采购-小额', ['done','active']),
         files: ['nodes/bid-apply.html','nodes/eval-result.html'],
         flow: [
-            { node: '招标申请&确定成交供应商', status: '审批中',  date: '2026-05-15', flowId: 'WF-2026-015-01' },
+            { node: '招标申请&确定成交供应商',status: '未审批', date: '—', flowId: '—'  },
 
         ]
     }
@@ -404,8 +404,8 @@ var DETAIL_DATA = {
             projectName: '办公用品采购',
             applyCode: 'ZB-2026-013',
             unit: '成员企业B',
-            status: '进行中',
-            statusTag: 'tag-yellow'
+            status: '草稿',
+            statusTag: 'tag-gray'
         },
         nodes: {
             0: {
@@ -415,7 +415,7 @@ var DETAIL_DATA = {
                     category: '货物类 · 办公用品类', note: '合同估算价 ＜ 100,000.00 元，可按直接采购方式实施',
                     handler: '赵岩', applyDate: '2026-06-20', agent: '—',
                     planIssueDate: '2026-06-20', planEndDate: '2026-06-30', inHouse: '否',
-                    approvalStatus: '审批中',
+                    approvalStatus: ' 草稿',
                     scope: '成员企业B 2026年度办公用品（打印纸、文具、耗材等）集中采购，满足全年办公需求。'
                 },
                 purchases: [
@@ -429,7 +429,7 @@ var DETAIL_DATA = {
                 ]
             },
             1: {
-                form: { approvalStatus: '审批中', applyCode: 'ZB-2026-013', unit: '成员企业B', resultNote: '完成供应商评审，确定成交供应商。' },
+                form: { approvalStatus: '草稿', applyCode: 'ZB-2026-013', unit: '成员企业B', resultNote: '完成供应商评审，确定成交供应商。' },
                 sections: [
                     { id: 'BD-013', planCode: 'PL-2026-0025', lineNo: 1, target: '主合同', awardCode: 'DB-2026-013-1', purchaseName: '办公用品采购', sectionNo: '1', limitAmount: 98000, winAmount: 95500, supplierCode: 'GYS-050', supplierName: '上海晨光办公用品有限公司', winDate: '—', otherSuppliers: [{ code: 'GYS-051', name: '北京齐心办公用品有限公司' }] }
                 ],

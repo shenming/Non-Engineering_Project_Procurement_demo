@@ -229,7 +229,7 @@ var sortAsc = true;
         }
         // 草稿状态增加删除按钮
         var dalNode0 = (dal && dal.nodes && dal.nodes[0] && dal.nodes[0].form) ? dal.nodes[0].form : null;
-        var isDraft = (dalNode0 && dalNode0.approvalStatus === '草稿');
+        var isDraft = (dalNode0 && dalNode0.approvalStatus === '草稿') || (dal && dal.info && dal.info.status === '草稿');
         if (isDraft) {
             var actionCell = row.cells[7];
             if (actionCell && !actionCell.querySelector('.btn-danger')) {

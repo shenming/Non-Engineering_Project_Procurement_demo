@@ -32,11 +32,11 @@ var EDITABLE_STEPS = {
         2: false    // 定标
     },
     '直接采购': {
-        0: true,   // 招采申请
+        0: false,   // 招采申请
         1: true    // 定标
     },
     '直接采购-小额': {
-        0: false,   // 招采申请
-        1: false    // 定标
+        0: true,   // 招采申请
+        1: true    // 定标
     }
 };
