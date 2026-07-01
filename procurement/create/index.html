@@ -31,7 +31,7 @@
 
 <!-- 顶部导航 -->
 <div class="sub-navbar">
-    <button class="btn btn-sm btn-outline" onclick="navTOLastPage()" style="margin-right:8px;">← 返回详情</button>
+    <button class="btn btn-sm btn-outline" onclick="exitToProcurementList()" style="margin-right:8px;">退出</button>
     <span class="sub-nav-title">✏️ 编辑招采</span>
     <span class="breadcrumb">
         <a onclick="navTo('procurement')">采购过程列表</a><span> › </span>
@@ -81,13 +81,12 @@
     <div class="flex gap-8">
 
          <button id="nextBtn" class="btn btn-primary" onclick="nextStep()">下一步 →</button>
-        <button class="btn btn-outline" onclick="navTOLastPage()">← 返回详情</button>
+        <button class="btn btn-outline" onclick="exitToProcurementList()">退出</button>
     </div>
 </div>
 
 <script src="../../common/scripts.js"></script>
 <script src="../../common/data.js"></script>
-<script src="../detail/data.js"></script>
 <script src="data.js"></script>
 <script>
 var selectedStep = 0;
@@ -119,7 +118,9 @@ var cfg = METHOD_CONFIG[currentMethod];
 
     renderSteps();
     renderApprovalFlow();
+    
     try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
+    
     try { sessionStorage.setItem('editEditableSteps', JSON.stringify(EDITABLE_STEPS)); } catch(e) {}
     sessionStorage.setItem('edit_method', currentMethod);
     sessionStorage.setItem('edit_step', selectedStep);
@@ -244,7 +245,7 @@ function saveProcurement() {
             projectName: document.getElementById('infoTitle').textContent.replace('✏️ ', '')
         };
         try { sessionStorage.setItem('procurementViewContext', JSON.stringify(ctx)); } catch(e) {}
-        navTo('procurement', 'procurement/detail/index.html');
+        navTo('procurement');
     }
 
     // 发送校验消息到 iframe
@@ -274,13 +275,8 @@ function saveProcurement() {
         doSave();
     }
 }
-function navTOLastPage() {
-    var ctx = {
-        method: currentMethod,
-        projectName: document.getElementById('infoTitle').textContent.replace('✏️ ', '')
-    };
-    try { sessionStorage.setItem('procurementViewContext', JSON.stringify(ctx)); } catch(e) {}
-    navTo('procurement', 'procurement/detail/index.html');
+function exitToProcurementList() {
+    navTo('procurement');
 }
 </script>
 </body>
