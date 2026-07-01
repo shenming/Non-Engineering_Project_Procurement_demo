@@ -127,6 +127,29 @@ var DETAIL_DATA = {
                     { type: '澄清回复', name: '供应商答疑澄清汇总.xlsx', file: 'ZB-2026-003-BC1-CLARIFY.xlsx', fileId: 'F20260625002', fileType: 'xlsx', size: '456,789', ts: '2026-06-25 15:00', user: '李经理' }
                 ],
                 approval: { status: '审批通过', date: '2026-06-26', flowId: 'WF-2026-003-S1' }
+            },
+            {
+                version: 2,
+                supplementId: 'ZB-2026-003-BC02',
+                status: '审批中',
+                createDate: '2026-07-02',
+                submitDate: '2026-07-02',
+                reason: '集团新增C座食堂运营面积扩大，需追加物业服务预算并调整招标代理机构以确保覆盖新增服务范围。',
+                changes: {
+                    limitAmountText: { old: '¥2,200,000.00元', new: '¥2,850,000.00元' },
+                    limitAmount: { old: 2200000, new: 2850000 },
+                    planEndDate: { old: '2026-08-15', new: '2026-09-01' },
+                    agent: { old: '上海XX招标代理有限公司', new: '北京中招国际招标有限公司' },
+                    scope: {
+                        old: '集团总部大楼A/B座/C座、园区绿化、安保、食堂等物业服务，服务期12个月。',
+                        new: '集团总部大楼A/B座/C座/D座、园区绿化、安保、食堂、会议服务等物业服务，服务期12个月。'
+                    }
+                },
+                attachments: [
+                    { type: '补充招标文件', name: '补充招标文件_第2次_集团年度物业服务.pdf', file: 'ZB-2026-003-BC2-ZB.pdf', fileId: 'F20260702001', fileType: 'pdf', size: '1,567,890', ts: '2026-07-02 09:00', user: '李经理' },
+                    { type: '预算调整说明', name: '预算调整审批单_v2.pdf', file: 'ZB-2026-003-BC2-BUDGET.pdf', fileId: 'F20260702002', fileType: 'pdf', size: '856,000', ts: '2026-07-02 09:30', user: '李经理' }
+                ],
+                approval: { status: '审批中', date: '—', flowId: 'WF-2026-003-S2' }
             }
         ],
         nodes: {
@@ -246,6 +269,28 @@ var DETAIL_DATA = {
                     { type: '补充图纸', name: '弱电系统拓扑图_v2.dwg', file: 'ZB-2026-011-BC1-DWG.dwg', fileId: 'F20260518002', fileType: 'dwg', size: '3,567,890', ts: '2026-05-18 10:30', user: '陈芳' }
                 ],
                 approval: { status: '审批通过', date: '2026-05-19', flowId: 'WF-2026-011-S1' }
+            },
+            {
+                version: 2,
+                supplementId: 'ZB-2026-011-BC02',
+                status: '已生效',
+                createDate: '2026-05-28',
+                submitDate: '2026-05-29',
+                reason: '弱电维保新增会议室音视频系统后，技术标准升级，需延长投标准备时间并调整最高限价。',
+                changes: {
+                    planEndDate: { old: '2026-06-15', new: '2026-07-10' },
+                    limitAmount: { old: 850000, new: 980000 },
+                    limitAmountText: { old: '¥850,000.00元', new: '¥980,000.00元' },
+                    scope: {
+                        old: '集团总部及下属企业弱电系统（监控、门禁、网络布线、会议室音视频系统等）年度维保服务。',
+                        new: '集团总部及下属企业弱电系统（监控、门禁、网络布线、会议室音视频系统、广播系统、UPS电源等）年度维保服务。'
+                    }
+                },
+                attachments: [
+                    { type: '补充招标文件', name: '补充招标文件_第2次_弱电维保.pdf', file: 'ZB-2026-011-BC2-ZB.pdf', fileId: 'F20260528001', fileType: 'pdf', size: '1,234,567', ts: '2026-05-28 14:00', user: '陈芳' },
+                    { type: '技术参数调整说明', name: '弱电技术参数_v3.xlsx', file: 'ZB-2026-011-BC2-SPEC.xlsx', fileId: 'F20260528002', fileType: 'xlsx', size: '678,900', ts: '2026-05-28 14:30', user: '陈芳' }
+                ],
+                approval: { status: '审批通过', date: '2026-05-30', flowId: 'WF-2026-011-S2' }
             }
         ],
         nodes: {
