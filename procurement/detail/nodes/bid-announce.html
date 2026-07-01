@@ -111,8 +111,8 @@ if (a.mode === 'edit') {
     try { var es = JSON.parse(sessionStorage.getItem('editEditableSteps') || '{}'); } catch(e) {}
     if (es && es[m] && es[m][s] === true) {
         document.querySelectorAll('input,select,textarea').forEach(function(el) {
-            if (el.tagName === 'SELECT') el.disabled = false;
-            else el.readOnly = false;
+            el.disabled = false;
+            el.readOnly = false;
             el.style.background = '';
             el.style.color = '';
             el.style.cursor = '';

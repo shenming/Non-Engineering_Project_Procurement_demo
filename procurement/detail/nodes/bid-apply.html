@@ -135,8 +135,8 @@ for(var i=0;i<ats.length;i++){var o=ats[i];ah+='<tr><td><span class="op-icon dis
     // 页面可编辑：解锁全部 field 控件
     var doc = document;
     doc.querySelectorAll('input, select, textarea').forEach(function(el) {
-        if (el.tagName === 'SELECT') el.disabled = false;
-        else el.readOnly = false;
+        el.disabled = false;
+        el.readOnly = false;
         el.style.background = '';
         el.style.color = '';
         el.style.cursor = '';
