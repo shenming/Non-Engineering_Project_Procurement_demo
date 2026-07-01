@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../common/styles.css">
+<style>
+    body.content-page { padding: 16px; }
+    .ref-section { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; padding: 16px; }
+    .ref-section h4 { font-size: 13px; font-weight: 600; margin: 0 0 12px; color: var(--gray-600); }
+    .ref-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px 16px; font-size: 12px; }
+    .ref-grid .item { display: flex; flex-direction: column; }
+    .ref-grid .item .label { color: var(--gray-500); font-size: 11px; }
+    .ref-grid .item .value { font-weight: 500; color: var(--gray-700); }
+    .edit-section { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; padding: 16px; }
+    .edit-section h4 { font-size: 13px; font-weight: 600; margin: 0 0 12px; }
+    .version-badge { display: inline-block; background: var(--primary); color: #fff; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .attach-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .attach-table th { text-align: left; padding: 6px 8px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); font-size: 11px; }
+    .attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
+    .change-highlight { border-left: 3px solid var(--warning); padding-left: 12px; background: #fffbeb; }
+</style>
+</head>
+<body class="content-page">
+
+<div class="sub-navbar">
+    <button class="btn btn-sm btn-outline" onclick="history.back()" style="margin-right:8px;">← 返回</button>
+    <span class="sub-nav-title">📝 补充招标</span>
+    <span class="breadcrumb">
+        <a onclick="navTo('procurement')">采购过程列表</a><span> › </span>
+        <a onclick="history.back()" style="cursor:pointer;">补充管理</a><span> › </span>
+        <span id="breadTitle">新建补充</span>
+    </span>
+</div>
+
+<div class="card" style="margin-bottom:16px;">
+    <div class="card-header">
+        <h3>📝 第<span id="versionDisplay">1</span>次补充 · <span id="projectTitle">项目名称</span></h3>
+        <span id="supplementIdDisplay" class="version-badge"></span>
+    </div>
+</div>
+
+<!-- 参考区域：原招采申请信息 -->
+<div class="ref-section" id="refSection">
+    <h4>📋 原招采申请信息（参考）</h4>
+    <div class="ref-grid" id="refGrid"></div>
+</div>
+
+<!-- 编辑区域：本次补充内容 -->
+<div class="edit-section">
+    <h4>✏️ 本次补充内容 <span class="text-muted" style="font-weight:400;font-size:12px;">（仅填写需要修改的字段）</span></h4>
+    <div class="form-group" style="margin-bottom:12px;">
+        <label>补充原因 <span class="required">*</span></label>
+        <textarea class="form-control" id="txtReason" rows="3" placeholder="请说明本次补充招标的原因和依据，如供应商答疑、参数调整、时间变更等"></textarea>
+    </div>
+    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+            <label>采购限额（元）</label>
+            <input class="form-control" type="number" id="txtLimitAmount" step="0.01">
+        </div>
+        <div class="form-group">
+            <label>投标截止日期</label>
+            <input class="form-control" type="date" id="txtPlanEndDate">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>招标代理机构</label>
+        <input class="form-control" id="txtAgent">
+    </div>
+    <div class="form-group">
+        <label>招标范围及相关说明</label>
+        <textarea class="form-control" id="txtScope" rows="4"></textarea>
+    </div>
+</div>
+
+<!-- 附件区域 -->
+<div class="edit-section">
+    <div class="flex-between" style="margin-bottom:12px;">
+        <h4 style="margin:0;">📎 补充附件</h4>
+        <button class="btn btn-xs btn-outline" onclick="addAttachRow()">＋ 添加附件</button>
+    </div>
+    <div class="table-wrap">
+        <table class="attach-table">
+            <thead><tr><th>附件类型</th><th>附件文档名称</th><th>文件类型</th><th>大小</th><th>操作</th></tr></thead>
+            <tbody id="attachBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="flex gap-8 mt-16">
+    <button class="btn btn-outline" onclick="history.back()">取消</button>
+    <button class="btn btn-primary" onclick="submitSupplement()">提交审批</button>
+</div>
+
+<script src="../common/scripts.js"></script>
+<script src="../procurement/detail/data.js"></script>
+<script src="data.js"></script>
+<script>
+var context = null;
+var currentMethod = '';
+var newVersion = 1;
+
+(function init() {
+    try { context = JSON.parse(sessionStorage.getItem('supplementContext') || 'null'); } catch(e) {}
+    if (!context) { showAlert('⚠️ 未获取到采购信息，请从采购详情页进入。'); return; }
+
+    currentMethod = context.method || '公开招标';
+    var dal = DETAIL_DATA[currentMethod];
+    if (!dal) { showAlert('⚠️ 未找到采购数据'); return; }
+
+    var info = dal.info || {};
+    var supps = dal.supplements || [];
+    newVersion = supps.length + 1;
+
+    document.getElementById('projectTitle').textContent = info.projectName || '项目名称';
+    document.getElementById('versionDisplay').textContent = newVersion;
+    document.getElementById('breadTitle').textContent = '第' + newVersion + '次补充';
+
+    var suppId = generateSupplementId(info.applyCode || 'ZB-XXXX', newVersion);
+    document.getElementById('supplementIdDisplay').textContent = suppId;
+
+    // 渲染原申请信息（从 nodes[0].form 读取）
+    var node0 = dal.nodes && dal.nodes[0] && dal.nodes[0].form;
+    if (node0) {
+        var refHtml = '';
+        var fields = [
+            { label: '招标过程编号', key: 'procCode' },
+            { label: '项目名称', key: 'procName' },
+            { label: '招标方式', key: 'method' },
+            { label: '采购类别', key: 'category' },
+            { label: '经办人', key: 'handler' },
+            { label: '申请日期', key: 'applyDate' },
+            { label: '招标代理', key: 'agent' },
+            { label: '采购限额', key: 'limitAmountText' },
+            { label: '截止日期', key: 'planEndDate' }
+        ];
+        fields.forEach(function(f) {
+            refHtml += '<div class="item"><span class="label">' + f.label + '</span><span class="value">' + (node0[f.key] || '—') + '</span></div>';
+        });
+        // scope
+        refHtml += '<div class="item" style="grid-column:1/-1;"><span class="label">招标范围</span><span class="value">' + (node0.scope || '—') + '</span></div>';
+        document.getElementById('refGrid').innerHTML = refHtml;
+
+        // 预填当前值为参考
+        document.getElementById('txtLimitAmount').value = node0.limitAmount || '';
+        document.getElementById('txtPlanEndDate').value = node0.planEndDate || '';
+        document.getElementById('txtAgent').value = node0.agent || '';
+        document.getElementById('txtScope').value = node0.scope || '';
+    }
+})();
+
+function addAttachRow() {
+    var tb = document.getElementById('attachBody');
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><input class="form-control form-control-sm" placeholder="补充招标文件/澄清回复" style="width:140px;"></td>'
+        + '<td><input class="form-control form-control-sm" placeholder="文件名" style="width:200px;"></td>'
+        + '<td><select class="form-control form-control-sm"><option>pdf</option><option>docx</option><option>xlsx</option><option>dwg</option><option>jpg</option></select></td>'
+        + '<td><input class="form-control form-control-sm" placeholder="大小" style="width:80px;"></td>'
+        + '<td><button class="btn btn-xs btn-danger" onclick="this.closest(\'tr\').remove()">删除</button></td>';
+    tb.appendChild(tr);
+}
+
+function submitSupplement() {
+    var reason = document.getElementById('txtReason').value.trim();
+    if (!reason) { showAlert('⚠️ 请填写补充原因。'); return; }
+
+    // 收集变更内容
+    var changes = {};
+    var dal = DETAIL_DATA[currentMethod];
+    var node0 = dal && dal.nodes && dal.nodes[0] && dal.nodes[0].form;
+
+    if (node0) {
+        var newAmount = parseFloat(document.getElementById('txtLimitAmount').value);
+        var oldAmount = node0.limitAmount;
+        if (newAmount && newAmount !== oldAmount) {
+            changes.limitAmount = { old: oldAmount, new: newAmount };
+            changes.limitAmountText = { old: node0.limitAmountText, new: '¥' + newAmount.toLocaleString() + '.00元' };
+        }
+
+        var newDate = document.getElementById('txtPlanEndDate').value;
+        if (newDate && newDate !== node0.planEndDate) {
+            changes.planEndDate = { old: node0.planEndDate, new: newDate };
+        }
+
+        var newAgent = document.getElementById('txtAgent').value.trim();
+        if (newAgent && newAgent !== node0.agent) {
+            changes.agent = { old: node0.agent, new: newAgent };
+        }
+
+        var newScope = document.getElementById('txtScope').value.trim();
+        if (newScope && newScope !== node0.scope) {
+            changes.scope = { old: node0.scope, new: newScope };
+        }
+    }
+
+    if (Object.keys(changes).length === 0) { showAlert('⚠️ 请至少修改一个字段。'); return; }
+
+    // 收集附件
+    var attachRows = document.querySelectorAll('#attachBody tr');
+    var atts = [];
+    attachRows.forEach(function(r) {
+        var cells = r.querySelectorAll('input,select');
+        if (cells.length >= 2 && cells[0].value.trim()) {
+            atts.push({
+                type: cells[0].value.trim(),
+                name: cells[1].value.trim() || cells[0].value.trim(),
+                file: cells[1].value.trim() || '',
+                fileType: cells[2] ? cells[2].value : 'pdf',
+                size: cells[3] ? cells[3].value : '',
+                fileId: 'F' + String(Date.now()).substring(5),
+                ts: new Date().toISOString().replace('T',' ').substring(0,19),
+                user: '当前用户'
+            });
+        }
+    });
+
+    // 构建补充记录
+    var supp = {
+        version: newVersion,
+        supplementId: document.getElementById('supplementIdDisplay').textContent,
+        status: '审批中',
+        createDate: new Date().toISOString().split('T')[0],
+        submitDate: new Date().toISOString().split('T')[0],
+        reason: reason,
+        changes: changes,
+        attachments: atts,
+        approval: { status: '审批中', date: '—', flowId: '—' }
+    };
+
+    // 写入 DETAIL_DATA
+    if (!dal.supplements) dal.supplements = [];
+    dal.supplements.push(supp);
+
+    // 更新 sessionStorage
+    try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
+
+    showAlert('✅ 第' + newVersion + '次补充招标已提交审批。');
+    navTo('procurement');
+}
+</script>
+</body>
+</html>

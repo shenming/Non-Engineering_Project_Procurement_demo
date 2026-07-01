@@ -3,18 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="../common/styles.css">
+<style>
+    body.content-page { padding: 16px; }
+    .supp-card { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; transition: box-shadow .15s; }
+    .supp-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    .supp-card .card-header { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; }
+    .supp-card .card-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
+    .supp-card .card-body { padding: 12px 16px; }
+    .supp-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--gray-500); }
+    .supp-meta span { white-space: nowrap; }
+    .supp-changes { margin-top: 8px; font-size: 12px; }
+    .supp-changes li { margin-bottom: 4px; }
+    .supp-changes .old-val { color: var(--danger); text-decoration: line-through; margin-right: 4px; }
+    .supp-changes .new-val { color: var(--success); font-weight: 500; }
+    .empty-state { text-align: center; padding: 40px; color: var(--gray-400); }
+</style>
 </head>
 <body class="content-page">
+
 <div class="sub-navbar">
-    <span class="sub-nav-title">📝 补充招标</span>
+    <span class="sub-nav-title">📝 补充招标管理</span>
 </div>
-<div class="card">
-    <div class="card-body" style="padding:40px;text-align:center;">
-        <div style="font-size:48px;margin-bottom:16px;">📝</div>
-        <h3 style="margin:0 0 8px;color:var(--gray-600);">补充招标管理</h3>
-        <p class="text-muted">该模块功能正在建设中，敬请期待。</p>
-    </div>
+
+<div class="flex-between mb-16">
+    <span class="text-muted">所有采购记录的补充招标版本汇总（仅公开招标/邀请招标）</span>
 </div>
+
+<div id="supplementList">
+    <!-- 动态渲染 -->
+</div>
+
 <script src="../common/scripts.js"></script>
+<script src="../procurement/detail/data.js"></script>
+<script src="data.js"></script>
+<script>
+(function renderList() {
+    var container = document.getElementById('supplementList');
+    var methods = ['公开招标', '邀请招标'];
+    var html = '';
+
+    methods.forEach(function(method) {
+        var dal = DETAIL_DATA[method];
+        if (!dal || !dal.supplements || dal.supplements.length === 0) return;
+        var info = dal.info || {};
+        var supps = dal.supplements;
+
+        supps.forEach(function(s) {
+            var tagCls = s.status === '已生效' ? 'tag-green' : (s.status === '审批中' ? 'tag-yellow' : 'tag-gray');
+            html += '<div class="supp-card">';
+            html += '<div class="card-header">';
+            html += '<h3>📝 ' + info.projectName + ' · 第' + s.version + '次补充</h3>';
+            html += '<div class="flex gap-8">';
+            html += '<span class="tag ' + tagCls + '">' + s.status + '</span>';
+            html += '<button class="btn btn-xs btn-outline" onclick="location.href=\'detail.html?method=' + encodeURIComponent(method) + '&version=' + s.version + '\'">查看</button>';
+            html += '</div></div>';
+            html += '<div class="card-body">';
+            html += '<div class="supp-meta">';
+            html += '<span>📋 补充编号：' + s.supplementId + '</span>';
+            html += '<span>📅 创建日期：' + s.createDate + '</span>';
+            html += '<span>📅 提交日期：' + (s.submitDate || '—') + '</span>';
+            html += '<span>🏷️ 招标方式：' + method + '</span>';
+            html += '</div>';
+            html += '<div style="margin-top:4px;font-size:12px;"><strong>原因：</strong>' + s.reason + '</div>';
+            if (s.changes) {
+                html += '<div class="supp-changes"><strong>变更内容：</strong><ul>';
+                for (var key in s.changes) {
+                    var c = s.changes[key];
+                    var label = key;
+                    if (key === 'planEndDate') label = '截止日期';
+                    else if (key === 'scope') label = '招标范围';
+                    else if (key === 'limitAmountText') label = '采购限额';
+                    else if (key === 'limitAmount') label = '采购金额';
+                    else if (key === 'agent') label = '招标代理';
+                    html += '<li>' + label + '：<span class="old-val">' + (c.old || '—') + '</span> → <span class="new-val">' + (c.new || '—') + '</span></li>';
+                }
+                html += '</ul></div>';
+            }
+            html += '<div style="margin-top:4px;font-size:12px;color:var(--gray-500);">附件：' + (s.attachments ? s.attachments.length : 0) + ' 个</div>';
+            html += '</div></div>';
+        });
+    });
+
+    if (!html) {
+        html = '<div class="empty-state"><div style="font-size:48px;margin-bottom:12px;">📝</div><h3>暂无补充招标记录</h3><p class="text-muted">公开招标和邀请招标的补充记录将在此显示。</p></div>';
+    }
+    container.innerHTML = html;
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../common/styles.css">
+<style>
+    body.content-page { padding: 16px; }
+    .diff-card { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+    .diff-card .card-header { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; }
+    .diff-card .card-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
+    .diff-card .card-body { padding: 16px; }
+    .diff-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .diff-table th { text-align: left; padding: 8px 10px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
+    .diff-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+    .diff-table .old-cell { background: #fef2f2; color: var(--danger); }
+    .diff-table .new-cell { background: #f0fdf4; color: var(--success); font-weight: 500; }
+    .diff-table .no-change { color: var(--gray-400); }
+    .attach-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .attach-table th { text-align: left; padding: 6px 8px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); font-size: 11px; }
+    .attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
+    .section-title { font-size: 13px; font-weight: 600; margin: 16px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--gray-200); }
+</style>
+</head>
+<body class="content-page">
+
+<div class="sub-navbar">
+    <button class="btn btn-sm btn-outline" onclick="history.back()" style="margin-right:8px;">← 返回列表</button>
+    <span class="sub-nav-title">📝 补充招标详情</span>
+    <span class="breadcrumb">
+        <a onclick="navTo('procurement')">采购过程列表</a><span> › </span>
+        <a onclick="navTo('procurement','../supplementary/list.html')">补充管理</a><span> › </span>
+        <span id="breadDetail">补充详情</span>
+    </span>
+</div>
+
+<div id="detailContent">
+    <!-- 动态渲染 -->
+</div>
+
+<script src="../common/scripts.js"></script>
+<script src="../procurement/detail/data.js"></script>
+<script src="data.js"></script>
+<script>
+(function initDetail() {
+    var params = {};
+    location.search.replace('?','').split('&').forEach(function(s) { var kv=s.split('='); if(kv[0]) params[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]||''); });
+    var method = params.method || '公开招标';
+    var version = parseInt(params.version) || 1;
+
+    var dal = DETAIL_DATA[method];
+    if (!dal) { document.getElementById('detailContent').innerHTML = '<div class="text-muted" style="padding:40px;text-align:center;">未找到数据</div>'; return; }
+
+    var supps = dal.supplements || [];
+    var supp = null;
+    for (var i = 0; i < supps.length; i++) {
+        if (supps[i].version === version) { supp = supps[i]; break; }
+    }
+    if (!supp) { document.getElementById('detailContent').innerHTML = '<div class="text-muted" style="padding:40px;text-align:center;">未找到该版本补充记录</div>'; return; }
+
+    var info = dal.info || {};
+    var tagCls = supp.status === '已生效' ? 'tag-green' : (supp.status === '审批中' ? 'tag-yellow' : 'tag-gray');
+    document.getElementById('breadDetail').textContent = info.projectName + ' · 第' + version + '次补充';
+
+    var html = '';
+
+    // 概要卡片
+    html += '<div class="diff-card">';
+    html += '<div class="card-header"><h3>📝 ' + info.projectName + ' · 第' + version + '次补充</h3><span class="tag ' + tagCls + '">' + supp.status + '</span></div>';
+    html += '<div class="card-body">';
+    html += '<div style="display:flex;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--gray-500);">';
+    html += '<span>📋 补充编号：<strong>' + (supp.supplementId || '—') + '</strong></span>';
+    html += '<span>📅 创建：' + supp.createDate + '</span>';
+    html += '<span>📅 提交：' + (supp.submitDate || '—') + '</span>';
+    html += '</div>';
+    html += '<div style="margin-top:8px;"><strong>补充原因：</strong><p style="margin:4px 0 0;font-size:13px;">' + supp.reason + '</p></div>';
+    html += '</div></div>';
+
+    // 变更对比
+    html += '<div class="section-title">📊 字段变更对比</div>';
+    html += '<div class="diff-card">';
+    html += '<table class="diff-table"><thead><tr><th style="width:120px;">字段</th><th style="width:45%;">原值</th><th style="width:45%;">补充后</th></tr></thead><tbody>';
+
+    var changes = supp.changes || {};
+    var fieldLabels = {
+        planEndDate: '截止日期',
+        scope: '招标范围',
+        limitAmountText: '采购限额',
+        limitAmount: '采购金额',
+        agent: '招标代理'
+    };
+
+    // 渲染已变更的字段
+    for (var key in fieldLabels) {
+        var c = changes[key];
+        if (!c) {
+            // 未变更的字段，显示原值
+            var orig = '';
+            var node0 = dal.nodes && dal.nodes[0] && dal.nodes[0].form;
+            if (node0) orig = node0[key] || '';
+            // 对于 limitAmount 需要特殊处理
+            if (key === 'limitAmount' && node0.limitAmount !== undefined) orig = node0.limitAmount.toLocaleString() + ' 元';
+            if (key === 'limitAmountText' && node0.limitAmountText) orig = node0.limitAmountText;
+            html += '<tr><td>' + fieldLabels[key] + '</td><td class="no-change" colspan="2">' + orig + '<span style="color:var(--gray-400);margin-left:8px;font-size:10px;">（未变更）</span></td></tr>';
+        } else {
+            var oldVal = c.old || '—';
+            var newVal = c.new || '—';
+            html += '<tr><td>' + fieldLabels[key] + '</td><td class="old-cell"><span style="text-decoration:line-through;">' + oldVal + '</span></td><td class="new-cell">' + newVal + '</td></tr>';
+        }
+    }
+    html += '</tbody></table>';
+    html += '</div>';
+
+    // 审批流
+    html += '<div class="section-title">✅ 审批信息</div>';
+    var aApproval = supp.approval || {};
+    var aTagCls = aApproval.status === '审批通过' ? 'tag-green' : (aApproval.status === '审批中' ? 'tag-yellow' : 'tag-gray');
+    html += '<div class="diff-card"><div class="card-body" style="font-size:12px;">';
+    html += '<div class="flex gap-16"><span>状态：<span class="tag ' + aTagCls + '">' + (aApproval.status || '待提交') + '</span></span>';
+    html += '<span>审批日期：' + (aApproval.date || '—') + '</span>';
+    html += '<span>流程单号：' + (aApproval.flowId || '—') + '</span></div>';
+    html += '</div></div>';
+
+    // 附件
+    html += '<div class="section-title">📎 补充附件（' + (supp.attachments ? supp.attachments.length : 0) + '）</div>';
+    html += '<div class="diff-card"><div class="card-body" style="padding:0;">';
+    html += '<table class="attach-table"><thead><tr><th>附件类型</th><th>附件文档名称</th><th>文件类型</th><th>大小</th><th>上传时间</th><th>用户</th></tr></thead><tbody>';
+    var atts = supp.attachments || [];
+    if (atts.length === 0) {
+        html += '<tr><td colspan="6" class="text-muted" style="text-align:center;padding:12px;">无附件</td></tr>';
+    } else {
+        atts.forEach(function(a) {
+            html += '<tr><td>' + (a.type||'') + '</td><td><a href="#" onclick="alert(\'📄 ' + (a.name||'') + '\');return false;">' + (a.name||'') + '</a></td><td>' + (a.fileType||'') + '</td><td>' + (a.size||'') + '</td><td>' + (a.ts||'') + '</td><td>' + (a.user||'') + '</td></tr>';
+        });
+    }
+    html += '</tbody></table></div></div>';
+
+    document.getElementById('detailContent').innerHTML = html;
+})();
+</script>
+</body>
+</html>

@@ -49,12 +49,14 @@
             <button id="btnEdit" class="btn btn-sm btn-outline" onclick="editProcurement()">✏️ 编辑</button>
             <button id="btnDelete" class="btn btn-sm btn-danger" onclick="confirmDelete()">🗑️ 删除</button>
             <button id="btnSubmit" class="btn btn-sm btn-primary" onclick="submitNode()">📤 提交</button>
+            <button id="btnSupplement" class="btn btn-sm btn-outline" onclick="createSupplement()" style="display:none;">📝 补充招标</button>
         </div>
     </div>
 
     <div class="tab-nav">
         <button class="tab-btn active" onclick="switchTab('tab-steps', this)">📌 招采进度</button>
         <button class="tab-btn" onclick="switchTab('tab-approval', this)">✅ 审批流预览</button>
+        <button class="tab-btn" id="tabSupplementsBtn" onclick="switchTab('tab-supplements', this)" style="display:none;">📋 补充记录</button>
     </div>
 
     <!-- TAB 招采进度 -->
@@ -73,6 +75,12 @@
             </thead>
             <tbody id="approvalBody"></tbody>
         </table>
+    </div>
+    <!-- TAB 补充记录 -->
+    <div class="tab-body" id="tab-supplements">
+        <div id="supplementTabContent" style="padding:12px 0;">
+            <div class="text-muted" style="text-align:center;padding:20px;">加载中...</div>
+        </div>
     </div>
 </div>
 
@@ -119,6 +127,7 @@ var cfg = METHOD_CONFIG[currentMethod];
     renderApprovalFlow();
     loadNode(selectedStep);
     updateActionButtons();
+    initSupplementUI();
 })();
 
 function renderSteps() {
@@ -247,6 +256,59 @@ function confirmDelete() {
 
 function submitNode() {
     alert('📤 已提交当前节点审批');
+}
+
+// ===== 补充招标 =====
+function initSupplementUI() {
+    var suppMethods = ['公开招标', '邀请招标'];
+    var isSuppMethod = suppMethods.indexOf(currentMethod) !== -1;
+
+    var btn = document.getElementById('btnSupplement');
+    var tabBtn = document.getElementById('tabSupplementsBtn');
+
+    // 仅在公开招标和邀请招标时显示补充招标相关 UI
+    if (btn) btn.style.display = isSuppMethod ? '' : 'none';
+    if (tabBtn) tabBtn.style.display = isSuppMethod ? '' : 'none';
+
+    // 渲染补充记录列表
+    renderSupplementTab();
+}
+
+function createSupplement() {
+    var ctx = {
+        method: currentMethod,
+        projectName: document.getElementById('infoTitle').textContent.replace('📄 ', '')
+    };
+    sessionStorage.setItem('supplementContext', JSON.stringify(ctx));
+    navTo('procurement', '../../supplementary/create.html');
+}
+
+function renderSupplementTab() {
+    var container = document.getElementById('supplementTabContent');
+    var data = DETAIL_DATA[currentMethod];
+    var supps = (data && data.supplements) ? data.supplements : [];
+
+    if (supps.length === 0) {
+        container.innerHTML = '<div class="text-muted" style="text-align:center;padding:30px;">暂无补充招标记录</div>';
+        return;
+    }
+
+    var html = '<table class="approval-table"><thead><tr><th>版本</th><th>补充编号</th><th>补充原因</th><th>创建日期</th><th>状态</th><th>操作</th></tr></thead><tbody>';
+    for (var i = supps.length - 1; i >= 0; i--) {
+        var s = supps[i];
+        var tagCls = s.status === '已生效' ? 'tag-green' : (s.status === '审批中' ? 'tag-yellow' : 'tag-gray');
+        var reasonShort = s.reason.length > 40 ? s.reason.substring(0, 40) + '...' : s.reason;
+        html += '<tr>';
+        html += '<td><strong>第' + s.version + '次</strong></td>';
+        html += '<td>' + (s.supplementId || '—') + '</td>';
+        html += '<td class="text-sm">' + reasonShort + '</td>';
+        html += '<td>' + s.createDate + '</td>';
+        html += '<td><span class="tag ' + tagCls + '">' + s.status + '</span></td>';
+        html += '<td><button class="btn btn-xs btn-outline" onclick="navTo(\'procurement\',\'../../supplementary/detail.html?method=' + encodeURIComponent(currentMethod) + '&version=' + s.version + '\')">查看</button></td>';
+        html += '</tr>';
+    }
+    html += '</tbody></table>';
+    container.innerHTML = html;
 }
 </script>
 </body>
