@@ -153,7 +153,8 @@ select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
             var nmTd = _editable ? '<input class="form-control" style="width:100px;height:28px;font-size:12px;" value="'+(sc.purchaseName||'')+'" onchange="updateSec('+idx+','+i+',\'purchaseName\',this.value)">' : (sc.purchaseName||'');
             var amtTd = _editable ? '<input type="number" class="form-control" style="width:100px;height:28px;font-size:12px;" value="'+(sc.amount||0)+'" onchange="updateSec('+idx+','+i+',\'amount\',parseFloat(this.value)||0)">' : '<span class="money">¥'+(sc.amount||0).toLocaleString()+'</span>';
             var secNoTd = _editable ? '<input class="form-control" style="width:60px;height:28px;font-size:12px;" value="'+(sc.sectionNo||'')+'" onchange="updateSec('+idx+','+i+',\'sectionNo\',this.value)">' : (sc.sectionNo||'');
-            sh+='<tr data-sidx="'+i+'"><td style="text-align:center;"><input type="radio" name="sSel" style="pointer-events:none;"></td>'
+            var selRadioStyle = _editable ? '' : 'pointer-events:none;';
+            sh+='<tr data-sidx="'+i+'"><td style="text-align:center;"><input type="radio" name="sSel" style="'+selRadioStyle+'"></td>'
                 +'<td>'+(sc.name||'')+'</td><td>'+(sc.planCode||'')+'</td><td>'+(sc.planRow||'')+'</td>'
                 +'<td>'+nmTd+'</td><td>'+amtTd+'</td><td>'+secNoTd+'</td>'
                 +'<td>'+(sc.cat||'')+'</td><td>'+(sc.subCat||'')+'</td><td>'+(sc.target||'')+'</td></tr>';
