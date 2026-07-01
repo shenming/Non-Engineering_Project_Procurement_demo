@@ -49,9 +49,13 @@ select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
 </div>
 <script src="../../../common/scripts.js"></script>
 <script>
-    // ===== 编辑模式：附件管理创建+批量删除 =====
-    if ((function(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p.mode==='edit'})()) {
-        // 添加工具条
+    // ===== 编辑模式：页面级控制，可编辑时显示附件工具栏 =====
+    (function() {
+        var p = {}; location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});
+        if (p.mode !== 'edit') return;
+        var m = p.method || '公开招标', st = parseInt(p.step) || 0;
+        try { var es = JSON.parse(sessionStorage.getItem('editEditableSteps') || '{}'); } catch(e) {}
+        if (!es || !es[m] || es[m][st] !== true) return; // 不可编辑时不显示工具栏
         var tb = document.getElementById('attachBody');
         if (tb) {
             var wrap = tb.closest('.table-wrap') || tb.parentNode;
@@ -87,7 +91,7 @@ select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
                 cbs.forEach(function(cb) { var r = cb.closest('tr'); if (r) r.remove(); });
             }
         };
-    }
+    })();
 </script>
 <script>
 (function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');if(!d||!d[m]||!d[m].nodes||!d[m].nodes[s]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted" style="padding:20px;">暂无数据</p></div>';return}var nd=d[m].nodes[s],f=nd.form||{};
@@ -120,37 +124,26 @@ var ats=nd.attachments||[],tb=document.getElementById('attachBody'),ah='';
 for(var i=0;i<ats.length;i++){var o=ats[i];ah+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.file||'')+'</td><td style="font-family:monospace;font-size:10px;">'+(o.fileId||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.user||'')+'</td></tr>'}tb.innerHTML=ah||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
 })();
 
-// ========== 编辑模式：默认可编辑，仅锁定指定字段 ==========
+// ========== 编辑模式：页面级控制 ==========
 (function(){
     var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});
     if (p.mode !== 'edit') return;
     var m = p.method || '公开招标';
-    var s = parseInt(p.step) || 0;
-    var locked;
-    try { locked = JSON.parse(sessionStorage.getItem('editLockedFields') || '{}'); } catch(e) { return; }
-    if (!locked) return;
-    var lockedNames = (locked[m] && locked[m][s]) || [];
-    // 解锁所有 input/select/textarea，但锁定字段保持 readonly/disabled
+    var step = parseInt(p.step) || 0;
+    try { var es = JSON.parse(sessionStorage.getItem('editEditableSteps') || '{}'); } catch(e) { return; }
+    if (!es || !es[m] || es[m][step] !== true) return; // 不可编辑，所有字段保持只读
+    // 页面可编辑：解锁全部 field 控件
     var doc = document;
     doc.querySelectorAll('input, select, textarea').forEach(function(el) {
-        var field = el.getAttribute('data-field') || '';
-        if (lockedNames.indexOf(field) !== -1) return; // 锁定字段保持原样
         if (el.tagName === 'SELECT') el.disabled = false;
         else el.readOnly = false;
         el.style.background = '';
         el.style.color = '';
         el.style.cursor = '';
+        if (el.tagName === 'TEXTAREA') el.style.resize = 'vertical';
     });
-    // 解锁 textarea
-    doc.querySelectorAll('textarea').forEach(function(el) {
-        var field = el.getAttribute('data-field') || '';
-        if (lockedNames.indexOf(field) !== -1) return;
-        el.readOnly = false;
-        el.style.background = '';
-        el.style.color = '';
-        el.style.cursor = '';
-        el.style.resize = 'vertical';
-    });
+    // 解锁附件操作图标
+    doc.querySelectorAll('.op-icon').forEach(function(el) { el.classList.remove('disabled'); });
 })();
 </script>
 <script>
@@ -161,9 +154,9 @@ for(var i=0;i<ats.length;i++){var o=ats[i];ah+='<tr><td><span class="op-icon dis
             if (!pd || Object.keys(pd).length === 0) {
                 try { sessionStorage.setItem('procNodeData', JSON.stringify(e.data.procNodeData)); } catch(e2) {}
             }
-            var lf = JSON.parse(sessionStorage.getItem('editLockedFields') || '{}');
-            if (!lf || Object.keys(lf).length === 0) {
-                try { sessionStorage.setItem('editLockedFields', JSON.stringify(e.data.editLockedFields)); } catch(e2) {}
+            var es = JSON.parse(sessionStorage.getItem('editEditableSteps') || '{}');
+            if (!es || Object.keys(es).length === 0) {
+                try { sessionStorage.setItem('editEditableSteps', JSON.stringify(e.data.editEditableSteps)); } catch(e2) {}
             }
             // 重新加载本页面数据
             if (typeof window.reloadNodeData === 'function') window.reloadNodeData();

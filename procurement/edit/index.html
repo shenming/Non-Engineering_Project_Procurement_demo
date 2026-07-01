@@ -88,44 +88,8 @@
 <script src="../../common/scripts.js"></script>
 <script src="../../common/data.js"></script>
 <script src="../detail/data.js"></script>
+<script src="data.js"></script>
 <script>
-// ===== 锁定字段配置（编辑模式下保持只读的字段）=====
-var EDIT_LOCKED_FIELDS = {
-    '公开招标': {
-        0: [],
-        1: [],
-        2: [],
-        3: [],
-        4: [],
-        5: [],
-        6: []
-    },
-    '邀请招标': {
-        0: ['procCode', 'companyCode', 'method', 'category', 'approvalStatus', 'applyDate'],
-        1: [],
-        2: ['approvalStatus'],
-        3: ['approvalStatus'],
-        4: ['approvalStatus', 'applyCode', 'unit']
-    },
-    '询比采购': {
-        0: ['procCode', 'companyCode', 'method', 'category', 'approvalStatus', 'applyDate'],
-        1: [],
-        2: ['approvalStatus', 'applyCode', 'unit']
-    },
-    '谈判采购': {
-        0: ['procCode', 'companyCode', 'method', 'category', 'approvalStatus', 'applyDate'],
-        1: [],
-        2: ['approvalStatus', 'applyCode', 'unit']
-    },
-    '直接采购': {
-        0: ['procCode', 'companyCode', 'method', 'category', 'approvalStatus', 'applyDate'],
-        1: ['approvalStatus', 'applyCode', 'unit']
-    },
-    '直接采购-小额': {
-        0: ['procCode', 'companyCode', 'method', 'category', 'approvalStatus', 'applyDate'],
-        1: ['approvalStatus', 'applyCode', 'unit']
-    }
-};
 var selectedStep = 0;
 var doneCount = 0;
 var currentMethod = '公开招标';
@@ -155,17 +119,14 @@ var cfg = METHOD_CONFIG[currentMethod];
 
     renderSteps();
     renderApprovalFlow();
-    // 先写入 sessionStorage，再加载 iframe
     try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
-    try { sessionStorage.setItem('editLockedFields', JSON.stringify(EDIT_LOCKED_FIELDS)); } catch(e) {}
-    // 确保 cfg 已就绪后再加载 iframe
+    try { sessionStorage.setItem('editEditableSteps', JSON.stringify(EDITABLE_STEPS)); } catch(e) {}
     sessionStorage.setItem('edit_method', currentMethod);
     sessionStorage.setItem('edit_step', selectedStep);
     loadNode(selectedStep);
-    // iframe 加载后重新确保数据同步（应对首次加载竞态条件）
     document.getElementById('nodeFrame').onload = function() {
         try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
-        try { sessionStorage.setItem('editLockedFields', JSON.stringify(EDIT_LOCKED_FIELDS)); } catch(e) {}
+        try { sessionStorage.setItem('editEditableSteps', JSON.stringify(EDITABLE_STEPS)); } catch(e) {}
     };
 })();
 
@@ -216,11 +177,9 @@ function onStepClick(index) {
 function loadNode(index) {
     var files = cfg.files || [];
     var nodeFile = files[index] || '';
-    // 将相对路径从 edit/nodes/ 重定向到 detail/nodes/
     var editNodeFile = nodeFile.replace('nodes/', '../detail/nodes/');
-    // sessionStorage.setItem 是同步操作，直接写入后设置 src 即可
     try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
-    try { sessionStorage.setItem('editLockedFields', JSON.stringify(EDIT_LOCKED_FIELDS)); } catch(e) {}
+    try { sessionStorage.setItem('editEditableSteps', JSON.stringify(EDITABLE_STEPS)); } catch(e) {}
     sessionStorage.setItem('edit_method', currentMethod);
     sessionStorage.setItem('edit_step', index);
     document.getElementById('nodeFrame').src = editNodeFile + '?method=' + encodeURIComponent(currentMethod) + '&step=' + index + '&mode=edit';
@@ -257,7 +216,6 @@ function draftProcurement() {
 }
 
 function saveProcurement() {
-    // 从 iframe 收集表单数据
     try {
         var frame = document.getElementById('nodeFrame');
         var frameDoc = frame.contentDocument || frame.contentWindow.document;
@@ -269,7 +227,6 @@ function saveProcurement() {
         });
     } catch(e) {}
     alert('💾 保存成功！所有修改已提交。');
-    // 设置详情页上下文，保存后跳转到详情页
     var ctx = {
         method: currentMethod,
         projectName: document.getElementById('infoTitle').textContent.replace('✏️ ', '')

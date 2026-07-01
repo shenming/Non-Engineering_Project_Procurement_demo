@@ -65,9 +65,13 @@
 
 <script src="../../../common/scripts.js"></script>
 <script>
-    // ===== 编辑模式：附件管理创建+批量删除 =====
-    if ((function(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p.mode==='edit'})()) {
-        // 添加工具条
+    // ===== 编辑模式：页面级控制，可编辑时显示附件工具栏 =====
+    (function() {
+        var p = {}; location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});
+        if (p.mode !== 'edit') return;
+        var m = p.method || '公开招标', st = parseInt(p.step) || 0;
+        try { var es = JSON.parse(sessionStorage.getItem('editEditableSteps') || '{}'); } catch(e) {}
+        if (!es || !es[m] || es[m][st] !== true) return;
         var tb = document.getElementById('attachBody');
         if (tb) {
             var wrap = tb.closest('.table-wrap') || tb.parentNode;
@@ -103,7 +107,7 @@
                 cbs.forEach(function(cb) { var r = cb.closest('tr'); if (r) r.remove(); });
             }
         };
-    }
+    })();
 </script>
 <script>
 (function initNode() {
@@ -139,14 +143,11 @@
     }
     tbody.innerHTML = html || '<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
 
-    // ===== 编辑模式：解锁可编辑字段 =====
+    // ===== 编辑模式：页面级控制 =====
     if (params.mode === 'edit') {
-        try { var locked = JSON.parse(sessionStorage.getItem('editLockedFields') || '{}'); } catch(e) {}
-        if (locked) {
-            var lockedNames = (locked[method] && locked[method][step]) || [];
+        try { var es = JSON.parse(sessionStorage.getItem('editEditableSteps') || '{}'); } catch(e) {}
+        if (es && es[method] && es[method][step] === true) {
             document.querySelectorAll('input,select,textarea').forEach(function(el) {
-                var field = el.getAttribute('data-field') || '';
-                if (lockedNames.indexOf(field) !== -1) return;
                 if (el.tagName === 'SELECT') el.disabled = false;
                 else el.readOnly = false;
                 el.style.background = '';
@@ -166,9 +167,9 @@
             if (!pd || Object.keys(pd).length === 0) {
                 try { sessionStorage.setItem('procNodeData', JSON.stringify(e.data.procNodeData)); } catch(e2) {}
             }
-            var lf = JSON.parse(sessionStorage.getItem('editLockedFields') || '{}');
-            if (!lf || Object.keys(lf).length === 0) {
-                try { sessionStorage.setItem('editLockedFields', JSON.stringify(e.data.editLockedFields)); } catch(e2) {}
+            var es = JSON.parse(sessionStorage.getItem('editEditableSteps') || '{}');
+            if (!es || Object.keys(es).length === 0) {
+                try { sessionStorage.setItem('editEditableSteps', JSON.stringify(e.data.editEditableSteps)); } catch(e2) {}
             }
             // 重新加载本页面数据
             if (typeof window.reloadNodeData === 'function') window.reloadNodeData();
