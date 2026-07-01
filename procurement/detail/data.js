@@ -56,17 +56,16 @@ var DETAIL_METHOD_CONFIG = {
     },
     '直接采购': {
         steps: buildSteps('直接采购', ['active','future']),
-        files: ['nodes/bid-apply.html','nodes/eval-result.html','nodes/award-result.html'],
+        files: ['nodes/bid-apply.html','nodes/award-result.html'],
         flow: [
             { node: '招标申请', status: '未审批', date: '—', flowId: '—' }
         ]
     },
     '直接采购-小额': {
         steps: buildSteps('直接采购-小额', ['done','active']),
-        files: ['nodes/bid-apply.html','nodes/eval-result.html'],
+        files: ['nodes/bid-apply.html','nodes/award-result.html'],
         flow: [
-            { node: '招标申请&确定成交供应商',status: '未审批', date: '—', flowId: '—'  },
-
+            { node: '招标申请&确定成交供应商',status: '未审批', date: '—', flowId: '—'  }
         ]
     }
 };
