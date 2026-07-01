@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../common/styles.css">
+<style>
+.dict-section { margin-bottom: 24px; }
+.dict-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.dict-table th { text-align: left; padding: 6px 8px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); }
+.dict-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); }
+.dict-table tr:hover td { background: var(--gray-50); }
+.conditions-list { list-style: none; padding: 0; margin: 0; }
+.conditions-list li { padding: 8px 12px; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+.conditions-list li:last-child { border-bottom: none; }
+.conditions-list .cond-id { display: inline-block; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 700; font-size: 12px; margin-right: 8px; }
+</style>
+</head>
+<body class="content-page">
+<div class="sub-navbar">
+    <span class="sub-nav-title">📖 字典表管理</span>
+    <span class="breadcrumb"><a onclick="navTo('settings')">配置管理</a> › 字典表</span>
+</div>
+
+<!-- 采购品类树 -->
+<div class="card dict-section">
+    <div class="card-header"><h3>🏷️ 采购品类树</h3></div>
+    <div class="card-body" id="catTreeBody"></div>
+</div>
+
+<!-- 采购方式步骤 -->
+<div class="card dict-section">
+    <div class="card-header"><h3>📌 采购方式步骤定义</h3></div>
+    <div class="card-body" style="padding:0;">
+        <table class="dict-table">
+            <thead><tr><th style="width:120px;">采购方式</th><th>步骤列表</th></tr></thead>
+            <tbody id="stepsBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 谈判采购适用情形 -->
+<div class="card dict-section">
+    <div class="card-header"><h3>🤝 谈判采购 — 适用情形</h3></div>
+    <div class="card-body">
+        <ul class="conditions-list" id="negoList"></ul>
+    </div>
+</div>
+
+<!-- 直接采购适用情形 -->
+<div class="card dict-section">
+    <div class="card-header"><h3>📌 直接采购 — 适用情形</h3></div>
+    <div class="card-body">
+        <table class="dict-table">
+            <thead><tr><th style="width:40px;">#</th><th>适用情形</th><th>详细说明</th><th>触发类型</th></tr></thead>
+            <tbody id="dpList"></tbody>
+        </table>
+    </div>
+</div>
+
+<button class="btn btn-outline mt-12" onclick="navTo('settings')">← 返回配置</button>
+
+<script src="../common/scripts.js"></script>
+<script src="../common/data.js"></script>
+<script>
+// 采购品类树
+(function(){
+    var body = document.getElementById('catTreeBody');
+    var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
+    var keys = Object.keys(CATEGORY_TREE);
+    for(var i=0;i<keys.length;i++){
+        var parent=keys[i], subs=CATEGORY_TREE[parent];
+        html += '<div style="border:1px solid var(--gray-200);border-radius:var(--radius);padding:12px;">';
+        html += '<div class="fw-600 mb-4" style="font-size:14px;">'+parent+'</div>';
+        for(var j=0;j<subs.length;j++){
+            html += '<span class="tag tag-blue" style="margin:2px 4px 2px 0;">'+subs[j]+'</span>';
+        }
+        html += '</div>';
+    }
+    html += '</div>';
+    body.innerHTML = html;
+})();
+
+// 采购方式步骤
+(function(){
+    var tbody = document.getElementById('stepsBody');
+    var keys = Object.keys(METHOD_STEPS);
+    var html = '';
+    for(var i=0;i<keys.length;i++){
+        var steps = METHOD_STEPS[keys[i]];
+        var stepTags = '';
+        for(var j=0;j<steps.length;j++){
+            stepTags += '<span class="tag" style="margin:2px 4px 2px 0;background:var(--gray-100);color:var(--gray-700);">'+(j+1)+'. '+steps[j]+'</span>';
+        }
+        html += '<tr><td><strong>'+keys[i]+'</strong></td><td>'+stepTags+'</td></tr>';
+    }
+    tbody.innerHTML = html;
+})();
+
+// 谈判采购
+(function(){
+    var list = document.getElementById('negoList');
+    var html = '';
+    for(var i=0;i<NEGOTIATION_CONDITIONS.length;i++){
+        var c = NEGOTIATION_CONDITIONS[i];
+        html += '<li><span class="cond-id">'+(i+1)+'</span><strong>'+c.label+'</strong><br><span class="text-muted text-sm">'+c.desc+'</span></li>';
+    }
+    list.innerHTML = html;
+})();
+
+// 直接采购
+(function(){
+    var tbody = document.getElementById('dpList');
+    var html = '';
+    for(var i=0;i<DIRECT_PURCHASE_CONDITIONS.length;i++){
+        var c = DIRECT_PURCHASE_CONDITIONS[i];
+        var tagCls = c.isAmount ? 'tag-green' : (c.id==='D6'?'tag-orange':'tag-red');
+        var tagText = c.isAmount ? '金额触发' : (c.id==='D6'?'紧急触发':(c.id==='D7'?'政策触发':'人工判定'));
+        html += '<tr><td>'+(i+1)+'</td><td><strong>'+c.label+'</strong></td><td class="text-sm text-muted">'+c.desc+'</td><td><span class="tag '+tagCls+'">'+tagText+'</span></td></tr>';
+    }
+    tbody.innerHTML = html;
+})();
+</script>
+</body>
+</html>
