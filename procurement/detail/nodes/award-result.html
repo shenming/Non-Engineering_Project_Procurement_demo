@@ -19,6 +19,15 @@ body.content-page { padding: 16px; }
 .action-btn-group .icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid var(--gray-300); border-radius: 4px; background: #fff; cursor: pointer; font-size: 13px; color: var(--gray-600); }
 .action-btn-group .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .attach-empty { text-align: center; padding: 24px 16px; color: var(--gray-400); font-size: 13px; }
+.supplier-modal-overlay { position: fixed; top:0;left:0;right:0;bottom:0; background: rgba(0,0,0,0.4); display:flex;align-items:center;justify-content:center;z-index:1000; }
+.supplier-modal { background:#fff; border-radius:8px; max-width:600px; width:90%; max-height:80vh; overflow-y:auto; box-shadow:0 8px 32px rgba(0,0,0,0.2); }
+.supplier-modal .modal-header { padding:16px 20px; border-bottom:1px solid var(--gray-200); font-size:15px; font-weight:600; display:flex; justify-content:space-between; }
+.supplier-modal .modal-body { padding:16px 20px; }
+.supplier-modal .modal-footer { padding:12px 20px; border-top:1px solid var(--gray-200); text-align:right; }
+.supply-tbl { width:100%; border-collapse:collapse; font-size:12px; }
+.supply-tbl th { text-align:left; padding:6px 8px; background:var(--gray-50); border-bottom:1px solid var(--gray-200); }
+.supply-tbl td { padding:4px 8px; border-bottom:1px solid var(--gray-100); }
+.supply-tbl input { width:100%; box-sizing:border-box; padding:4px 6px; border:1px solid var(--gray-300); border-radius:3px; font-size:12px; }
 </style>
 </head>
 <body class="content-page">
@@ -41,7 +50,7 @@ body.content-page { padding: 16px; }
   <div class="card-header"><h3>📦 定标标段明细</h3></div>
   <div class="card-body" style="padding:0;">
     <div class="sub-table-wrap">
-      <table><thead><tr><th style="width:36px;"></th><th>招采计划编号</th><th>行号</th><th>招采目标</th><th>定标编号</th><th>招标采购名称</th><th>标段号</th><th>招采限额</th><th>中标金额(元)</th><th>中标单位编号</th><th>中标单位名称</th><th>中标日期</th><th>其他供应商</th></tr></thead>
+      <table><thead><tr><th style="width:36px;"></th><th>招采计划编号</th><th>行号</th><th>招采目标</th><th>定标编号</th><th>招标采购名称</th><th>标段号</th><th>招采限额(元)</th><th>中标金额(元)</th><th>中标单位编号</th><th>中标单位名称</th><th>中标日期</th><th>其他供应商</th></tr></thead>
         <tbody id="sectionBody"></tbody>
       </table>
     </div>
@@ -105,55 +114,95 @@ body.content-page { padding: 16px; }
     })();
 </script>
 <script>
-(function(){function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');if(!d||!d[m]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted">暂无数据</p></div>';return}var nd=d[m].nodes[s],f=nd.form||{};if(d[m].info&&d[m].info.projectName)document.getElementById('pageMainTitle').textContent=d[m].info.projectName+' 定标结果';document.getElementById('spanApplyCode').textContent=f.applyCode||'';document.getElementById('spanUnit').textContent=f.unit||'';document.getElementById('resultNote').value=f.resultNote||'';var st=document.getElementById('statusTag'),sv=f.approvalStatus||'审批中';st.textContent=sv;st.className='tag '+(sv==='审批通过'?'tag-green':sv==='审批中'?'tag-yellow':'tag-gray');var secs=nd.sections||[],stb=document.getElementById('sectionBody'),sh='';for(var i=0;i<secs.length;i++){var sc=secs[i];sh+='<tr data-sid="'+sc.id+'" style="cursor:pointer;" onclick="selectSection(this)"><td style="text-align:center;"><input type="radio" name="sRad" style="pointer-events:none;"'+(i===0?' checked':'')+'></td><td>'+sc.planCode+'</td><td>'+sc.lineNo+'</td><td><strong>'+sc.target+'</strong></td><td>'+sc.awardCode+'</td><td>'+sc.purchaseName+'</td><td>'+sc.sectionNo+'</td><td><span class="money">¥'+(sc.limitAmount/10000).toFixed(2)+'万</span></td><td>'+sc.winAmount.toLocaleString()+'</td><td>'+sc.supplierCode+'</td><td>'+sc.supplierName+'</td><td>'+sc.winDate+'</td><td><span class="supplier-expand" onclick="event.stopPropagation();alert(\''+(sc.otherSuppliers?sc.otherSuppliers.map(function(x){return x.code+' - '+x.name}).join('\\n'):'无')+'\')">展开</span></td></tr>'}stb.innerHTML=sh;// 所有标段附件合并展示，不联动
-var ats=nd.attachments||{},tb=document.getElementById('attachBody'),ee=document.getElementById('attachEmpty');
-var _editable = (a.mode==='edit');
-try { var _es = JSON.parse(sessionStorage.getItem('editEditableSteps') || '{}'); _editable = _editable && _es && _es[m] && _es[m][s]===true; } catch(e){ _editable=false; }
-var _d = _editable ? '' : ' disabled';
-var allAtts=[];
-if(Array.isArray(ats)){
-  // 直接是数组
-  allAtts = ats;
-} else if(typeof ats==='object' && ats!==null){
-  // 按 section id 分组对象，摊平
-  for(var _k in ats){
-    if(ats.hasOwnProperty(_k) && Array.isArray(ats[_k])){
-      allAtts = allAtts.concat(ats[_k]);
+(function(){
+    function g(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}
+    var a=g(),m=a.method||'公开招标',s=parseInt(a.step)||0,d=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');
+    if(!d||!d[m]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted">暂无数据</p></div>';return}
+    var nd=d[m].nodes[s],f=nd.form||{};
+    if(d[m].info&&d[m].info.projectName) document.getElementById('pageMainTitle').textContent=d[m].info.projectName+' 定标结果';
+    document.getElementById('spanApplyCode').textContent=f.applyCode||'';
+    document.getElementById('spanUnit').textContent=f.unit||'';
+    document.getElementById('resultNote').value=f.resultNote||'';
+    var st=document.getElementById('statusTag'),sv=f.approvalStatus||'审批中';
+    st.textContent=sv;st.className='tag '+(sv==='审批通过'?'tag-green':sv==='审批中'?'tag-yellow':'tag-gray');
+    var _editable = (a.mode==='edit');
+    try{var _es=JSON.parse(sessionStorage.getItem('editEditableSteps')||'{}');_editable=_editable&&_es&&_es[m]&&_es[m][s]===true;}catch(e){_editable=false;}
+    // 客商库
+    var SUPPLIER_MAP={
+        'GYS-001':'北京金牌物业服务有限公司','GYS-010':'上海华讯网络系统有限公司','GYS-011':'北京神州数码有限公司',
+        'GYS-012':'深圳华为技术有限公司','GYS-015':'杭州海康威视数字技术股份有限公司','GYS-016':'浙江大华技术股份有限公司',
+        'GYS-018':'北京浪潮电子信息产业有限公司','GYS-019':'联想（北京）信息技术有限公司','GYS-020':'中科曙光信息产业股份有限公司',
+        'GYS-022':'新华三技术有限公司','GYS-023':'锐捷网络股份有限公司','GYS-030':'上海安保通智能科技有限公司',
+        'GYS-031':'北京中科弱电工程有限公司','GYS-032':'深圳达实智能股份有限公司','GYS-040':'北京XX律师事务所',
+        'GYS-050':'上海晨光办公用品有限公司','GYS-051':'北京齐心办公用品有限公司'
+    };
+    var secs=nd.sections||[],stb=document.getElementById('sectionBody'),sh='';
+    window._awardSecs=secs;
+    for(var i=0;i<secs.length;i++){
+        var sc=secs[i];
+        var limitTd='<span class="money">¥'+(sc.limitAmount||0).toLocaleString()+'</span>';
+        var winAmtTd=_editable?'<input type="number" class="form-control" style="width:90px;height:28px;font-size:12px;" value="'+(sc.winAmount||0)+'" onchange="window._awardSecs['+i+'].winAmount=parseFloat(this.value)||0">':'<span class="money">'+(sc.winAmount||0).toLocaleString()+'</span>';
+        var supCodeTd=_editable?'<input class="form-control" style="width:80px;height:28px;font-size:12px;" value="'+(sc.supplierCode||'')+'" onchange="var n=SUPPLIER_MAP[this.value.trim()];if(n){window._awardSecs['+i+'].supplierName=n;var r=this.closest(\'tr\');if(r&&r.cells[11])r.cells[11].textContent=n;}window._awardSecs['+i+'].supplierCode=this.value.trim();">':(sc.supplierCode||'');
+        var supNameTd=_editable?'<input class="form-control" style="width:100px;height:28px;font-size:12px;" value="'+(sc.supplierName||'')+'" onchange="window._awardSecs['+i+'].supplierName=this.value">':(sc.supplierName||'');
+        var winDateTd=_editable?'<input type="date" class="form-control" style="width:110px;height:28px;font-size:12px;" value="'+(sc.winDate||'')+'" onchange="window._awardSecs['+i+'].winDate=this.value">':(sc.winDate||'');
+        var otherSupTd=_editable?'<button class="btn btn-xs btn-outline" onclick="event.stopPropagation();openSupModal('+i+')">管理</button>':'<span class="supplier-expand" onclick="event.stopPropagation();alert(\''+(sc.otherSuppliers?sc.otherSuppliers.map(function(x){return x.code+' - '+x.name}).join('\\n'):'无')+'\')">展开</span>';
+        sh+='<tr data-sid="'+sc.id+'" style="cursor:pointer;" onclick="selectSection(this)"><td style="text-align:center;"><input type="radio" name="sRad" style="pointer-events:none;"'+(i===0?' checked':'')+'></td><td>'+sc.planCode+'</td><td>'+sc.lineNo+'</td><td><strong>'+sc.target+'</strong></td><td>'+sc.awardCode+'</td><td>'+sc.purchaseName+'</td><td>'+sc.sectionNo+'</td><td>'+limitTd+'</td><td>'+winAmtTd+'</td><td>'+supCodeTd+'</td><td>'+supNameTd+'</td><td>'+winDateTd+'</td><td>'+otherSupTd+'</td></tr>';
     }
-  }
-}
-var ah='';
-for(var i=0;i<allAtts.length;i++){
-  var o=allAtts[i];
-  ah+='<tr><td><span class="op-icon'+_d+'">📤</span><span class="op-icon'+_d+'">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'📥 下载\')">📥</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.comp||'')+'</td><td style="font-family:monospace;font-size:10px;">'+(o.fileId||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.user||'')+'</td></tr>';
-}
-tb.innerHTML=ah||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
-if(ee) ee.style.display='none';
-// selectSection 仅保留选中样式，不再联动附件
-window.selectSection=function(row){
-  document.querySelectorAll('#sectionBody tr').forEach(function(r){r.classList.remove('selected')});
-  row.classList.add('selected');
-  row.querySelector('input[type="radio"]').checked=true;
-};
-
-// ===== 编辑模式：页面级控制 =====
-if (a.mode === 'edit') {
-    try { var es = JSON.parse(sessionStorage.getItem('editEditableSteps') || '{}'); } catch(e) {}
-    if (es && es[m] && es[m][s] === true) {
-        document.querySelectorAll('input,select,textarea').forEach(function(el) {
-            el.disabled = false;
-            el.readOnly = false;
-            el.style.background = '';
-            el.style.color = '';
-            el.style.cursor = '';
-        });
-        document.querySelectorAll('.op-icon').forEach(function(el) { el.classList.remove('disabled'); });
+    stb.innerHTML=sh;
+    // 其他供应商管理弹窗
+    window.openSupModal=function(idx){
+        if(!secs[idx])return;
+        var data=secs[idx].otherSuppliers||[];
+        var overlay=document.createElement('div');
+        overlay.className='supplier-modal-overlay';
+        overlay.innerHTML='<div class="supplier-modal"><div class="modal-header"><span>管理其他供应商</span><button class="btn btn-xs" onclick="this.closest(\'.supplier-modal-overlay\').remove()">✕</button></div>'
+            +'<div class="modal-body"><table class="supply-tbl"><thead><tr><th>单位编号</th><th>单位名称</th><th style="width:50px;"></th></tr></thead><tbody id="supTbody"></tbody></table>'
+            +'<button class="btn btn-xs btn-outline" style="margin-top:8px;" onclick="addSupRow()">＋ 新增</button></div>'
+            +'<div class="modal-footer"><button class="btn btn-sm btn-outline" onclick="saveSup('+idx+')">确认</button></div></div>';
+        document.body.appendChild(overlay);
+        window._supData=data.slice();
+        renderSupTbl();
+    };
+    window.renderSupTbl=function(){
+        var tb=document.getElementById('supTbody');if(!tb)return;
+        var h='';
+        for(var i=0;i<_supData.length;i++){
+            h+='<tr><td><input value="'+(_supData[i].code||'')+'" onchange="_supData['+i+'].code=this.value"></td>'
+                +'<td><input value="'+(_supData[i].name||'')+'" onchange="_supData['+i+'].name=this.value"></td>'
+                +'<td><button class="btn btn-xs btn-danger" onclick="_supData.splice('+i+',1);renderSupTbl()">🗑</button></td></tr>';
+        }
+        tb.innerHTML=h;
+    };
+    window.addSupRow=function(){_supData.push({code:'',name:''});renderSupTbl();};
+    window.saveSup=function(idx){
+        if(secs[idx])secs[idx].otherSuppliers=_supData;
+        document.querySelector('.supplier-modal-overlay').remove();
+    };
+    // 附件
+    var ats=nd.attachments||{},tb=document.getElementById('attachBody'),ee=document.getElementById('attachEmpty');
+    var _d=_editable?'':' disabled';
+    var allAtts=[];
+    if(Array.isArray(ats)){allAtts=ats;
+    }else if(typeof ats==='object'&&ats!==null){
+        for(var _k in ats){if(ats.hasOwnProperty(_k)&&Array.isArray(ats[_k])){allAtts=allAtts.concat(ats[_k]);}}
     }
-}
+    var ah='';
+    for(var i=0;i<allAtts.length;i++){var o=allAtts[i];
+        ah+='<tr><td><span class="op-icon'+_d+'">📤</span><span class="op-icon'+_d+'">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'📥 下载\')">📥</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.comp||'')+'</td><td style="font-family:monospace;font-size:10px;">'+(o.fileId||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.user||'')+'</td></tr>';
+    }
+    tb.innerHTML=ah||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
+    if(ee)ee.style.display='none';
+    window.selectSection=function(row){
+        document.querySelectorAll('#sectionBody tr').forEach(function(r){r.classList.remove('selected')});
+        row.classList.add('selected');row.querySelector('input[type="radio"]').checked=true;
+    };
+    if(_editable){
+        document.querySelectorAll('input,select,textarea').forEach(function(el){el.disabled=false;el.readOnly=false;el.style.background='';el.style.color='';el.style.cursor='';});
+        document.querySelectorAll('.op-icon').forEach(function(el){el.classList.remove('disabled');});
+    }
 })();
 </script>
 <script>
-    // ===== 监听父页面 postMessage 推送数据（兼容 file:// 协议）=====
     window.addEventListener('message', function(e) {
         if (e.data && e.data.type === 'editData') {
             var pd = JSON.parse(sessionStorage.getItem('procNodeData') || '{}');
@@ -164,7 +213,6 @@ if (a.mode === 'edit') {
             if (!es || Object.keys(es).length === 0) {
                 try { sessionStorage.setItem('editEditableSteps', JSON.stringify(e.data.editEditableSteps)); } catch(e2) {}
             }
-            // 重新加载本页面数据
             if (typeof window.reloadNodeData === 'function') window.reloadNodeData();
             else if (typeof location !== 'undefined') location.reload();
         }
