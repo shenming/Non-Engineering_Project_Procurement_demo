@@ -19,9 +19,6 @@
         'dashboard':    { file: 'dashboard/index.html',      title: '仪表盘' },
         'plans':        { file: 'plans/list.html',           title: '采购计划' },
         'procurement':  { file: 'procurement/list.html',     title: '采购过程' },
-        'supplementary':{ file: 'supplementary/list.html',   title: '补充招标' },
-        'abandonment':  { file: 'abandonment/list.html',     title: '流标/弃标' },
-        'collective':   { file: 'collective/list.html',      title: '联合采购' },
         'reports':      { file: 'reports/overview.html',     title: '报表管理' },
         'settings':     { file: 'settings/overview.html',    title: '配置管理' }
     };
@@ -140,9 +137,6 @@ function navTo(module, file) {
             'dashboard': 'dashboard/index.html',
             'plans': 'plans/list.html',
             'procurement': 'procurement/list.html',
-            'supplementary': 'supplementary/list.html',
-            'abandonment': 'abandonment/list.html',
-            'collective': 'collective/list.html',
             'reports': 'reports/overview.html',
             'settings': 'settings/overview.html'
         };
