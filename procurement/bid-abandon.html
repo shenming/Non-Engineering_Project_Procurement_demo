@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../common/styles.css">
+    <style>
+        body.content-page { padding: 0; }
+        .info-card { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+        .info-card .card-header { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+        .info-card .card-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
+        .info-card .card-body { padding: 16px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 4px; }
+        .form-group:last-child { margin-bottom: 0; }
+        .form-control[readonly], .form-control:disabled { background: var(--gray-50); color: var(--gray-600); cursor: not-allowed; }
+        .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .info-item { display: flex; flex-direction: column; }
+        .info-item .label { font-size: 12px; color: var(--gray-500); margin-bottom: 2px; }
+        .info-item .value { font-size: 13px; font-weight: 500; color: var(--gray-800); }
+        .field-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .field-table th { text-align: left; padding: 6px 10px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); width: 140px; }
+        .field-table td { padding: 6px 10px; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+        .attach-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .attach-table th { text-align: left; padding: 6px 8px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); font-size: 11px; white-space: nowrap; }
+        .attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
+        .abandon-type-select { display: flex; gap: 12px; margin-bottom: 12px; }
+        .abandon-type-select label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; font-weight: 500; padding: 8px 16px; border: 2px solid var(--gray-200); border-radius: var(--radius); }
+        .abandon-type-select label.selected { border-color: var(--danger); background: #fef2f2; color: var(--danger); }
+        .abandon-type-select input[type="radio"] { accent-color: var(--danger); }
+        textarea.form-control { resize: vertical; }
+    </style>
+</head>
+<body class="content-page">
+
+<div class="sub-navbar">
+    <button class="btn btn-sm btn-outline" onclick="navTo('procurement')" style="margin-right:8px;">← 返回列表</button>
+    <span class="sub-nav-title">🏳 弃标流标申请</span>
+    <span class="breadcrumb">
+        <a onclick="navTo('procurement')">采购过程列表</a><span> › </span>
+        <span>弃标流标：</span><span id="breadProject">—</span>
+    </span>
+</div>
+
+<div class="alert alert-warning">
+    <span>⚠️</span>
+    <div>
+        <strong>注意：</strong>提交弃标流标审核后，该招采申请状态将置为<strong>弃标/流标</strong>，关联的采购计划将恢复为<strong>未引用</strong>状态，可重新发起招采申请。此操作不可撤销，请谨慎处理。
+    </div>
+</div>
+
+<!-- 卡1：招采信息（只读） -->
+<div class="info-card">
+    <div class="card-header"><h3>📋 招采信息</h3></div>
+    <div class="card-body">
+        <table class="field-table">
+            <tbody id="infoTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 卡2：采购明细（只读） -->
+<div class="info-card" id="purchaseCard" style="display:none;">
+    <div class="card-header"><h3>📋 采购明细</h3></div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap"><table>
+            <thead><tr><th>招标采购项名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th></tr></thead>
+            <tbody id="purchaseBody"></tbody>
+        </table></div>
+    </div>
+</div>
+
+<!-- 卡3：标段明细（只读） -->
+<div class="info-card" id="sectionCard" style="display:none;">
+    <div class="card-header"><h3>📋 标段明细</h3></div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap"><table>
+            <thead><tr><th>招标采购项名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段号</th><th>招采品类</th><th>二级品类</th><th>招采目标</th></tr></thead>
+            <tbody id="sectionBody"></tbody>
+        </table></div>
+    </div>
+</div>
+
+<!-- 卡4：附件管理（只读） -->
+<div class="info-card" id="attachCard" style="display:none;">
+    <div class="card-header"><h3>📎 附件管理</h3></div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table class="attach-table">
+                <thead><tr><th>附件类型</th><th>附件文档名称</th><th>文件名（下载）</th><th>文件 ID</th><th>文件类型</th><th>文件大小（字节）</th><th>时戳</th><th>用户名</th></tr></thead>
+                <tbody id="attachBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 卡5：弃标流标原因 -->
+<div class="info-card">
+    <div class="card-header"><h3>📝 弃标流标原因</h3></div>
+    <div class="card-body">
+        <div class="abandon-type-select" id="abandonTypeSelect">
+            <label onclick="selectAbandonType(this, '弃标')">
+                <input type="radio" name="abandonType" value="弃标"> 🏳 弃标
+            </label>
+            <label onclick="selectAbandonType(this, '流标')">
+                <input type="radio" name="abandonType" value="流标"> 🌊 流标
+            </label>
+        </div>
+        <div class="form-group">
+            <label>弃标/流标原因 <span style="color:var(--danger);">*</span></label>
+            <textarea class="form-control" id="abandonReason" rows="5" placeholder="请输入弃标或流标的具体原因..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>附件（弃标/流标证明材料）</label>
+            <input class="form-control" type="file" multiple>
+            <span class="text-xs text-muted" style="display:block;margin-top:4px;">可上传相关证明文件（如：弃标函、流标说明、会议纪要等）</span>
+        </div>
+    </div>
+</div>
+
+<div class="flex-between" style="padding:12px 0;border-top:1px solid var(--gray-200);margin-top:12px;">
+    <span></span>
+    <div class="flex gap-8">
+        <button class="btn btn-outline" onclick="navTo('procurement')">取消</button>
+        <button class="btn btn-danger" onclick="submitAbandon()">📤 提交审核</button>
+    </div>
+</div>
+
+<script src="../common/scripts.js"></script>
+<script src="../common/data.js"></script>
+<script src="detail/data.js"></script>
+<script>
+// ========== 初始化：从 sessionStorage 读取选中数据 ==========
+var procData = null;
+try { procData = JSON.parse(sessionStorage.getItem('abandonProcData') || 'null'); } catch(e) {}
+if (!procData) {
+    document.body.innerHTML = '<div class="content-page"><div class="alert alert-warning"><span>⚠️</span><div>未选择采购申请，请从<a onclick="navTo(\'procurement\')" style="cursor:pointer;color:var(--primary);text-decoration:underline;">采购过程列表</a>中选择。</div></div></div>';
+}
+
+(function init() {
+    if (!procData) return;
+
+    // 面包屑
+    document.getElementById('breadProject').textContent = procData.projectName || '—';
+
+    // 渲染招采信息（从 DETAIL_DATA 读取 node0 form）
+    var methodKey = procData.methodKey || procData.method;
+    var dal = DETAIL_DATA[methodKey];
+    var form = (dal && dal.nodes && dal.nodes[0] && dal.nodes[0].form) ? dal.nodes[0].form : null;
+
+    var infoHtml = '';
+    if (form) {
+        var fields = [
+            { label: '招标过程编号', value: form.procCode || '—' },
+            { label: '招标过程名称', value: form.procName || '—' },
+            { label: '公司编号', value: form.companyCode || '—' },
+            { label: '招采限额', value: form.limitAmountText || '—' },
+            { label: '招标方式', value: form.method || '—' },
+            { label: '招采类型', value: form.category || '—' },
+            { label: '采购项说明', value: form.note || '—' },
+            { label: '经办人', value: form.handler || '—' },
+            { label: '申请日期', value: form.applyDate || '—' },
+            { label: '招标代理机构', value: form.agent || '—' },
+            { label: '拟发标日期', value: form.planIssueDate || '—' },
+            { label: '招标预计完成日期', value: form.planEndDate || '—' },
+            { label: '是否进场招标', value: form.inHouse || '—' },
+            { label: '审批状态', value: form.approvalStatus || '—' }
+        ];
+        for (var i = 0; i < fields.length; i += 2) {
+            infoHtml += '<tr>';
+            infoHtml += '<th>' + fields[i].label + '</th><td>' + fields[i].value + '</td>';
+            if (i + 1 < fields.length) {
+                infoHtml += '<th>' + fields[i+1].label + '</th><td>' + fields[i+1].value + '</td>';
+            } else {
+                infoHtml += '<th></th><td></td>';
+            }
+            infoHtml += '</tr>';
+        }
+        // 招标范围单独一行
+        infoHtml += '<tr><th>招标范围及相关说明</th><td colspan="3">' + (form.scope || '—') + '</td></tr>';
+    } else {
+        infoHtml = '<tr><td colspan="4" class="text-muted" style="text-align:center;padding:20px;">暂无招采信息数据</td></tr>';
+    }
+    document.getElementById('infoTableBody').innerHTML = infoHtml;
+
+    // 渲染采购明细
+    var purchases = (dal && dal.nodes && dal.nodes[0] && dal.nodes[0].purchases) ? dal.nodes[0].purchases : [];
+    if (purchases.length > 0) {
+        document.getElementById('purchaseCard').style.display = '';
+        var ph = '';
+        purchases.forEach(function(p) {
+            ph += '<tr><td>' + p.name + '</td><td>' + p.planCode + '</td><td>' + p.lineNo + '</td><td>' + p.purchaseName + '</td>';
+            ph += '<td><span class="money">' + (p.amountText || ('¥' + (p.amount || 0).toLocaleString())) + '</span></td>';
+            ph += '<td>' + p.sections + '</td><td>' + p.cat + '</td><td>' + p.subCat + '</td><td>' + p.target + '</td></tr>';
+        });
+        document.getElementById('purchaseBody').innerHTML = ph;
+    }
+
+    // 渲染标段明细
+    var sectionData = (dal && dal.nodes && dal.nodes[0] && dal.nodes[0].sectionData) ? dal.nodes[0].sectionData : {};
+    var allSections = [];
+    for (var idx in sectionData) {
+        var secs = sectionData[idx] || [];
+        secs.forEach(function(s) { allSections.push(s); });
+    }
+    if (allSections.length > 0) {
+        document.getElementById('sectionCard').style.display = '';
+        var sh = '';
+        allSections.forEach(function(s) {
+            sh += '<tr><td>' + (s.name || '') + '</td><td>' + (s.planCode || '') + '</td><td>' + (s.planRow || '') + '</td><td>' + (s.purchaseName || '') + '</td>';
+            sh += '<td><span class="money">¥' + ((s.amount || 0).toLocaleString()) + '</span></td>';
+            sh += '<td>' + (s.sectionNo || '') + '</td><td>' + (s.cat || '') + '</td><td>' + (s.subCat || '') + '</td><td>' + (s.target || '') + '</td></tr>';
+        });
+        document.getElementById('sectionBody').innerHTML = sh;
+    }
+
+    // 渲染附件
+    var attachments = (dal && dal.nodes && dal.nodes[0] && dal.nodes[0].attachments) ? dal.nodes[0].attachments : [];
+    if (attachments.length > 0) {
+        document.getElementById('attachCard').style.display = '';
+        var ah = '';
+        attachments.forEach(function(o) {
+            ah += '<tr><td>' + (o.type || '') + '</td><td>' + (o.name || '') + '</td><td>' + (o.file || '') + '</td>';
+            ah += '<td style="font-family:monospace;font-size:10px;">' + (o.fileId || '') + '</td>';
+            ah += '<td>' + (o.fileType || '') + '</td><td style="text-align:right;">' + (o.size || '') + '</td>';
+            ah += '<td>' + (o.ts || '') + '</td><td>' + (o.user || '') + '</td></tr>';
+        });
+        document.getElementById('attachBody').innerHTML = ah;
+    }
+})();
+
+// ========== 弃标/流标类型选择 ==========
+function selectAbandonType(labelEl, type) {
+    var allLabels = document.querySelectorAll('#abandonTypeSelect label');
+    allLabels.forEach(function(l) { l.classList.remove('selected'); });
+    labelEl.classList.add('selected');
+    labelEl.querySelector('input[type="radio"]').checked = true;
+}
+
+// ========== 共享引用状态（与 list.html 共用 sessionStorage key）==========
+function getRefStatusMap() {
+    try { return JSON.parse(sessionStorage.getItem('planItemRefStatus') || '{}'); } catch(e) { return {}; }
+}
+function setRefStatusMap(map) {
+    sessionStorage.setItem('planItemRefStatus', JSON.stringify(map));
+}
+
+// ========== 提交弃标流标 ==========
+function submitAbandon() {
+    if (!procData) { showAlert('⚠️ 未选择采购申请，无法提交。'); return; }
+
+    // 校验弃标/流标类型
+    var typeRadio = document.querySelector('input[name="abandonType"]:checked');
+    if (!typeRadio) { showAlert('⚠️ 请选择弃标或流标类型。'); return; }
+    var abandonType = typeRadio.value;
+
+    // 校验原因
+    var reason = document.getElementById('abandonReason').value.trim();
+    if (!reason) { showAlert('⚠️ 请填写弃标/流标原因。'); return; }
+
+    if (!confirm('确认提交「' + abandonType + '」申请？\n\n采购编号：' + procData.id + '\n项目名称：' + procData.projectName + '\n\n提交后该招采申请状态将置为「' + abandonType + '」，关联采购计划恢复未引用。')) return;
+
+    // 更新 DETAIL_DATA 状态
+    var methodKey = procData.methodKey || procData.method;
+    if (typeof DETAIL_DATA !== 'undefined' && DETAIL_DATA[methodKey] && DETAIL_DATA[methodKey].info) {
+        DETAIL_DATA[methodKey].info.status = abandonType;
+        DETAIL_DATA[methodKey].info.statusTag = 'tag-gray';
+    }
+
+    // 更新采购计划引用状态为未引用
+    var planItemId = procData.planItemId;
+    if (planItemId) {
+        var map = getRefStatusMap();
+        map[planItemId] = '未引用';
+        setRefStatusMap(map);
+    }
+
+    showAlert('✅ 弃标流标申请已提交审核！\n\n' + procData.id + ' 状态已置为「' + abandonType + '」，关联采购计划已恢复为未引用状态。');
+    navTo('procurement');
+}
+</script>
+</body>
+</html>
