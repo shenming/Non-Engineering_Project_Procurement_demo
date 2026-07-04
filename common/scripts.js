@@ -144,6 +144,11 @@ function navTo(module, file) {
             'reports': 'reports/overview.html',
             'settings': 'settings/overview.html'
         };
+        // 补充分页路由
+        var subPageMap = {
+            'application/create/index.html': 'application/create/index.html',
+            'application/collective-create/index.html': 'application/collective-create/index.html',
+        };
         if (file) {
             window.location.href = '../' + file;
         } else if (pageMap[module]) {
