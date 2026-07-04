@@ -34,10 +34,10 @@
 <body class="content-page">
 
 <div class="sub-navbar">
-    <button class="btn btn-sm btn-outline" onclick="navTo('procurement')" style="margin-right:8px;">← 返回列表</button>
+    <button class="btn btn-sm btn-outline" onclick="navTo('abandonment')" style="margin-right:8px;">← 返回列表</button>
     <span class="sub-nav-title">🏳 弃标流标申请</span>
     <span class="breadcrumb">
-        <a onclick="navTo('procurement')">采购过程列表</a><span> › </span>
+        <a onclick="navTo('abandonment')">流标/弃标</a><span> › </span>
         <span>弃标流标：</span><span id="breadProject">—</span>
     </span>
 </div>
@@ -128,7 +128,7 @@
 
 <script src="../common/scripts.js"></script>
 <script src="../common/data.js"></script>
-<script src="detail/data.js"></script>
+<script src="../procurement/detail/data.js"></script>
 <script>
 // ========== 初始化：从 sessionStorage 读取选中数据 ==========
 var procData = null;
@@ -276,7 +276,7 @@ function submitAbandon() {
     }
 
     showAlert('✅ 弃标流标申请已提交审核！\n\n' + procData.id + ' 状态已置为「' + abandonType + '」，关联采购计划已恢复为未引用状态。');
-    navTo('procurement');
+    navTo('abandonment');
 }
 </script>
 </body>
