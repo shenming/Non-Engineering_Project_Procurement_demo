@@ -206,9 +206,8 @@ function switchTab(tabId, btn) {
 function updateNavButtons() {
     var steps = cfg.steps;
     document.getElementById('prevBtn').disabled = (selectedStep === 0);
-    var activeIdx = -1;
-    for (var i = 0; i < steps.length; i++) { if (steps[i].state === 'active') activeIdx = i; }
-    document.getElementById('nextBtn').disabled = (selectedStep >= activeIdx || selectedStep >= steps.length - 1);
+    var nextStep = selectedStep + 1;
+    document.getElementById('nextBtn').disabled = (nextStep >= steps.length || steps[nextStep].state === 'future');
 }
 
 function draftProcurement() {
