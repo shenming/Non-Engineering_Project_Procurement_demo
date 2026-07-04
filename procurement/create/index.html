@@ -245,7 +245,7 @@ function saveProcurement() {
             projectName: document.getElementById('infoTitle').textContent.replace('✏️ ', '')
         };
         try { sessionStorage.setItem('procurementViewContext', JSON.stringify(ctx)); } catch(e) {}
-        navTo('procurement');
+        navTo('procurement', 'procurement/detail/index.html');
     }
 
     // 发送校验消息到 iframe

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../common/styles.css">
+    <style>
+        .plan-table tr { cursor: pointer; }
+        .plan-table tr.selected { background: var(--primary-50, #eef2ff); }
+        .plan-table tr:hover { background: var(--gray-50); }
+        .plan-table tr.selected:hover { background: var(--primary-50, #eef2ff); }
+        .plan-table td { vertical-align: middle; }
+        .text-xs { font-size: 11px; }
+    </style>
+</head>
+<body class="content-page">
+
+<div class="sub-navbar">
+    <span class="sub-nav-title">📝 招采申请</span>
+    <span class="text-muted text-sm" style="margin-left:12px;">从采购计划中选择项目发起招采</span>
+</div>
+
+<div class="flex-between mb-16">
+    <span class="text-muted text-sm">共 <strong id="totalPlanCount">0</strong> 条可发起申请的计划项</span>
+    <div class="flex gap-8">
+        <button class="btn btn-primary" onclick="confirmSelection()">确认并创建招采 →</button>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:16px;">
+    <div class="card-body" style="padding:12px 20px;">
+        <div class="flex gap-12" style="flex-wrap:wrap;align-items:center;">
+            <input class="form-control form-control-sm" id="searchPlanId" placeholder="搜索计划编号..." style="width:200px;" oninput="filterItems()">
+            <input class="form-control form-control-sm" id="searchContent" placeholder="搜索采购内容..." style="width:200px;" oninput="filterItems()">
+            <select class="form-control form-control-sm" id="filterUnit" style="width:auto;min-width:120px;" onchange="filterItems()">
+                <option value="all">全部单位</option>
+                <option value="集团总部">集团总部</option>
+                <option value="成员企业A">成员企业A</option>
+                <option value="成员企业B">成员企业B</option>
+            </select>
+            <select class="form-control form-control-sm" id="filterMethod" style="width:auto;min-width:130px;" onchange="filterItems()">
+                <option value="all">全部方式</option>
+                <option value="公开招标">公开招标</option>
+                <option value="邀请招标">邀请招标</option>
+                <option value="询比采购">询比采购</option>
+                <option value="谈判采购">谈判采购</option>
+                <option value="直接采购">直接采购</option>
+            </select>
+            <button class="btn btn-sm btn-outline" onclick="resetFilters()">重置</button>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table class="plan-table">
+                <thead>
+                    <tr>
+                        <th style="width:40px;">选择</th>
+                        <th>采购计划编号</th>
+                        <th>采购内容</th>
+                        <th>所属单位</th>
+                        <th>招采品类</th>
+                        <th>采购方式</th>
+                        <th>采购项说明</th>
+                        <th>采购金额（万元）</th>
+                        <th>采购限额（万元）</th>
+                        <th>经办人</th>
+                    </tr>
+                </thead>
+                <tbody id="planItemTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="../common/scripts.js"></script>
+<script>
+var PLAN_ITEMS = [
+    { id: 'PL-2026-0001-1', planId: 'PL-2026-0001', planName: '2026年度成员企业A采购计划', content: '年度法律顾问服务', unit: '成员企业A', cat: '服务类 · 法律服务', method: '直接采购', note: '涉密/商业秘密', amount: 15.0, limit: 12.0, handler: '张明', lineNo: '001', purchaseName: '年度法律顾问服务', subCat: '法律服务' },
+    { id: 'PL-2026-0002-1', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '集团年度物业服务', unit: '集团总部', cat: '服务类 · 物业服务', method: '公开招标', note: '', amount: 186.5, limit: 180.0, handler: '李经理', lineNo: '001', purchaseName: '集团年度物业服务', subCat: '物业服务' },
+    { id: 'PL-2026-0002-2', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '生产设备维护服务', unit: '集团总部', cat: '服务类 · 维护服务', method: '邀请招标', note: '', amount: 67.0, limit: 67.0, handler: '赵岩', lineNo: '002', purchaseName: '生产设备维护服务', subCat: '维护服务' },
+    { id: 'PL-2026-0010-1', planId: 'PL-2026-0010', planName: '2026年度成员企业B采购计划', content: 'IT设备采购', unit: '成员企业B', cat: '货物类 · IT类', method: '邀请招标', note: '', amount: 45.0, limit: 42.0, handler: '王磊', lineNo: '001', purchaseName: 'IT设备采购', subCat: 'IT类' },
+    { id: 'PL-2026-0015-1', planId: 'PL-2026-0015', planName: '2026年度成员企业A采购计划', content: '年度培训服务', unit: '成员企业A', cat: '服务类 · 培训服务', method: '询比采购', note: '', amount: 28.0, limit: 25.0, handler: '陈芳', lineNo: '001', purchaseName: '年度培训服务', subCat: '培训服务' }
+];
+
+function renderCategoryTag(cat) {
+    if (!cat) return '<span class="text-muted">—</span>';
+    var color = cat.indexOf('服务') >= 0 ? 'tag-purple' : 'tag-blue';
+    return '<span class="tag ' + color + '">' + cat + '</span>';
+}
+
+function renderItems(items) {
+    var tbody = document.getElementById('planItemTableBody');
+    var html = '';
+    items.forEach(function(item) {
+        html += '<tr onclick="toggleRow(this)" data-item="' + encodeURIComponent(JSON.stringify(item)) + '">';
+        html += '<td style="text-align:center;"><input type="checkbox" class="planCheckbox" style="pointer-events:none;"></td>';
+        html += '<td><strong>' + item.planId + '</strong><br><span class="text-xs text-muted">' + item.planName + '</span></td>';
+        html += '<td>' + item.content + '</td>';
+        html += '<td>' + item.unit + '</td>';
+        html += '<td>' + renderCategoryTag(item.cat) + '</td>';
+        html += '<td><span class="tag tag-blue">' + item.method + '</span></td>';
+        html += '<td class="text-sm">' + (item.note || '<span class="text-muted">—</span>') + '</td>';
+        html += '<td><span class="money">' + item.amount.toFixed(1) + '</span></td>';
+        html += '<td>' + item.limit.toFixed(1) + '</td>';
+        html += '<td>' + item.handler + '</td>';
+        html += '</tr>';
+    });
+    tbody.innerHTML = html || '<tr><td colspan="10" class="text-muted text-sm" style="text-align:center;padding:20px;">无匹配的记录</td></tr>';
+    document.getElementById('totalPlanCount').textContent = items.length;
+}
+
+function toggleRow(row) {
+    var cb = row.querySelector('.planCheckbox');
+    if (cb) {
+        cb.checked = !cb.checked;
+        if (cb.checked) row.classList.add('selected');
+        else row.classList.remove('selected');
+    }
+}
+
+function filterItems() {
+    var kw1 = document.getElementById('searchPlanId').value.toLowerCase();
+    var kw2 = document.getElementById('searchContent').value.toLowerCase();
+    var unit = document.getElementById('filterUnit').value;
+    var method = document.getElementById('filterMethod').value;
+    var filtered = PLAN_ITEMS.filter(function(item) {
+        return (!kw1 || item.planId.toLowerCase().indexOf(kw1) !== -1)
+            && (!kw2 || item.content.toLowerCase().indexOf(kw2) !== -1)
+            && (unit === 'all' || item.unit === unit)
+            && (method === 'all' || item.method === method);
+    });
+    renderItems(filtered);
+}
+
+function resetFilters() {
+    document.getElementById('searchPlanId').value = '';
+    document.getElementById('searchContent').value = '';
+    document.getElementById('filterUnit').value = 'all';
+    document.getElementById('filterMethod').value = 'all';
+    renderItems(PLAN_ITEMS);
+}
+
+function confirmSelection() {
+    var checkedRows = document.querySelectorAll('#planItemTableBody tr.selected');
+    if (checkedRows.length === 0) {
+        showAlert('⚠️ 请至少选择一条采购计划项。');
+        return;
+    }
+
+    var items = [];
+    checkedRows.forEach(function(row) {
+        items.push(JSON.parse(decodeURIComponent(row.getAttribute('data-item'))));
+    });
+
+    // 校验：同一公司
+    var units = items.map(function(i) { return i.unit; }).filter(function(u, idx, arr) { return arr.indexOf(u) === idx; });
+    if (units.length > 1) {
+        showAlert('⚠️ 所选采购计划项必须属于同一单位。\n当前选择了：' + units.join('、'));
+        return;
+    }
+
+    // 校验：同一采购方式
+    var methods = items.map(function(i) { return i.method; }).filter(function(m, idx, arr) { return arr.indexOf(m) === idx; });
+    if (methods.length > 1) {
+        showAlert('⚠️ 所选采购计划项必须使用同一采购方式。\n当前选择了：' + methods.join('、'));
+        return;
+    }
+
+    var method = methods[0];
+
+    // 校验：谈判采购/直接采购 采购项说明必须一致
+    if (method === '谈判采购' || method === '直接采购') {
+        var notes = items.map(function(i) { return i.note || ''; }).filter(function(n, idx, arr) { return arr.indexOf(n) === idx; });
+        if (notes.length > 1) {
+            showAlert('⚠️ ' + method + '的采购项说明必须一致。\n当前选择了：' + notes.join('、'));
+            return;
+        }
+    }
+
+    sessionStorage.setItem('selectedPlanItems', JSON.stringify(items));
+    navTo('procurement', 'procurement/create/index.html');
+}
+
+// 初始化
+renderItems(PLAN_ITEMS);
+</script>
+</body>
+</html>

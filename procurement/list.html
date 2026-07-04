@@ -16,7 +16,6 @@
     </div>
     <div class="flex gap-8">
         <button class="btn btn-sm btn-outline">📥 导出</button>
-        <button class="btn btn-sm btn-primary" onclick="openPlanSelectionModal()">＋ 发起申请</button>
         <button class="btn btn-sm btn-danger" onclick="openAbandonModal()">🏳 弃标流标</button>
     </div>
 </div>
@@ -369,118 +368,6 @@ function deleteProcurement(btn) {
 
     showAlert('🗑️ ' + procId + ' 已删除，关联招采项已恢复为未引用状态。');
     filterTable();
-}
-</script>
-
-<!-- ========== 招采项选择弹框 ========== -->
-<div id="planSelectModal" class="modal-overlay" style="display:none;">
-    <div class="modal" style="max-width:900px;">
-        <div class="modal-header">
-            <h2>📋 请选择对应的招采项</h2>
-            <button class="close" onclick="closePlanModal()">✕</button>
-        </div>
-        <div class="modal-body">
-            <div class="flex gap-12 mb-12" style="flex-wrap:wrap;">
-                <input class="form-control form-control-sm" id="searchPlanId" placeholder="采购计划编号模糊搜索..." style="width:200px;" oninput="filterPlanItems()">
-                <input class="form-control form-control-sm" id="searchContent" placeholder="采购内容模糊搜索..." style="width:200px;" oninput="filterPlanItems()">
-                <button class="btn btn-sm btn-outline" onclick="document.getElementById('searchPlanId').value='';document.getElementById('searchContent').value='';filterPlanItems();">重置</button>
-            </div>
-            <div class="table-wrap"><table>
-                <thead><tr><th style="width:40px;">选择</th><th>计划编号</th><th>采购内容</th><th>所属单位</th><th>采购类别</th><th>预选采购方式</th><th>预估金额(万)</th><th>采购限价(万)</th><th>经办人</th></tr></thead>
-                <tbody id="planItemTableBody"></tbody>
-            </table></div>
-            <div class="text-xs text-muted mt-8">仅显示已生效且未被引用的招采项。</div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closePlanModal()">取消</button>
-            <button class="btn btn-primary" onclick="confirmPlanSelection()">确认</button>
-        </div>
-    </div>
-</div>
-
-<script>
-var PLAN_ITEMS = [
-    { id: 'PL-2026-0001-1', planId: 'PL-2026-0001', planName: '2026年度成员企业A采购计划', content: '年度法律顾问服务', unit: '成员企业A', cat: '服务类 · 法律服务', method: '直接采购', note: '涉密/商业秘密', amount: 15.0, limit: 12.0, handler: '张明', lineNo: '001', purchaseName: '年度法律顾问服务', subCat: '法律服务' },
-    { id: 'PL-2026-0002-1', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '集团年度物业服务', unit: '集团总部', cat: '服务类 · 物业服务', method: '公开招标', note: '', amount: 186.5, limit: 180.0, handler: '李经理', lineNo: '001', purchaseName: '集团年度物业服务', subCat: '物业服务' },
-    { id: 'PL-2026-0002-2', planId: 'PL-2026-0002', planName: '2026年度集团总部采购计划', content: '生产设备维护服务', unit: '集团总部', cat: '服务类 · 维护服务', method: '邀请招标', note: '', amount: 67.0, limit: 67.0, handler: '赵岩', lineNo: '002', purchaseName: '生产设备维护服务', subCat: '维护服务' },
-    { id: 'PL-2026-0010-1', planId: 'PL-2026-0010', planName: '2026年度成员企业B采购计划', content: 'IT设备采购', unit: '成员企业B', cat: '货物类 · IT类', method: '邀请招标', note: '', amount: 45.0, limit: 42.0, handler: '王磊', lineNo: '001', purchaseName: 'IT设备采购', subCat: 'IT类' },
-    { id: 'PL-2026-0015-1', planId: 'PL-2026-0015', planName: '2026年度成员企业A采购计划', content: '年度培训服务', unit: '成员企业A', cat: '服务类 · 培训服务', method: '询比采购', note: '', amount: 28.0, limit: 25.0, handler: '陈芳', lineNo: '001', purchaseName: '年度培训服务', subCat: '培训服务' }
-];
-
-function openPlanSelectionModal() {
-    document.getElementById('planSelectModal').style.display = 'flex';
-    document.getElementById('searchPlanId').value = '';
-    document.getElementById('searchContent').value = '';
-    renderPlanItems(PLAN_ITEMS);
-}
-
-function closePlanModal() { document.getElementById('planSelectModal').style.display = 'none'; }
-
-function filterPlanItems() {
-    var kw1 = document.getElementById('searchPlanId').value.toLowerCase();
-    var kw2 = document.getElementById('searchContent').value.toLowerCase();
-    var filtered = PLAN_ITEMS.filter(function(item) {
-        return (!kw1 || item.planId.toLowerCase().indexOf(kw1) !== -1) && (!kw2 || item.content.toLowerCase().indexOf(kw2) !== -1);
-    });
-    renderPlanItems(filtered);
-}
-
-function renderPlanItems(items) {
-    var tbody = document.getElementById('planItemTableBody');
-    var html = '';
-    items.forEach(function(item) {
-        html += '<tr style="cursor:pointer;" onclick="togglePlanRow(this)" data-item="' + encodeURIComponent(JSON.stringify(item)) + '">';
-        html += '<td><input type="checkbox" class="planCheckbox" style="pointer-events:none;"></td>';
-        html += '<td><strong>' + item.planId + '</strong><br><span class="text-xs text-muted">' + item.planName + '</span></td>';
-        html += '<td>' + item.content + '</td><td>' + item.unit + '</td>';
-        html += '<td>' + renderCategoryTag(item.cat) + '</td>';
-        html += '<td><span class="tag tag-blue">' + item.method + '</span></td>';
-        html += '<td class="text-sm">' + (item.note || '<span class="text-muted">—</span>') + '</td>';
-        html += '<td><span class="money">' + item.amount.toFixed(1) + '</span></td>';
-        html += '<td>' + item.limit.toFixed(1) + '</td><td>' + item.handler + '</td></tr>';
-    });
-    tbody.innerHTML = html || '<tr><td colspan="10" class="text-muted text-sm" style="text-align:center;padding:20px;">无匹配的记录</td></tr>';
-}
-
-function togglePlanRow(row) {
-    var cb = row.querySelector('.planCheckbox');
-    if (cb) {
-        cb.checked = !cb.checked;
-        if (cb.checked) row.classList.add('selected');
-        else row.classList.remove('selected');
-    }
-}
-
-function confirmPlanSelection() {
-    var checkedRows = document.querySelectorAll('#planItemTableBody tr.selected');
-    if (checkedRows.length === 0) { showAlert('⚠️ 请至少选择一条招采项。'); return; }
-
-    var items = [];
-    checkedRows.forEach(function(row) {
-        items.push(JSON.parse(decodeURIComponent(row.getAttribute('data-item'))));
-    });
-
-    // 校验：同一公司
-    var units = items.map(function(i) { return i.unit; }).filter(function(u, idx, arr) { return arr.indexOf(u) === idx; });
-    if (units.length > 1) { showAlert('⚠️ 所选招采项必须属于同一单位。\n当前选择了：' + units.join('、')); return; }
-
-    // 校验：同一采购方式
-    var methods = items.map(function(i) { return i.method; }).filter(function(m, idx, arr) { return arr.indexOf(m) === idx; });
-    if (methods.length > 1) { showAlert('⚠️ 所选招采项必须使用同一采购方式。\n当前选择了：' + methods.join('、')); return; }
-
-    var method = methods[0];
-
-    // 校验：谈判采购/直接采购 采购项说明必须一致
-    if (method === '谈判采购' || method === '直接采购') {
-        var notes = items.map(function(i) { return i.note || ''; }).filter(function(n, idx, arr) { return arr.indexOf(n) === idx; });
-        if (notes.length > 1) {
-            showAlert('⚠️ ' + method + '的采购项说明必须一致。\n当前选择了：' + notes.join('、')); return;
-        }
-    }
-
-    sessionStorage.setItem('selectedPlanItems', JSON.stringify(items));
-    closePlanModal();
-    navTo('procurement', 'procurement/create/index.html');
 }
 </script>
 
