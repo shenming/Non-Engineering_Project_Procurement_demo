@@ -89,14 +89,82 @@
 <script src="data.js"></script>
 <script src="../../common/procurement-core.js"></script>
 <script>
-initProcurementEditor({
-    mode: 'create',
-    backAction: 'exitToList',
-    backTarget: 'application_collective',
-    backFile: null,
-    nodeBasePath: '../../procurement/detail/nodes/',
-    pageTitle: '🤝 创建联合招采',
-});
+// 联合招采：从 sessionStorage 读取选中的计划项、最高优先级采购方式
+(function() {
+    var items = [];
+    try { items = JSON.parse(sessionStorage.getItem('selectedPlanItems') || '[]'); } catch(e) {}
+    var collectiveMethod = sessionStorage.getItem('collectiveMethod') || '公开招标';
+
+    if (items.length > 0) {
+        // 只保留最高优先级方式对应的配置
+        var allMethods = Object.keys(DETAIL_METHOD_CONFIG);
+        for (var mi = 0; mi < allMethods.length; mi++) {
+            if (allMethods[mi] !== collectiveMethod) {
+                delete DETAIL_METHOD_CONFIG[allMethods[mi]];
+                delete DETAIL_DATA[allMethods[mi]];
+                delete EDITABLE_STEPS[allMethods[mi]];
+            }
+        }
+
+        // 动态构建采购明细和标段数据
+        var purchases = [];
+        var sectionData = {};
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var idx = i;
+            purchases.push({
+                idx: idx,
+                name: item.purchaseName || item.content,
+                planCode: item.planId,
+                lineNo: item.lineNo || '',
+                purchaseName: item.purchaseName || item.content,
+                amount: Math.round((item.amount || 0) * 10000), // 万元→元
+                amountText: '¥' + ((item.amount || 0) * 10000).toLocaleString() + '.00元',
+                sections: 1,
+                cat: item.cat ? item.cat.split(' · ')[0] : '',
+                subCat: item.subCat || (item.cat ? item.cat.split(' · ')[1] || '' : ''),
+                target: '主合同',
+                note: item.note || ''
+            });
+            sectionData[idx] = [{
+                seq: 1,
+                name: item.purchaseName || item.content,
+                limit: Math.round((item.limit || item.amount || 0) * 10000),
+                planCode: item.planId,
+                planRow: item.lineNo || '',
+                purchaseName: item.purchaseName || item.content,
+                amount: Math.round((item.amount || 0) * 10000),
+                sections: 1,
+                cat: item.cat ? item.cat.split(' · ')[0] : '',
+                subCat: item.subCat || (item.cat ? item.cat.split(' · ')[1] || '' : ''),
+                target: '主合同',
+                note: item.note || ''
+            }];
+        }
+
+        // 覆盖 DETAIL_DATA 中对应方式的 step 0 数据
+        if (DETAIL_DATA[collectiveMethod] && DETAIL_DATA[collectiveMethod].nodes) {
+            var node0 = DETAIL_DATA[collectiveMethod].nodes[0];
+            if (node0) {
+                node0.purchases = purchases;
+                node0.sectionData = sectionData;
+                node0.form = node0.form || {};
+                node0.form.method = collectiveMethod;
+                node0.form.procType = 'collective';
+            }
+        }
+    }
+
+    initProcurementEditor({
+        mode: 'create',
+        backAction: 'exitToList',
+        backTarget: 'application_collective',
+        backFile: null,
+        nodeBasePath: '../../procurement/detail/nodes/',
+        pageTitle: '🤝 创建联合招采',
+        procType: 'collective',
+    });
+})();
 </script>
 </body>
 </html>

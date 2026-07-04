@@ -114,7 +114,7 @@ var DETAIL_DATA = {
                     category: '服务类 · 物业服务', note: '',
                     handler: '', applyDate: '', agent: '',
                     planIssueDate: '', planEndDate: '', inHouse: '',
-                    approvalStatus: '草稿', scope: ''
+                    approvalStatus: '草稿', scope: '', procType: 'single'
                 },
                 purchases: [
                     { idx: 0, name: '集团年度物业服务', planCode: 'PL-2026-0002', lineNo: '001', purchaseName: '集团年度物业服务', amount: 1865000, amountText: '¥1,865,000.00元', sections: 1, cat: '服务类', subCat: '物业服务', target: '主合同', note: '公开招标不限金额门槛' },

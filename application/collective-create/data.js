@@ -117,10 +117,11 @@ var DETAIL_DATA = {
                     category: '服务类 · 物业服务', note: '',
                     handler: '', applyDate: '', agent: '',
                     planIssueDate: '', planEndDate: '', inHouse: '',
-                    approvalStatus: '草稿', scope: ''
+                    approvalStatus: '草稿', scope: '', procType: 'collective'
                 },
                 purchases: [
                     { idx: 0, name: '集团年度物业服务', planCode: 'PL-2026-0002', lineNo: '001', purchaseName: '集团年度物业服务', amount: 1865000, amountText: '¥1,865,000.00元', sections: 1, cat: '服务类', subCat: '物业服务', target: '主合同', note: '公开招标不限金额门槛' },
+                    { idx: 1, name: 'IT设备采购', planCode: 'PL-2026-0010', lineNo: '001', purchaseName: '台式计算机及服务器', amount: 2450000, amountText: '¥2,450,000.00元', sections: 3, cat: '货物类', subCat: 'IT类', target: '主合同', note: '—' }
                    
                 ],
                 sectionData: {

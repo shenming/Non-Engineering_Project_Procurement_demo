@@ -75,6 +75,20 @@
 
 <script src="../common/scripts.js"></script>
 <script>
+// 采购方式优先级 Map（值越大优先级越高）
+var METHOD_PRIORITY = { '公开招标': 5, '邀请招标': 4, '询比采购': 3, '谈判采购': 2, '直接采购': 1 };
+
+// 取最高优先级的采购方式
+function getTopMethod(methods) {
+    var top = methods[0];
+    for (var i = 1; i < methods.length; i++) {
+        if ((METHOD_PRIORITY[methods[i]] || 0) > (METHOD_PRIORITY[top] || 0)) {
+            top = methods[i];
+        }
+    }
+    return top;
+}
+
 // 企业A及下属企业的全部计划项（联合招采专用数据）
 var PLAN_ITEMS = [
     { id: 'PL-2026-0001-1', planId: 'PL-2026-0001', planName: '2026年度成员企业A采购计划', content: '年度法律顾问服务', unit: '成员企业A', cat: '服务类 · 法律服务', method: '直接采购', note: '涉密/商业秘密', amount: 15.0, limit: 12.0, handler: '张明', lineNo: '001', purchaseName: '年度法律顾问服务', subCat: '法律服务' },
@@ -154,28 +168,23 @@ function confirmSelection() {
         items.push(JSON.parse(decodeURIComponent(row.getAttribute('data-item'))));
     });
 
-    // 联合招采不校验同单位（可跨企业）
-
-    // 校验：同一采购方式
+    // 联合招采不校验同单位（可跨企业），也不校验同一采购方式
+    // 取所有选中项的采购方式，按优先级取最高者作为联合招采的方式
     var methods = items.map(function(i) { return i.method; }).filter(function(m, idx, arr) { return arr.indexOf(m) === idx; });
-    if (methods.length > 1) {
-        showAlert('⚠️ 所选采购计划项必须使用同一采购方式。\n当前选择了：' + methods.join('、'));
-        return;
-    }
-
-    var method = methods[0];
+    var topMethod = getTopMethod(methods);
 
     // 校验：谈判采购/直接采购 采购项说明必须一致
-    if (method === '谈判采购' || method === '直接采购') {
+    if (topMethod === '谈判采购' || topMethod === '直接采购') {
         var notes = items.map(function(i) { return i.note || ''; }).filter(function(n, idx, arr) { return arr.indexOf(n) === idx; });
         if (notes.length > 1) {
-            showAlert('⚠️ ' + method + '的采购项说明必须一致。\n当前选择了：' + notes.join('、'));
+            showAlert('⚠️ ' + topMethod + '的采购项说明必须一致。\n当前选择了：' + notes.join('、'));
             return;
         }
     }
 
     sessionStorage.setItem('selectedPlanItems', JSON.stringify(items));
     sessionStorage.setItem('procType', 'collective');
+    sessionStorage.setItem('collectiveMethod', topMethod);
     navTo('application_collective', 'application/collective-create/index.html');
 }
 

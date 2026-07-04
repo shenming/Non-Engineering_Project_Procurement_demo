@@ -26,6 +26,7 @@ function initProcurementEditor(config) {
     var backFile = cfg.backFile || null;
     var nodeBasePath = cfg.nodeBasePath || '../procurement/detail/nodes/';
     var pageTitle = cfg.pageTitle || '✏️ 招采管理';
+    var procType = cfg.procType || 'single';
 
     // ---- 状态变量 ----
     var selectedStep = 0;
@@ -62,6 +63,7 @@ function initProcurementEditor(config) {
         try { sessionStorage.setItem('editEditableSteps', JSON.stringify(EDITABLE_STEPS)); } catch(e) {}
         sessionStorage.setItem('edit_method', currentMethod);
         sessionStorage.setItem('edit_step', selectedStep);
+        sessionStorage.setItem('procType', procType);
 
         loadNode(selectedStep);
         document.getElementById('nodeFrame').onload = function() {
