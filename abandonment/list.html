@@ -19,6 +19,9 @@
 
 <div class="flex-between mb-16">
     <span class="text-muted text-sm">共 <strong id="totalRecordCount">0</strong> 条记录</span>
+    <div class="flex gap-8">
+        <button class="btn btn-sm btn-danger" onclick="openAbandonModal()">🏳 弃标流标</button>
+    </div>
 </div>
 
 <div class="card" style="margin-bottom:16px;">
@@ -59,6 +62,8 @@
 </div>
 
 <script src="../common/scripts.js"></script>
+<script src="../common/data.js"></script>
+<script src="../procurement/detail/data.js"></script>
 <script>
 // ===== 静态示例数据（后续可替换为后端数据）=====
 var ABANDON_RECORDS = [
@@ -67,11 +72,6 @@ var ABANDON_RECORDS = [
 
 // ===== 初始化 =====
 renderRecords(ABANDON_RECORDS);
-
-function renderCategoryTag(cat) {
-    if (!cat) return '';
-    return cat;
-}
 
 function renderRecords(items) {
     var tbody = document.getElementById('recordTableBody');
@@ -110,7 +110,6 @@ function filterRecords() {
 
 function viewDetail(row) {
     var item = JSON.parse(decodeURIComponent(row.getAttribute('data-item')));
-    // 跳转到招采详情页
     var ctx = {
         method: item.method,
         projectName: item.projectName,
@@ -126,6 +125,135 @@ function viewDetail(row) {
     sessionStorage.setItem('procurementViewContext', JSON.stringify(ctx));
     navTo('procurement', 'procurement/detail/index.html');
 }
+
+// ========== 弃标流标功能 ==========
+
+function canAbandon(methodKey) {
+    var data = DETAIL_DATA[methodKey];
+    if (!data || !data.nodes) return false;
+    if (data.info && (data.info.status === '弃标' || data.info.status === '流标')) return false;
+    for (var key in data.nodes) {
+        var node = data.nodes[key];
+        if (node.form && node.form.approvalStatus === '审批中') return false;
+    }
+    return true;
+}
+
+function buildAbandonList() {
+    var list = [];
+    var allMethodKeys = Object.keys(DETAIL_DATA);
+    for (var mi = 0; mi < allMethodKeys.length; mi++) {
+        var methodKey = allMethodKeys[mi];
+        if (canAbandon(methodKey)) {
+            var dal = DETAIL_DATA[methodKey];
+            var form = (dal && dal.nodes && dal.nodes[0] && dal.nodes[0].form) ? dal.nodes[0].form : null;
+            list.push({
+                id: form ? form.procCode : methodKey,
+                planItemId: '',
+                method: methodKey,
+                methodKey: methodKey,
+                projectName: (dal.info && dal.info.projectName) || '',
+                amountText: (form && form.limitAmountText) || '',
+                unit: (dal.info && dal.info.unit) || '',
+                nodeText: getActiveStepName(methodKey) || '',
+                status: (dal.info && dal.info.status) || '',
+                form: form
+            });
+        }
+    }
+    return list;
+}
+
+var ABANDON_LIST = [];
+
+function openAbandonModal() {
+    ABANDON_LIST = buildAbandonList();
+    if (ABANDON_LIST.length === 0) {
+        showAlert('⚠️ 当前没有可弃标/流标的采购申请。\n\n（所有采购申请均有审批中节点，或已弃标/流标）');
+        return;
+    }
+    var modal = document.getElementById('abandonModal');
+    if (!modal) {
+        showAlert('⚠️ 弹窗加载失败');
+        return;
+    }
+    modal.style.display = 'flex';
+    document.getElementById('abandonSearchKeyword').value = '';
+    renderAbandonItems(ABANDON_LIST);
+}
+
+function closeAbandonModal() { document.getElementById('abandonModal').style.display = 'none'; }
+
+function filterAbandonItems() {
+    var kw = document.getElementById('abandonSearchKeyword').value.toLowerCase();
+    var filtered = ABANDON_LIST.filter(function(item) {
+        return (!kw || item.id.toLowerCase().indexOf(kw) !== -1 || item.projectName.toLowerCase().indexOf(kw) !== -1);
+    });
+    renderAbandonItems(filtered);
+}
+
+function renderAbandonItems(items) {
+    var tbody = document.getElementById('abandonTableBody');
+    var html = '';
+    items.forEach(function(item) {
+        var methodTag = '<span class="tag tag-blue">' + item.method + '</span>';
+        var statusTag = item.status === '已完成' ? '<span class="tag tag-green">已完成</span>'
+            : item.status === '进行中' ? '<span class="tag tag-yellow">进行中</span>'
+            : item.status === '草稿' ? '<span class="tag tag-gray">草稿</span>'
+            : '<span class="tag tag-yellow">' + item.status + '</span>';
+        html += '<tr style="cursor:pointer;" onclick="selectAbandonRow(this)" data-item="' + encodeURIComponent(JSON.stringify(item)) + '">';
+        html += '<td><input type="radio" name="abandonSelect" style="pointer-events:none;"></td>';
+        html += '<td><strong>' + item.id + '</strong></td>';
+        html += '<td>' + item.projectName + '</td>';
+        html += '<td>' + methodTag + '</td>';
+        html += '<td><span class="money">' + item.amountText + '</span></td>';
+        html += '<td>' + item.unit + '</td>';
+        html += '<td>' + item.nodeText + '</td>';
+        html += '<td>' + statusTag + '</td></tr>';
+    });
+    tbody.innerHTML = html || '<tr><td colspan="8" class="text-muted text-sm" style="text-align:center;padding:20px;">无匹配的记录</td></tr>';
+}
+
+function selectAbandonRow(row) {
+    var allRows = document.querySelectorAll('#abandonTableBody tr');
+    allRows.forEach(function(r) { r.classList.remove('selected'); });
+    row.classList.add('selected');
+    row.querySelector('input[type="radio"]').checked = true;
+}
+
+function confirmAbandonSelection() {
+    var checkedRow = document.querySelector('#abandonTableBody tr.selected');
+    if (!checkedRow) { showAlert('⚠️ 请先选择一条采购申请。'); return; }
+    var itemData = JSON.parse(decodeURIComponent(checkedRow.getAttribute('data-item')));
+    sessionStorage.setItem('abandonProcData', JSON.stringify(itemData));
+    closeAbandonModal();
+    navTo('abandonment', '../procurement/bid-abandon.html');
+}
 </script>
+
+<!-- ========== 弃标流标：选择采购申请弹框 ========== -->
+<div id="abandonModal" class="modal-overlay" style="display:none;">
+    <div class="modal" style="max-width:1000px;">
+        <div class="modal-header">
+            <h2>🏳 弃标流标 — 请选择采购申请</h2>
+            <button class="close" onclick="closeAbandonModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="flex gap-12 mb-12" style="flex-wrap:wrap;">
+                <input class="form-control form-control-sm" id="abandonSearchKeyword" placeholder="搜索申请编号/项目名称..." style="width:220px;" oninput="filterAbandonItems()">
+                <button class="btn btn-sm btn-outline" onclick="document.getElementById('abandonSearchKeyword').value='';filterAbandonItems();">重置</button>
+            </div>
+            <div class="table-wrap"><table>
+                <thead><tr><th style="width:40px;">选择</th><th>申请编号</th><th>项目名称</th><th>采购方式</th><th>金额</th><th>所属单位</th><th>当前节点</th><th>状态</th></tr></thead>
+                <tbody id="abandonTableBody"></tbody>
+            </table></div>
+            <div class="text-xs text-muted mt-8">仅显示无「审批中」节点的采购申请。已弃标/流标的不再显示。</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeAbandonModal()">取消</button>
+            <button class="btn btn-danger" onclick="confirmAbandonSelection()">确认选择</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
