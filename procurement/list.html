@@ -31,6 +31,9 @@
             <select class="form-control form-control-sm" id="filterProcType" style="width:auto;min-width:120px;">
                 <option value="all">全部类型</option><option value="single">单项招采</option><option value="collective">联合招采</option>
             </select>
+            <select class="form-control form-control-sm" id="filterHasSupp" style="width:auto;min-width:120px;">
+                <option value="all">全部补充</option><option value="是">是</option><option value="否">否</option>
+            </select>
             <input class="form-control form-control-sm" id="filterKeyword" placeholder="搜索申请编号/项目名称..." style="width:220px;">
             <button class="btn btn-sm btn-primary" onclick="filterTable()">查询</button>
             <button class="btn btn-sm btn-outline" onclick="resetFilters()">重置</button>
@@ -51,12 +54,13 @@
                         <th class="sortable" onclick="sortTable(4)" data-col="4">所属单位 <span class="sort-arrow"></span></th>
                         <th class="sortable" onclick="sortTable(5)" data-col="5">采购类型 <span class="sort-arrow"></span></th>
                         <th class="sortable" onclick="sortTable(6)" data-col="6">当前节点 <span class="sort-arrow"></span></th>
-                        <th class="sortable" onclick="sortTable(7)" data-col="7">状态 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(7)" data-col="7">是否补充招标 <span class="sort-arrow"></span></th>
+                        <th class="sortable" onclick="sortTable(8)" data-col="8">状态 <span class="sort-arrow"></span></th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody id="procTableBody">
-                    <tr data-id="ZB-2026-003" data-plan-item-id="PL-2026-0002-1" data-status="进行中" data-method="公开招标" data-proc-type="single">
+                    <tr data-id="ZB-2026-003" data-plan-item-id="PL-2026-0002-1" data-status="进行中" data-method="公开招标" data-proc-type="single" data-has-supp="是">
                         <td><strong>ZB-2026-003</strong></td>
                         <td>集团年度物业服务</td>
                         <td><span class="tag tag-blue">公开招标</span></td>
@@ -64,12 +68,13 @@
                         <td>集团总部</td>
                         <td><span class="tag tag-blue">单项招采</span></td>
                         <td>中标结果公示</td>
+                        <td><span class="tag tag-blue">是</span></td>
                         <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-011" data-plan-item-id="PL-2026-0021-1" data-status="进行中" data-method="邀请招标" data-proc-type="single">
+                    <tr data-id="ZB-2026-011" data-plan-item-id="PL-2026-0021-1" data-status="进行中" data-method="邀请招标" data-proc-type="single" data-has-supp="是">
                         <td><strong>ZB-2026-011</strong></td>
                         <td>弱电系统维保服务</td>
                         <td><span class="tag tag-blue">邀请招标</span></td>
@@ -77,12 +82,13 @@
                         <td>集团总部</td>
                         <td><span class="tag tag-blue">单项招采</span></td>
                         <td>招标申请</td>
+                        <td><span class="tag tag-blue">是</span></td>
                         <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-005" data-plan-item-id="PL-2026-0010-1" data-status="已完成" data-method="询比采购" data-proc-type="single">
+                    <tr data-id="ZB-2026-005" data-plan-item-id="PL-2026-0010-1" data-status="已完成" data-method="询比采购" data-proc-type="single" data-has-supp="否">
                         <td><strong>ZB-2026-005</strong></td>
                         <td>办公设备集中采购</td>
                         <td><span class="tag tag-purple">询比采购</span></td>
@@ -90,12 +96,13 @@
                         <td>成员企业A</td>
                         <td><span class="tag tag-blue">单项招采</span></td>
                         <td>已定标</td>
+                        <td><span class="tag tag-gray">否</span></td>
                         <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-006" data-plan-item-id="PL-2026-0001-1" data-status="进行中" data-method="直接采购" data-proc-type="single">
+                    <tr data-id="ZB-2026-006" data-plan-item-id="PL-2026-0001-1" data-status="进行中" data-method="直接采购" data-proc-type="single" data-has-supp="否">
                         <td><strong>ZB-2026-006</strong></td>
                         <td>法律顾问服务</td>
                         <td><span class="tag tag-orange">直接采购</span></td>
@@ -103,12 +110,13 @@
                         <td>集团总部</td>
                         <td><span class="tag tag-blue">单项招采</span></td>
                         <td>采购申请</td>
+                        <td><span class="tag tag-gray">否</span></td>
                         <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-013" data-plan-item-id="PL-2026-0025-1" data-status="进行中" data-method="直接采购-小额" data-proc-type="single">
+                    <tr data-id="ZB-2026-013" data-plan-item-id="PL-2026-0025-1" data-status="进行中" data-method="直接采购-小额" data-proc-type="single" data-has-supp="否">
                         <td><strong>ZB-2026-013</strong></td>
                         <td>办公用品采购</td>
                         <td><span class="tag tag-orange">直接采购</span></td>
@@ -116,12 +124,13 @@
                         <td>成员企业B</td>
                         <td><span class="tag tag-blue">单项招采</span></td>
                         <td>确定成交供应商</td>
+                        <td><span class="tag tag-gray">否</span></td>
                         <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-007" data-plan-item-id="PL-2026-0015-1" data-status="进行中" data-method="谈判采购" data-proc-type="single">
+                    <tr data-id="ZB-2026-007" data-plan-item-id="PL-2026-0015-1" data-status="进行中" data-method="谈判采购" data-proc-type="single" data-has-supp="否">
                         <td><strong>ZB-2026-007</strong></td>
                         <td>IT运维服务</td>
                         <td><span class="tag tag-yellow">谈判采购</span></td>
@@ -129,12 +138,13 @@
                         <td>成员企业A</td>
                         <td><span class="tag tag-blue">单项招采</span></td>
                         <td>谈判中</td>
+                        <td><span class="tag tag-gray">否</span></td>
                         <td><span class="tag tag-yellow">进行中</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-008" data-plan-item-id="PL-2026-0003-1" data-status="已完成" data-method="公开招标" data-proc-type="collective">
+                    <tr data-id="ZB-2026-008" data-plan-item-id="PL-2026-0003-1" data-status="已完成" data-method="公开招标" data-proc-type="collective" data-has-supp="否">
                         <td><strong>ZB-2026-008</strong></td>
                         <td>办公家具采购</td>
                         <td><span class="tag tag-blue">公开招标</span></td>
@@ -142,12 +152,13 @@
                         <td>成员企业B</td>
                         <td><span class="tag tag-purple">联合招采</span></td>
                         <td>已定标</td>
+                        <td><span class="tag tag-gray">否</span></td>
                         <td><span class="tag tag-green">已完成</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-009" data-plan-item-id="PL-2026-0004-1" data-status="流标/弃标" data-method="谈判采购" data-proc-type="collective">
+                    <tr data-id="ZB-2026-009" data-plan-item-id="PL-2026-0004-1" data-status="流标/弃标" data-method="谈判采购" data-proc-type="collective" data-has-supp="否">
                         <td><strong>ZB-2026-009</strong></td>
                         <td>年度培训服务</td>
                         <td><span class="tag tag-yellow">谈判采购</span></td>
@@ -155,12 +166,13 @@
                         <td>成员企业A</td>
                         <td><span class="tag tag-purple">联合招采</span></td>
                         <td>流标/弃标</td>
+                        <td><span class="tag tag-gray">否</span></td>
                         <td><span class="tag tag-gray">流标/弃标</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-010" data-plan-item-id="PL-2026-0002-2" data-status="草稿" data-method="询比采购" data-proc-type="collective">
+                    <tr data-id="ZB-2026-010" data-plan-item-id="PL-2026-0002-2" data-status="草稿" data-method="询比采购" data-proc-type="collective" data-has-supp="否">
                         <td><strong>ZB-2026-010</strong></td>
                         <td>生产设备维护</td>
                         <td><span class="tag tag-purple">询比采购</span></td>
@@ -168,13 +180,14 @@
                         <td>成员企业B</td>
                         <td><span class="tag tag-purple">联合招采</span></td>
                         <td>采购申请</td>
+                        <td><span class="tag tag-gray">否</span></td>
                         <td><span class="tag tag-gray">草稿</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                             <button class="btn btn-xs btn-danger" onclick="deleteProcurement(this)" data-proc-id="ZB-2026-010" data-plan-item-id="PL-2026-0002-2">删除</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-012" data-plan-item-id="PL-2026-0022-1" data-status="已完成" data-method="询比采购" data-proc-type="single">
+                    <tr data-id="ZB-2026-012" data-plan-item-id="PL-2026-0022-1" data-status="已完成" data-method="询比采购" data-proc-type="single" data-has-supp="否">
                         <td><strong>ZB-2026-012</strong></td>
                         <td>台式计算机采购</td>
                         <td><span class="tag tag-purple">询比采购</span></td>
@@ -182,6 +195,7 @@
                         <td>成员企业B</td>
                         <td><span class="tag tag-blue">单项招采</span></td>
                         <td>已定标</td>
+                        <td><span class="tag tag-gray">否</span></td>
                         <td><span class="tag tag-green">已完成</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
@@ -226,10 +240,20 @@ var sortAsc = true;
             var cell = row.cells[6];
             if (cell) cell.textContent = activeName;
         }
-        // 从 DETAIL_DATA 读取状态
+        // 从 data-has-supp 更新"是否补充招标"列（第7列）
+        var hasSupp = row.getAttribute('data-has-supp') || '否';
+        var suppCell = row.cells[7];
+        if (suppCell) {
+            var suppTag = suppCell.querySelector('.tag');
+            if (suppTag) {
+                suppTag.className = hasSupp === '是' ? 'tag tag-blue' : 'tag tag-gray';
+                suppTag.textContent = hasSupp;
+            }
+        }
+        // 从 DETAIL_DATA 读取状态（第8列）
         var dal = (typeof DETAIL_DATA !== 'undefined') ? (DETAIL_DATA[method] || null) : null;
         if (dal && dal.info && dal.info.status) {
-            var statusCell = row.cells[7];
+            var statusCell = row.cells[8];
             if (statusCell) {
                 var oldTag = statusCell.querySelector('.tag');
                 if (oldTag) {
@@ -240,11 +264,11 @@ var sortAsc = true;
                 }
             }
         }
-        // 草稿状态增加删除按钮
+        // 草稿状态增加删除按钮（第9列）
         var dalNode0 = (dal && dal.nodes && dal.nodes[0] && dal.nodes[0].form) ? dal.nodes[0].form : null;
         var isDraft = (dalNode0 && dalNode0.approvalStatus === '草稿') || (dal && dal.info && dal.info.status === '草稿');
         if (isDraft) {
-            var actionCell = row.cells[8];
+            var actionCell = row.cells[9];
             if (actionCell && !actionCell.querySelector('.btn-danger')) {
                 var delBtn = document.createElement('button');
                 delBtn.className = 'btn btn-xs btn-danger';
@@ -335,15 +359,19 @@ function filterTable() {
     var rows = document.querySelectorAll('#procTableBody tr');
     var visibleCount = 0;
 
+    var hasSuppFilter = document.getElementById('filterHasSupp').value;
+
     rows.forEach(function(row) {
         var status = row.getAttribute('data-status');
         var method = row.getAttribute('data-method');
         var procType = row.getAttribute('data-proc-type');
+        var hasSupp = row.getAttribute('data-has-supp');
         var text = row.textContent.toLowerCase();
         var show = true;
         if (statusFilter !== 'all' && status !== statusFilter) show = false;
         if (methodFilter !== 'all' && method !== methodFilter) show = false;
         if (procTypeFilter !== 'all' && procType !== procTypeFilter) show = false;
+        if (hasSuppFilter !== 'all' && hasSupp !== hasSuppFilter) show = false;
         if (keyword && text.indexOf(keyword) === -1) show = false;
         row.style.display = show ? '' : 'none';
         if (show) visibleCount++;
@@ -357,6 +385,7 @@ function resetFilters() {
     document.getElementById('filterStatus').value = 'all';
     document.getElementById('filterMethod').value = 'all';
     document.getElementById('filterProcType').value = 'all';
+    document.getElementById('filterHasSupp').value = 'all';
     document.getElementById('filterKeyword').value = '';
     filterTable();
 }
