@@ -1,20 +1,131 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="../common/styles.css">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../common/styles.css">
+    <style>
+        .plan-table tr { cursor: pointer; }
+        .plan-table tr:hover { background: var(--gray-50); }
+        .plan-table td { vertical-align: middle; }
+        .text-xs { font-size: 11px; }
+    </style>
 </head>
 <body class="content-page">
+
 <div class="sub-navbar">
-    <span class="sub-nav-title">🚫 流标/弃标</span>
+    <span class="sub-nav-title">🏳 流标/弃标</span>
+    <span class="text-muted text-sm" style="margin-left:12px;">招采过程中产生的流标/弃标记录</span>
 </div>
-<div class="card">
-    <div class="card-body" style="padding:40px;text-align:center;">
-        <div style="font-size:48px;margin-bottom:16px;">🚫</div>
-        <h3 style="margin:0 0 8px;color:var(--gray-600);">流标/弃标管理</h3>
-        <p class="text-muted">该模块功能正在建设中，敬请期待。</p>
+
+<div class="flex-between mb-16">
+    <span class="text-muted text-sm">共 <strong id="totalRecordCount">0</strong> 条记录</span>
+</div>
+
+<div class="card" style="margin-bottom:16px;">
+    <div class="card-body" style="padding:12px 20px;">
+        <div class="flex gap-12" style="flex-wrap:wrap;align-items:center;">
+            <select class="form-control form-control-sm" id="filterType" style="width:auto;min-width:120px;" onchange="filterRecords()">
+                <option value="all">全部类型</option>
+                <option value="弃标">弃标</option>
+                <option value="流标">流标</option>
+            </select>
+            <input class="form-control form-control-sm" id="searchKeyword" placeholder="搜索申请编号/项目名称..." style="width:220px;" oninput="filterRecords()">
+            <button class="btn btn-sm btn-outline" onclick="document.getElementById('searchKeyword').value='';document.getElementById('filterType').value='all';filterRecords();">重置</button>
+        </div>
     </div>
 </div>
+
+<div class="card">
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <table class="plan-table">
+                <thead>
+                    <tr>
+                        <th>申请编号</th>
+                        <th>项目名称</th>
+                        <th>采购方式</th>
+                        <th>金额</th>
+                        <th>所属单位</th>
+                        <th>操作类型</th>
+                        <th>操作日期</th>
+                        <th>操作人</th>
+                        <th>原因</th>
+                    </tr>
+                </thead>
+                <tbody id="recordTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <script src="../common/scripts.js"></script>
+<script>
+// ===== 静态示例数据（后续可替换为后端数据）=====
+var ABANDON_RECORDS = [
+    { procId: 'ZB-2026-009', projectName: '年度培训服务', method: '谈判采购', amount: '¥280,000.00', unit: '成员企业A', type: '流标', date: '2026-06-20', user: '李经理', reason: '经评标委员会评审，有效投标人不足三家，本次招标作流标处理。' }
+];
+
+// ===== 初始化 =====
+renderRecords(ABANDON_RECORDS);
+
+function renderCategoryTag(cat) {
+    if (!cat) return '';
+    return cat;
+}
+
+function renderRecords(items) {
+    var tbody = document.getElementById('recordTableBody');
+    var html = '';
+    items.forEach(function(item) {
+        var methodTag = '<span class="tag tag-blue">' + item.method + '</span>';
+        var typeTag = item.type === '弃标' 
+            ? '<span class="tag tag-red">🏳 弃标</span>' 
+            : '<span class="tag tag-gray">🌊 流标</span>';
+        var reasonShort = item.reason.length > 30 ? item.reason.substring(0, 30) + '...' : item.reason;
+        html += '<tr onclick="viewDetail(this)" data-item="' + encodeURIComponent(JSON.stringify(item)) + '">';
+        html += '<td><strong>' + item.procId + '</strong></td>';
+        html += '<td>' + item.projectName + '</td>';
+        html += '<td>' + methodTag + '</td>';
+        html += '<td><span class="money">' + item.amount + '</span></td>';
+        html += '<td>' + item.unit + '</td>';
+        html += '<td>' + typeTag + '</td>';
+        html += '<td>' + item.date + '</td>';
+        html += '<td>' + item.user + '</td>';
+        html += '<td class="text-sm" title="' + item.reason + '">' + reasonShort + '</td>';
+        html += '</tr>';
+    });
+    tbody.innerHTML = html || '<tr><td colspan="9" class="text-muted text-sm" style="text-align:center;padding:20px;">暂无流标/弃标记录</td></tr>';
+    document.getElementById('totalRecordCount').textContent = items.length;
+}
+
+function filterRecords() {
+    var type = document.getElementById('filterType').value;
+    var kw = document.getElementById('searchKeyword').value.toLowerCase();
+    var filtered = ABANDON_RECORDS.filter(function(item) {
+        return (type === 'all' || item.type === type)
+            && (!kw || item.procId.toLowerCase().indexOf(kw) !== -1 || item.projectName.toLowerCase().indexOf(kw) !== -1);
+    });
+    renderRecords(filtered);
+}
+
+function viewDetail(row) {
+    var item = JSON.parse(decodeURIComponent(row.getAttribute('data-item')));
+    // 跳转到招采详情页
+    var ctx = {
+        method: item.method,
+        projectName: item.projectName,
+        amount: item.amount,
+        unit: item.unit,
+        status: item.type === '弃标' ? '弃标' : '流标',
+        plan: '',
+        handler: item.user,
+        currentStep: 0,
+        doneCount: 0,
+        nodeText: item.type
+    };
+    sessionStorage.setItem('procurementViewContext', JSON.stringify(ctx));
+    navTo('procurement', 'procurement/detail/index.html');
+}
+</script>
 </body>
 </html>

@@ -24,7 +24,7 @@
     <div class="card-body" style="padding:12px 20px;">
         <div class="flex gap-12" style="flex-wrap:wrap;">
             <select class="form-control form-control-sm" id="filterStatus" style="width:auto;min-width:120px;">
-                <option value="all">全部状态</option><option value="草稿">草稿</option><option value="审批中">审批中</option><option value="进行中">进行中</option><option value="已完成">已完成</option><option value="弃标">弃标</option><option value="流标">流标</option>
+                <option value="all">全部状态</option><option value="草稿">草稿</option><option value="进行中">进行中</option><option value="已完成">已完成</option><option value="流标/弃标">流标/弃标</option>
             </select>
             <select class="form-control form-control-sm" id="filterMethod" style="width:auto;min-width:130px;">
                 <option value="all">全部方式</option><option value="公开招标">公开招标</option><option value="邀请招标">邀请招标</option><option value="询比采购">询比采购</option><option value="谈判采购">谈判采购</option><option value="直接采购">直接采购</option>
@@ -96,7 +96,7 @@
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-006" data-plan-item-id="PL-2026-0001-1" data-status="审批中" data-method="直接采购" data-proc-type="single">
+                    <tr data-id="ZB-2026-006" data-plan-item-id="PL-2026-0001-1" data-status="进行中" data-method="直接采购" data-proc-type="single">
                         <td><strong>ZB-2026-006</strong></td>
                         <td>法律顾问服务</td>
                         <td><span class="tag tag-orange">直接采购</span></td>
@@ -135,28 +135,28 @@
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-008" data-plan-item-id="PL-2026-0003-1" data-status="进行中" data-method="公开招标" data-proc-type="collective">
+                    <tr data-id="ZB-2026-008" data-plan-item-id="PL-2026-0003-1" data-status="已完成" data-method="公开招标" data-proc-type="collective">
                         <td><strong>ZB-2026-008</strong></td>
                         <td>办公家具采购</td>
                         <td><span class="tag tag-blue">公开招标</span></td>
                         <td><span class="money">¥890,000.00</span></td>
                         <td>成员企业B</td>
                         <td><span class="tag tag-purple">联合招采</span></td>
-                        <td>开标</td>
+                        <td>已定标</td>
                         <td><span class="tag tag-green">已完成</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
                     </tr>
-                    <tr data-id="ZB-2026-009" data-plan-item-id="PL-2026-0004-1" data-status="已完成" data-method="谈判采购" data-proc-type="collective">
+                    <tr data-id="ZB-2026-009" data-plan-item-id="PL-2026-0004-1" data-status="流标/弃标" data-method="谈判采购" data-proc-type="collective">
                         <td><strong>ZB-2026-009</strong></td>
                         <td>年度培训服务</td>
                         <td><span class="tag tag-yellow">谈判采购</span></td>
                         <td><span class="money">¥280,000.00</span></td>
                         <td>成员企业A</td>
                         <td><span class="tag tag-purple">联合招采</span></td>
-                        <td>中标结果</td>
-                        <td><span class="tag tag-green">已完成</span></td>
+                        <td>流标/弃标</td>
+                        <td><span class="tag tag-gray">流标/弃标</span></td>
                         <td>
                             <button class="btn btn-xs btn-outline" onclick="viewProcurement(this)">查看</button>
                         </td>
@@ -234,8 +234,8 @@ var sortAsc = true;
             if (statusCell) {
                 var oldTag = statusCell.querySelector('.tag');
                 if (oldTag) {
-                    var s = dal.info.status;
-                    var tagClass = s==='已完成'?'tag-green':s==='审批中'?'tag-blue':s==='进行中'?'tag-yellow':'tag-gray';
+                    var s = row.getAttribute('data-status') || dal.info.status || '进行中';
+                    var tagClass = s==='已完成'?'tag-green':s==='流标/弃标'?'tag-gray':s==='草稿'?'tag-gray':'tag-yellow';
                     oldTag.className = 'tag ' + tagClass;
                     oldTag.textContent = s;
                 }

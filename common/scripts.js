@@ -21,6 +21,7 @@
         'application':  { file: 'application/list.html',     title: '招采申请' },
         'application_collective': { file: 'application/collective-list.html', title: '联合招采' },
         'procurement':  { file: 'procurement/list.html',     title: '采购过程' },
+        'abandonment':  { file: 'abandonment/list.html',     title: '流标/弃标' },
         'reports':      { file: 'reports/overview.html',     title: '报表管理' },
         'settings':     { file: 'settings/overview.html',    title: '配置管理' }
     };
@@ -141,6 +142,7 @@ function navTo(module, file) {
             'application': 'application/list.html',
             'application_collective': 'application/collective-list.html',
             'procurement': 'procurement/list.html',
+            'abandonment': 'abandonment/list.html',
             'reports': 'reports/overview.html',
             'settings': 'settings/overview.html'
         };
