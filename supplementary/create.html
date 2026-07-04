@@ -5,19 +5,26 @@
 <link rel="stylesheet" href="../common/styles.css">
 <style>
     body.content-page { padding: 16px; }
-    .ref-section { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; padding: 16px; }
-    .ref-section h4 { font-size: 13px; font-weight: 600; margin: 0 0 12px; color: var(--gray-600); }
-    .ref-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px 16px; font-size: 12px; }
-    .ref-grid .item { display: flex; flex-direction: column; }
-    .ref-grid .item .label { color: var(--gray-500); font-size: 11px; }
-    .ref-grid .item .value { font-weight: 500; color: var(--gray-700); }
     .edit-section { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; padding: 16px; }
     .edit-section h4 { font-size: 13px; font-weight: 600; margin: 0 0 12px; }
     .version-badge { display: inline-block; background: var(--primary); color: #fff; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .info-card { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+    .info-card .card-header { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+    .info-card .card-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
+    .info-card .card-body { padding: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 4px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-control[readonly], .form-control:disabled { background: var(--gray-50); color: var(--gray-600); cursor: not-allowed; }
+    select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
     .attach-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .attach-table th { text-align: left; padding: 6px 8px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); font-size: 11px; }
+    .attach-table th { text-align: left; padding: 6px 8px; background: var(--gray-50); font-weight: 600; color: var(--gray-600); border-bottom: 1px solid var(--gray-200); font-size: 11px; white-space: nowrap; }
     .attach-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px; }
-    .change-highlight { border-left: 3px solid var(--warning); padding-left: 12px; background: #fffbeb; }
+    .attach-table .op-icon { cursor: pointer; color: var(--primary); font-size: 14px; margin: 0 2px; }
+    .attach-table .op-icon.disabled { color: var(--gray-400); cursor: not-allowed; pointer-events: none; }
+    .section-toolbar { display: flex; gap: 8px; }
+    .section-toolbar button { font-size: 12px; }
 </style>
 </head>
 <body class="content-page">
@@ -39,50 +46,45 @@
     </div>
 </div>
 
-<!-- 参考区域：原招采申请信息 -->
-<div class="ref-section" id="refSection">
-    <h4>📋 原招采申请信息（参考）</h4>
-    <div class="ref-grid" id="refGrid"></div>
+<!-- 补充原因 -->
+<div class="edit-section">
+    <h4>✏️ 补充原因 <span class="required" style="color:var(--danger);">*</span></h4>
+    <textarea class="form-control" id="txtReason" rows="3" placeholder="请说明本次补充招标的原因和依据，如供应商答疑、参数调整、时间变更等"></textarea>
 </div>
 
-<!-- 编辑区域：本次补充内容 -->
-<div class="edit-section">
-    <h4>✏️ 本次补充内容 <span class="text-muted" style="font-weight:400;font-size:12px;">（仅填写需要修改的字段）</span></h4>
-    <div class="form-group" style="margin-bottom:12px;">
-        <label>补充原因 <span class="required">*</span></label>
-        <textarea class="form-control" id="txtReason" rows="3" placeholder="请说明本次补充招标的原因和依据，如供应商答疑、参数调整、时间变更等"></textarea>
+<!-- 招采申请信息（与 bid-apply.html 完全一致的功能） -->
+<div class="info-card">
+    <div class="card-header"><h3>📋 招采信息</h3></div>
+    <div class="card-body" id="formContainer"></div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📋 采购明细</h3></div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>招标采购项名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段数</th><th>招采品类</th><th>二级品类</th><th>招采目标</th></tr></thead>
+            <tbody id="purchaseBody"></tbody>
+        </table></div>
     </div>
-    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div class="form-group">
-            <label>采购限额（元）</label>
-            <input class="form-control" type="number" id="txtLimitAmount" step="0.01">
+    <div class="card-header" style="border-top:1px solid var(--gray-200);">
+        <h3>📋 标段明细</h3>
+        <span id="sectionToolbar" class="section-toolbar" style="display:none;margin-left:auto;">
+            <button class="btn btn-xs btn-outline" onclick="addSectionRow()">＋ 新增标段</button>
+            <button class="btn btn-xs btn-danger" onclick="deleteSectionRow()">🗑 删除选中</button>
+        </span>
+    </div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap"><table><thead><tr><th style="width:36px;"></th><th>招标采购项名称</th><th>采购计划编号</th><th>行号</th><th>采购名称</th><th>采购金额含税（元）</th><th>标段号</th><th>招采品类</th><th>二级品类</th><th>招采目标</th></tr></thead>
+            <tbody id="sectionBody"></tbody>
+        </table></div>
+    </div>
+    <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📎 附件管理</h3></div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+            <div id="attachToolbar" style="display:none;gap:8px;margin-bottom:8px;">
+                <button class="btn btn-xs btn-outline" onclick="createAttachRow()">＋ 创建</button>
+                <button class="btn btn-xs btn-danger" onclick="batchDeleteAttach()">🗑 批量删除</button>
+            </div>
+            <table class="attach-table"><thead><tr><th style="width:16px;"><input type="checkbox" id="attachSelAll" onchange="toggleAllAttachCb()"></th><th style="width:30px;">操作</th><th>附件类型</th><th>附件文档名称</th><th>文件名（下载）</th><th>文件 ID</th><th>文件类型</th><th>文件大小（字节）</th><th>时戳</th><th>用户名</th></tr></thead>
+                <tbody id="attachBody"></tbody>
+            </table>
         </div>
-        <div class="form-group">
-            <label>投标截止日期</label>
-            <input class="form-control" type="date" id="txtPlanEndDate">
-        </div>
-    </div>
-    <div class="form-group">
-        <label>招标代理机构</label>
-        <input class="form-control" id="txtAgent">
-    </div>
-    <div class="form-group">
-        <label>招标范围及相关说明</label>
-        <textarea class="form-control" id="txtScope" rows="4"></textarea>
-    </div>
-</div>
-
-<!-- 附件区域 -->
-<div class="edit-section">
-    <div class="flex-between" style="margin-bottom:12px;">
-        <h4 style="margin:0;">📎 补充附件</h4>
-        <button class="btn btn-xs btn-outline" onclick="addAttachRow()">＋ 添加附件</button>
-    </div>
-    <div class="table-wrap">
-        <table class="attach-table">
-            <thead><tr><th>附件类型</th><th>附件文档名称</th><th>文件类型</th><th>大小</th><th>操作</th></tr></thead>
-            <tbody id="attachBody"></tbody>
-        </table>
     </div>
 </div>
 
@@ -92,13 +94,17 @@
 </div>
 
 <script src="../common/scripts.js"></script>
+<script src="../common/data.js"></script>
 <script src="../procurement/detail/data.js"></script>
 <script src="data.js"></script>
 <script>
+// ========== 全局状态 ==========
 var context = null;
 var currentMethod = '';
 var newVersion = 1;
+var _selectedPurIdx = undefined;
 
+// ========== 初始化 ==========
 (function init() {
     try { context = JSON.parse(sessionStorage.getItem('supplementContext') || 'null'); } catch(e) {}
     if (!context) { showAlert('⚠️ 未获取到采购信息，请从采购详情页进入。'); return; }
@@ -118,100 +124,364 @@ var newVersion = 1;
     var suppId = generateSupplementId(info.applyCode || 'ZB-XXXX', newVersion);
     document.getElementById('supplementIdDisplay').textContent = suppId;
 
-    // 渲染原申请信息（从 nodes[0].form 读取）
-    var node0 = dal.nodes && dal.nodes[0] && dal.nodes[0].form;
-    if (node0) {
-        var refHtml = '';
-        var fields = [
-            { label: '招标过程编号', key: 'procCode' },
-            { label: '项目名称', key: 'procName' },
-            { label: '招标方式', key: 'method' },
-            { label: '采购类别', key: 'category' },
-            { label: '经办人', key: 'handler' },
-            { label: '申请日期', key: 'applyDate' },
-            { label: '招标代理', key: 'agent' },
-            { label: '采购限额', key: 'limitAmountText' },
-            { label: '截止日期', key: 'planEndDate' }
-        ];
-        fields.forEach(function(f) {
-            refHtml += '<div class="item"><span class="label">' + f.label + '</span><span class="value">' + (node0[f.key] || '—') + '</span></div>';
-        });
-        // scope
-        refHtml += '<div class="item" style="grid-column:1/-1;"><span class="label">招标范围</span><span class="value">' + (node0.scope || '—') + '</span></div>';
-        document.getElementById('refGrid').innerHTML = refHtml;
+    // 写入 sessionStorage（供内部数据访问）
+    try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
 
-        // 预填当前值为参考
-        document.getElementById('txtLimitAmount').value = node0.limitAmount || '';
-        document.getElementById('txtPlanEndDate').value = node0.planEndDate || '';
-        document.getElementById('txtAgent').value = node0.agent || '';
-        document.getElementById('txtScope').value = node0.scope || '';
-    }
+    // 渲染招采申请内容
+    renderBidApply();
 })();
 
-function addAttachRow() {
+// ========== 渲染招采申请 ==========
+function renderBidApply() {
+    var dal = DETAIL_DATA[currentMethod];
+    if (!dal || !dal.nodes || !dal.nodes[0]) {
+        document.getElementById('formContainer').innerHTML = '<p class="text-muted" style="padding:20px;">暂无数据</p>';
+        return;
+    }
+
+    var nd = dal.nodes[0];
+    var f = nd.form || {};
+    var _editable = true; // 补充模式始终可编辑
+
+    // 渲染表单
+    var fh = '<div class="form-row">'
+        + '<div class="form-group"><label>招标过程编号</label><input class="form-control" id="fld_procCode" value="' + (f.procCode || '') + '" readonly></div>'
+        + '<div class="form-group"><label>招标过程名称</label><input class="form-control" id="fld_procName" value="' + (f.procName || '') + '"></div></div>';
+    fh += '<div class="form-row">'
+        + '<div class="form-group"><label>公司编号</label><input class="form-control" id="fld_companyCode" value="' + (f.companyCode || '') + '" readonly></div>'
+        + '<div class="form-group"><label>招采限额</label><input class="form-control" id="fld_limitAmountText" value="' + (f.limitAmountText || '') + '" readonly></div></div>';
+    fh += '<div class="form-row">'
+        + '<div class="form-group"><label>招标方式</label><select class="form-control" id="fld_method" disabled><option>' + f.method + '</option></select></div>'
+        + '<div class="form-group"><label>招采类型</label><input class="form-control" value="单项招采" disabled></div></div>';
+    fh += '<div class="form-row">'
+        + '<div class="form-group"><label>采购类别</label><input class="form-control" id="fld_category" value="' + (f.category || '') + '"></div>'
+        + '<div class="form-group"><label>采购项说明</label><input class="form-control" id="fld_note" value="' + (f.note || '') + '"></div></div>';
+    fh += '<div class="form-row">'
+        + '<div class="form-group"><label>经办人</label><input class="form-control" id="fld_handler" value="' + (f.handler || '') + '"></div>'
+        + '<div class="form-group"><label>申请日期</label><input class="form-control" id="fld_applyDate" value="' + (f.applyDate || '') + '"></div></div>';
+    fh += '<div class="form-row">'
+        + '<div class="form-group"><label>招标代理机构</label><input class="form-control" id="fld_agent" value="' + (f.agent || '') + '"></div>'
+        + '<div class="form-group"><label>拟发标日期</label><input type="date" class="form-control" id="fld_planIssueDate" value="' + (f.planIssueDate || '') + '"></div></div>';
+    fh += '<div class="form-row">'
+        + '<div class="form-group"><label>计划开标/结束日期</label><input type="date" class="form-control" id="fld_planEndDate" value="' + (f.planEndDate || '') + '"></div>'
+        + '<div class="form-group"><label>是否进场招标</label><input class="form-control" id="fld_inHouse" value="' + (f.inHouse || '') + '"></div></div>';
+    var statusText = f.approvalStatus || '审批通过';
+    var statusColor = (statusText.indexOf('通过') >= 0 || statusText.indexOf('生效') >= 0) ? 'tag tag-green' : (statusText.indexOf('中') >= 0 ? 'tag tag-yellow' : 'tag tag-gray');
+    fh += '<div class="form-row">'
+        + '<div class="form-group"><label>招采限价（元）</label><input type="number" class="form-control" id="fld_limitAmount" value="' + (f.limitAmount || '') + '"></div>'
+        + '<div class="form-group"><label>审批状态</label><div><span class="' + statusColor + '">' + statusText + '</span></div></div></div>';
+    fh += '<div class="form-group" style="margin-bottom:0;"><label>招标范围及相关说明</label><textarea class="form-control" id="fld_scope" rows="3">' + (f.scope || '') + '</textarea></div>';
+    document.getElementById('formContainer').innerHTML = fh;
+
+    // 渲染采购明细
+    var ps = nd.purchases || [];
+    var ptb = document.getElementById('purchaseBody');
+    var ph = '';
+    for (var i = 0; i < ps.length; i++) {
+        var p = ps[i];
+        ph += '<tr data-idx="' + p.idx + '" style="cursor:pointer;" onclick="onPurchaseSelect(this)">'
+            + '<td style="text-align:center;"><input type="radio" name="pSel"' + (i === 0 ? ' checked' : '') + '></td>'
+            + '<td>' + p.name + '</td><td>' + p.planCode + '</td><td>' + p.lineNo + '</td><td>' + p.purchaseName + '</td>'
+            + '<td><input type="number" class="form-control" style="width:100px;height:28px;font-size:12px;" value="' + (p.amount || 0) + '" onchange="updatePurAmt(' + p.idx + ',this.value)"></td>'
+            + '<td><input type="number" class="form-control" style="width:50px;height:28px;font-size:12px;" value="' + p.sections + '" onchange="updatePurSecs(' + p.idx + ',this.value)"></td>'
+            + '<td>' + p.cat + '</td><td>' + p.subCat + '</td><td>' + p.target + '</td></tr>';
+    }
+    ptb.innerHTML = ph;
+
+    // 渲染标段明细
+    var sd = nd.sectionData || {};
+    _selectedPurIdx = (ps.length > 0) ? ps[0].idx : undefined;
+    renderSections(_selectedPurIdx);
+
+    // 显示标段工具栏
+    document.getElementById('sectionToolbar').style.display = 'flex';
+
+    // 渲染附件
+    var ats = nd.attachments || [];
     var tb = document.getElementById('attachBody');
+    var ah = '';
+    for (var i = 0; i < ats.length; i++) {
+        var o = ats[i];
+        ah += '<tr>'
+            + '<td><input type="checkbox" class="attach-cb"></td>'
+            + '<td><span class="op-icon" onclick="if(confirm(\'确认删除？\'))this.closest(\'tr\').remove()">🗑</span></td>'
+            + '<td contenteditable="true">' + (o.type || '') + '</td>'
+            + '<td contenteditable="true">' + (o.name || '') + '</td>'
+            + '<td contenteditable="true">' + (o.file || '') + '</td>'
+            + '<td contenteditable="true" style="font-family:monospace;font-size:10px;">' + (o.fileId || '') + '</td>'
+            + '<td contenteditable="true">' + (o.fileType || '') + '</td>'
+            + '<td contenteditable="true" style="text-align:right;">' + (o.size || '') + '</td>'
+            + '<td contenteditable="true">' + (o.ts || '') + '</td>'
+            + '<td contenteditable="true">' + (o.user || '') + '</td></tr>';
+    }
+    tb.innerHTML = ah || '<tr><td colspan="10" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
+
+    // 显示附件工具栏
+    document.getElementById('attachToolbar').style.display = 'flex';
+
+    // 默认选中第1个采购
+    var firstPurchase = document.querySelector('#purchaseBody tr');
+    if (firstPurchase) onPurchaseSelect(firstPurchase);
+}
+
+// ========== 采购明细操作 ==========
+function updatePurAmt(idx, val) {
+    var ps = DETAIL_DATA[currentMethod].nodes[0].purchases || [];
+    for (var i = 0; i < ps.length; i++) {
+        if (ps[i].idx === idx || ps[i].idx === parseInt(idx)) { ps[i].amount = parseFloat(val) || 0; break; }
+    }
+}
+
+function updatePurSecs(idx, val) {
+    var ps = DETAIL_DATA[currentMethod].nodes[0].purchases || [];
+    for (var i = 0; i < ps.length; i++) {
+        if (ps[i].idx === idx || ps[i].idx === parseInt(idx)) { ps[i].sections = parseInt(val) || 0; break; }
+    }
+}
+
+function onPurchaseSelect(row) {
+    document.querySelectorAll('#purchaseBody tr').forEach(function(r) { r.classList.remove('selected'); });
+    row.classList.add('selected');
+    row.querySelector('input[type="radio"]').checked = true;
+    var idx = parseInt(row.getAttribute('data-idx'));
+    _selectedPurIdx = idx;
+    renderSections(idx);
+}
+
+// ========== 标段操作 ==========
+function renderSections(idx) {
+    var sd = DETAIL_DATA[currentMethod].nodes[0].sectionData || {};
+    var secs = (sd[idx] || []);
+    var stb = document.getElementById('sectionBody');
+    var sh = '';
+    for (var i = 0; i < secs.length; i++) {
+        var sc = secs[i];
+        sh += '<tr data-sidx="' + i + '"><td style="text-align:center;"><input type="radio" name="sSel"></td>'
+            + '<td>' + (sc.name || '') + '</td><td>' + (sc.planCode || '') + '</td><td>' + (sc.planRow || '') + '</td>'
+            + '<td><input class="form-control" style="width:100px;height:28px;font-size:12px;" value="' + (sc.purchaseName || '') + '" onchange="updateSec(' + idx + ',' + i + ',\'purchaseName\',this.value)"></td>'
+            + '<td><input type="number" class="form-control" style="width:100px;height:28px;font-size:12px;" value="' + (sc.amount || 0) + '" onchange="updateSec(' + idx + ',' + i + ',\'amount\',parseFloat(this.value)||0)"></td>'
+            + '<td><input class="form-control" style="width:60px;height:28px;font-size:12px;" value="' + (sc.sectionNo || '') + '" onchange="updateSec(' + idx + ',' + i + ',\'sectionNo\',this.value)"></td>'
+            + '<td>' + (sc.cat || '') + '</td><td>' + (sc.subCat || '') + '</td><td>' + (sc.target || '') + '</td></tr>';
+    }
+    stb.innerHTML = sh;
+}
+
+function updateSec(idx, si, field, val) {
+    var sd = DETAIL_DATA[currentMethod].nodes[0].sectionData || {};
+    var secs = (sd[idx] || []);
+    if (secs[si]) secs[si][field] = val;
+}
+
+function addSectionRow() {
+    var idx = _selectedPurIdx;
+    var ps = DETAIL_DATA[currentMethod].nodes[0].purchases || [];
+    if (idx === undefined && ps.length > 0) idx = ps[0].idx;
+    if (idx === undefined) { alert('请先选择一条采购明细'); return; }
+    var pur = null;
+    for (var k = 0; k < ps.length; k++) { if (ps[k].idx === idx) { pur = ps[k]; break; } }
+    if (!pur) pur = ps[0];
+    var sd = DETAIL_DATA[currentMethod].nodes[0].sectionData || {};
+    var secs = sd[idx] || [];
+    secs.push({
+        purchaseName: pur.purchaseName || '', planCode: pur.planCode || '', planRow: pur.lineNo || '',
+        name: pur.purchaseName || '', cat: pur.cat || '', subCat: pur.subCat || '', target: pur.target || '',
+        amount: 0, sectionNo: ''
+    });
+    sd[idx] = secs;
+    renderSections(idx);
+}
+
+function deleteSectionRow() {
+    var idx = _selectedPurIdx;
+    if (idx === undefined) { alert('请先选择一条采购明细'); return; }
+    var checked = document.querySelector('#sectionBody input[name="sSel"]:checked');
+    if (!checked) { alert('请先勾选要删除的标段行'); return; }
+    var tr = checked.closest('tr');
+    var si = parseInt(tr.getAttribute('data-sidx'));
+    if (isNaN(si)) return;
+    if (confirm('确认删除选中标段？')) {
+        var sd = DETAIL_DATA[currentMethod].nodes[0].sectionData || {};
+        var secs = sd[idx] || [];
+        secs.splice(si, 1);
+        sd[idx] = secs;
+        renderSections(idx);
+    }
+}
+
+// ========== 附件操作 ==========
+function createAttachRow() {
+    var tb = document.getElementById('attachBody');
+    if (!tb) return;
     var tr = document.createElement('tr');
-    tr.innerHTML = '<td><input class="form-control form-control-sm" placeholder="补充招标文件/澄清回复" style="width:140px;"></td>'
-        + '<td><input class="form-control form-control-sm" placeholder="文件名" style="width:200px;"></td>'
-        + '<td><select class="form-control form-control-sm"><option>pdf</option><option>docx</option><option>xlsx</option><option>dwg</option><option>jpg</option></select></td>'
-        + '<td><input class="form-control form-control-sm" placeholder="大小" style="width:80px;"></td>'
-        + '<td><button class="btn btn-xs btn-danger" onclick="this.closest(\'tr\').remove()">删除</button></td>';
+    tr.innerHTML = '<td><input type="checkbox" class="attach-cb"></td>'
+        + '<td><span class="op-icon" onclick="if(confirm(\'确认删除？\'))this.closest(\'tr\').remove()">🗑</span></td>'
+        + '<td contenteditable="true">新附件</td>'
+        + '<td contenteditable="true"></td>'
+        + '<td contenteditable="true"></td>'
+        + '<td contenteditable="true"></td>'
+        + '<td contenteditable="true"></td>'
+        + '<td contenteditable="true"></td>'
+        + '<td contenteditable="true">' + new Date().toISOString().replace('T', ' ').substring(0, 19) + '</td>'
+        + '<td contenteditable="true">当前用户</td>';
     tb.appendChild(tr);
 }
 
+function batchDeleteAttach() {
+    var cbs = document.querySelectorAll('.attach-cb:checked');
+    if (cbs.length === 0) { alert('⚠️ 请先勾选要删除的附件行'); return; }
+    if (confirm('确认删除选中的 ' + cbs.length + ' 条附件？')) {
+        cbs.forEach(function(cb) { var r = cb.closest('tr'); if (r) r.remove(); });
+    }
+}
+
+function toggleAllAttachCb() {
+    var allCb = document.getElementById('attachSelAll');
+    var cbs = document.querySelectorAll('.attach-cb');
+    cbs.forEach(function(cb) { cb.checked = allCb.checked; });
+}
+
+// ========== 收集表单数据 ==========
+function collectFormData() {
+    var dal = DETAIL_DATA[currentMethod];
+    if (!dal || !dal.nodes || !dal.nodes[0]) return null;
+    var nd = dal.nodes[0];
+    var f = nd.form || {};
+
+    // 从 DOM 读取当前值
+    var id = function(elId) {
+        var el = document.getElementById(elId);
+        return el ? el.value : '';
+    };
+    f.procName = id('fld_procName');
+    f.category = id('fld_category');
+    f.note = id('fld_note');
+    f.handler = id('fld_handler');
+    f.applyDate = id('fld_applyDate');
+    f.agent = id('fld_agent');
+    f.planIssueDate = id('fld_planIssueDate');
+    f.planEndDate = id('fld_planEndDate');
+    f.inHouse = id('fld_inHouse');
+    f.scope = id('fld_scope');
+    var limitAmt = parseFloat(id('fld_limitAmount'));
+    if (!isNaN(limitAmt)) {
+        f.limitAmount = limitAmt;
+        f.limitAmountText = '¥' + limitAmt.toLocaleString() + '.00元';
+    }
+
+    // 收集附件（从 DOM 表格读取）
+    var attachRows = document.querySelectorAll('#attachBody tr');
+    var atts = [];
+    attachRows.forEach(function(tr) {
+        if (tr.querySelector('td[colspan]')) return; // 跳过"无附件"行
+        var tds = tr.querySelectorAll('td');
+        if (tds.length >= 10) {
+            var a = {
+                type: tds[2].textContent.trim(),
+                name: tds[3].textContent.trim(),
+                file: tds[4].textContent.trim(),
+                fileId: tds[5].textContent.trim(),
+                fileType: tds[6].textContent.trim(),
+                size: tds[7].textContent.trim(),
+                ts: tds[8].textContent.trim(),
+                user: tds[9].textContent.trim()
+            };
+            atts.push(a);
+        }
+    });
+    nd.attachments = atts;
+
+    // 收集采购明细（从 DOM 表格读取）
+    var purRows = document.querySelectorAll('#purchaseBody tr');
+    var ps = [];
+    purRows.forEach(function(tr) {
+        var idx = parseInt(tr.getAttribute('data-idx'));
+        if (isNaN(idx)) return;
+        var tds = tr.querySelectorAll('td');
+        if (tds.length >= 10) {
+            var p = {
+                idx: idx,
+                name: tds[1].textContent.trim(),
+                planCode: tds[2].textContent.trim(),
+                lineNo: tds[3].textContent.trim(),
+                purchaseName: tds[4].textContent.trim(),
+                amount: parseFloat(tds[5].querySelector('input') ? tds[5].querySelector('input').value : (tds[5].textContent.replace(/[^0-9.]/g, '') || 0)),
+                sections: parseInt(tds[6].querySelector('input') ? tds[6].querySelector('input').value : (tds[6].textContent || 0)),
+                cat: tds[7].textContent.trim(),
+                subCat: tds[8].textContent.trim(),
+                target: tds[9].textContent.trim()
+            };
+            ps.push(p);
+        }
+    });
+    nd.purchases = ps;
+
+    // 收集标段明细（从 DOM 表格读取）
+    var secRows = document.querySelectorAll('#sectionBody tr');
+    var sd = {};
+    var idx = _selectedPurIdx;
+    if (idx !== undefined) {
+        var secs = [];
+        secRows.forEach(function(tr) {
+            var tds = tr.querySelectorAll('td');
+            if (tds.length < 10) return;
+            var sc = {
+                name: tds[1].textContent.trim(),
+                planCode: tds[2].textContent.trim(),
+                planRow: tds[3].textContent.trim(),
+                purchaseName: tds[4].querySelector('input') ? tds[4].querySelector('input').value : tds[4].textContent.trim(),
+                amount: parseFloat(tds[5].querySelector('input') ? tds[5].querySelector('input').value : 0) || 0,
+                sectionNo: tds[6].querySelector('input') ? tds[6].querySelector('input').value : tds[6].textContent.trim(),
+                cat: tds[7].textContent.trim(),
+                subCat: tds[8].textContent.trim(),
+                target: tds[9].textContent.trim()
+            };
+            secs.push(sc);
+        });
+        sd[idx] = secs;
+    }
+    nd.sectionData = sd;
+
+    return nd;
+}
+
+// ========== 提交补充审批 ==========
 function submitSupplement() {
     var reason = document.getElementById('txtReason').value.trim();
     if (!reason) { showAlert('⚠️ 请填写补充原因。'); return; }
 
-    // 收集变更内容
-    var changes = {};
+    // 从 DOM 收集最新数据
+    collectFormData();
+
     var dal = DETAIL_DATA[currentMethod];
-    var node0 = dal && dal.nodes && dal.nodes[0] && dal.nodes[0].form;
+    if (!dal) { showAlert('⚠️ 数据异常'); return; }
 
-    if (node0) {
-        var newAmount = parseFloat(document.getElementById('txtLimitAmount').value);
-        var oldAmount = node0.limitAmount;
-        if (newAmount && newAmount !== oldAmount) {
-            changes.limitAmount = { old: oldAmount, new: newAmount };
-            changes.limitAmountText = { old: node0.limitAmountText, new: '¥' + newAmount.toLocaleString() + '.00元' };
-        }
+    var node0 = dal.nodes && dal.nodes[0];
+    var originNode0 = JSON.parse(JSON.stringify(dal.nodes[0])); // 备份原始数据做对比
 
-        var newDate = document.getElementById('txtPlanEndDate').value;
-        if (newDate && newDate !== node0.planEndDate) {
-            changes.planEndDate = { old: node0.planEndDate, new: newDate };
-        }
+    // 再收集一次（collectFormData 已写入 DETAIL_DATA，重新读取对比）
+    collectFormData();
 
-        var newAgent = document.getElementById('txtAgent').value.trim();
-        if (newAgent && newAgent !== node0.agent) {
-            changes.agent = { old: node0.agent, new: newAgent };
+    // 与原数据对比，收集变化
+    var originForm = originNode0 ? originNode0.form : {};
+    var newForm = node0 ? node0.form : {};
+    var changes = {};
+    if (originForm && newForm) {
+        if (newForm.limitAmount !== undefined && newForm.limitAmount !== originForm.limitAmount) {
+            changes.limitAmount = { old: originForm.limitAmount, new: newForm.limitAmount };
+            changes.limitAmountText = { old: originForm.limitAmountText || ('¥' + Number(originForm.limitAmount).toLocaleString() + '.00元'), new: '¥' + Number(newForm.limitAmount).toLocaleString() + '.00元' };
         }
-
-        var newScope = document.getElementById('txtScope').value.trim();
-        if (newScope && newScope !== node0.scope) {
-            changes.scope = { old: node0.scope, new: newScope };
-        }
+        ['planEndDate', 'agent', 'scope', 'procName', 'category', 'handler', 'applyDate', 'planIssueDate', 'inHouse'].forEach(function(field) {
+            if (newForm[field] !== undefined && newForm[field] !== originForm[field]) {
+                changes[field] = { old: originForm[field], new: newForm[field] };
+            }
+        });
     }
 
-    if (Object.keys(changes).length === 0) { showAlert('⚠️ 请至少修改一个字段。'); return; }
-
-    // 收集附件
-    var attachRows = document.querySelectorAll('#attachBody tr');
+    // 收集附件（从 node0 中读取）
     var atts = [];
-    attachRows.forEach(function(r) {
-        var cells = r.querySelectorAll('input,select');
-        if (cells.length >= 2 && cells[0].value.trim()) {
-            atts.push({
-                type: cells[0].value.trim(),
-                name: cells[1].value.trim() || cells[0].value.trim(),
-                file: cells[1].value.trim() || '',
-                fileType: cells[2] ? cells[2].value : 'pdf',
-                size: cells[3] ? cells[3].value : '',
-                fileId: 'F' + String(Date.now()).substring(5),
-                ts: new Date().toISOString().replace('T',' ').substring(0,19),
-                user: '当前用户'
-            });
-        }
-    });
+    if (node0 && node0.attachments) {
+        atts = node0.attachments.filter(function(a) { return a.name && a.name.trim(); });
+    }
 
     // 构建补充记录
     var supp = {
@@ -230,7 +500,7 @@ function submitSupplement() {
     if (!dal.supplements) dal.supplements = [];
     dal.supplements.push(supp);
 
-    // 更新 sessionStorage
+    // 同步回 procNodeData
     try { sessionStorage.setItem('procNodeData', JSON.stringify(DETAIL_DATA)); } catch(e) {}
 
     showAlert('✅ 第' + newVersion + '次补充招标已提交审批。');
