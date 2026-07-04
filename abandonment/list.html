@@ -132,6 +132,8 @@ function canAbandon(methodKey) {
     var data = DETAIL_DATA[methodKey];
     if (!data || !data.nodes) return false;
     if (data.info && (data.info.status === '弃标' || data.info.status === '流标')) return false;
+    // 仅允许 进行中 和 已完成 两个状态的招采可弃标/流标
+    if (data.info && data.info.status !== '进行中' && data.info.status !== '已完成') return false;
     for (var key in data.nodes) {
         var node = data.nodes[key];
         if (node.form && node.form.approvalStatus === '审批中') return false;
