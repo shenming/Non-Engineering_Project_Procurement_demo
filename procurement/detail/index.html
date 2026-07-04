@@ -46,8 +46,7 @@
             <span class="tag" id="infoStatusTag" style="margin-left:8px;">进行中</span>
         </div>
         <div class="flex gap-8">
-            <button id="btnEdit" class="btn btn-sm btn-outline" onclick="editProcurement()">✏️ 编辑</button>
-            <button id="btnDelete" class="btn btn-sm btn-danger" onclick="confirmDelete()">🗑️ 删除</button>
+             <button id="btnEdit" class="btn btn-sm btn-outline" onclick="editProcurement()">✏️ 编辑</button>
             <button id="btnSubmit" class="btn btn-sm btn-primary" onclick="submitNode()">📤 提交</button>
             <button id="btnSupplement" class="btn btn-sm btn-outline" onclick="createSupplement()" style="display:none;">📝 补充招标</button>
         </div>
@@ -228,16 +227,11 @@ function updateActionButtons() {
 
     var editBtn = document.getElementById('btnEdit');
     var submitBtn = document.getElementById('btnSubmit');
-    var deleteBtn = document.getElementById('btnDelete');
 
     // 编辑/提交：仅当当前 active 步骤状态为"草稿"或"待推进"时可操作
     var canEdit = (approvalStatus === '草稿' || approvalStatus === '待推进');
     if (editBtn) editBtn.disabled = !canEdit;
     if (submitBtn) submitBtn.disabled = !canEdit;
-
-    // 删除：仅当在招采申请（步骤0）且该步骤状态为"草稿"时可删除
-    var canDelete = (activeStep === 0 && step0Status === '草稿');
-    if (deleteBtn) deleteBtn.disabled = !canDelete;
 }
 
 function editProcurement() {
@@ -248,10 +242,6 @@ function editProcurement() {
     };
     sessionStorage.setItem('procEditContext', JSON.stringify(ctx));
     navTo('procurement', 'procurement/edit/index.html');
-}
-
-function confirmDelete() {
-    if (confirm('确认删除此采购记录？')) alert('🗑️ 已删除');
 }
 
 function submitNode() {
