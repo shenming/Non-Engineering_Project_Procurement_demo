@@ -227,7 +227,7 @@ function confirmAbandonSelection() {
     var itemData = JSON.parse(decodeURIComponent(checkedRow.getAttribute('data-item')));
     sessionStorage.setItem('abandonProcData', JSON.stringify(itemData));
     closeAbandonModal();
-    navTo('abandonment', '../procurement/bid-abandon.html');
+    navTo('abandonment', 'bid-abandon.html');
 }
 </script>
 
