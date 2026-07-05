@@ -97,8 +97,30 @@ var DETAIL_DATA = {
         },
         supplements: [
             {
-                version: 1,
+                version: 0,
                 supplementId: 'ZB-2026-003-BC01',
+                status: '已生效',
+                createDate: '2026-06-25',
+                submitDate: '2026-06-26',
+                reason: '初始版本',
+                changes: {
+                    planEndDate: { old: '2026-07-25', new: '2026-08-15' },
+                    scope: {
+                        old: '集团总部大楼A/B座、园区绿化、安保等物业服务，服务期12个月。',
+                        new: '-'
+                    },
+                    limitAmountText: { old: '¥1,865,000.00元', new: '-' },
+                    limitAmount: { old: 1865000, new: 0 }
+                },
+                attachments: [
+                    { type: '补充招标文件', name: '补充招标文件_第1次_集团年度物业服务.pdf', file: 'ZB-2026-003-BC1-ZB.pdf', fileId: 'F20260625001', fileType: 'pdf', size: '1,234,567', ts: '2026-06-25 14:30', user: '李经理' },
+                    { type: '澄清回复', name: '供应商答疑澄清汇总.xlsx', file: 'ZB-2026-003-BC1-CLARIFY.xlsx', fileId: 'F20260625002', fileType: 'xlsx', size: '456,789', ts: '2026-06-25 15:00', user: '李经理' }
+                ],
+                approval: { status: '审批通过', date: '2026-06-26', flowId: 'WF-2026-003-S1' }
+            },
+            {
+                version: 1,
+                supplementId: 'ZB-2026-003-BC02',
                 status: '已生效',
                 createDate: '2026-06-25',
                 submitDate: '2026-06-26',
@@ -120,8 +142,8 @@ var DETAIL_DATA = {
             },
             {
                 version: 2,
-                supplementId: 'ZB-2026-003-BC02',
-                status: '审批中',
+                supplementId: 'ZB-2026-003-BC03',
+                status: '已生效',
                 createDate: '2026-07-02',
                 submitDate: '2026-07-02',
                 reason: '集团新增C座食堂运营面积扩大，需追加物业服务预算并调整招标代理机构以确保覆盖新增服务范围。',
@@ -242,8 +264,27 @@ var DETAIL_DATA = {
         },
         supplements: [
             {
-                version: 1,
+                version: 0,
                 supplementId: 'ZB-2026-011-BC01',
+                status: '已生效',
+                createDate: '2026-05-18',
+                submitDate: '2026-05-19',
+                reason: '初始版本',
+                changes: {
+                    scope: {
+                        old: '集团总部及下属企业弱电系统（监控、门禁、网络布线等）年度维保服务。',
+                        new: '-'
+                    }
+                },
+                attachments: [
+                    { type: '补充招标文件', name: '补充招标文件_第1次_弱电维保.pdf', file: 'ZB-2026-011-BC1-ZB.pdf', fileId: 'F20260518001', fileType: 'pdf', size: '1,123,456', ts: '2026-05-18 10:00', user: '陈芳' },
+                    { type: '补充图纸', name: '弱电系统拓扑图_v2.dwg', file: 'ZB-2026-011-BC1-DWG.dwg', fileId: 'F20260518002', fileType: 'dwg', size: '3,567,890', ts: '2026-05-18 10:30', user: '陈芳' }
+                ],
+                approval: { status: '审批通过', date: '2026-05-19', flowId: 'WF-2026-011-S1' }
+            },
+            {
+                version: 1,
+                supplementId: 'ZB-2026-011-BC02',
                 status: '已生效',
                 createDate: '2026-05-18',
                 submitDate: '2026-05-19',
@@ -262,7 +303,7 @@ var DETAIL_DATA = {
             },
             {
                 version: 2,
-                supplementId: 'ZB-2026-011-BC02',
+                supplementId: 'ZB-2026-011-BC03',
                 status: '已生效',
                 createDate: '2026-05-28',
                 submitDate: '2026-05-29',

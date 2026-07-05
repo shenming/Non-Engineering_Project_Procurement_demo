@@ -45,7 +45,8 @@
     var params = {};
     location.search.replace('?','').split('&').forEach(function(s) { var kv=s.split('='); if(kv[0]) params[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]||''); });
     var method = params.method || '公开招标';
-    var version = parseInt(params.version) || 1;
+    var versionParsed = parseInt(params.version);
+    var version = isNaN(versionParsed) ? 1 : versionParsed;
 
     var dal = DETAIL_DATA[method];
     if (!dal) { document.getElementById('detailContent').innerHTML = '<div class="text-muted" style="padding:40px;text-align:center;">未找到数据</div>'; return; }
