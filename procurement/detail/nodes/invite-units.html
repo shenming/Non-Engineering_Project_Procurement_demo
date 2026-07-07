@@ -25,6 +25,10 @@
             <div><span id="statusTag" class="tag tag-green">审批通过</span></div>
         </div>
         <div class="text-sm fw-600" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;margin-bottom:8px;">📎 附件管理</div>
+        <div style="padding:8px 12px;background:var(--gray-50);border-radius:var(--radius);margin-bottom:12px;display:none;" id="attachRequirementBar">
+            <div class="text-sm fw-600 mb-4">📋 附件要求</div>
+            <div id="attachRequirementBody"></div>
+        </div>
         <div class="table-wrap">
             <table class="attach-table">
                 <thead><tr><th style="width:30px;"><input type="checkbox" disabled></th><th style="width:100px;">操作</th><th>附件类型</th><th>附件文档名称</th><th>组件名称</th><th style="width:40px;">预览</th><th>文件类型</th><th>文件大小（字节）</th><th>时戳编码</th><th>文件上传时间</th><th>上传操作用户名</th></tr></thead>
@@ -84,6 +88,9 @@
 // 动态渲染审批状态
 var st=document.getElementById('statusTag'),sv=f.approvalStatus||'审批通过';if(st){st.textContent=sv;st.className='tag '+(sv==='审批通过'||sv==='已生效'?'tag-green':sv.indexOf('中')>=0?'tag-yellow':'tag-gray')}
 var t=document.getElementById('attachBody'),x=n.attachments||[],h='';for(var i=0;i<x.length;i++){var o=x[i];h+='<tr><td><input type="checkbox" disabled></td><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.comp||'')+'</td><td><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span></td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.time||'')+'</td><td>'+(o.user||'')+'</td></tr>'}t.innerHTML=h||'<tr><td colspan="11" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
+
+// ===== 渲染附件要求 =====
+(function(){var sn=(METHOD_STEPS[m]||[])[s]||'';if(!sn)return;var rule=getAttachmentRule(m,sn);if(!rule||(rule.required.length===0&&rule.other.length===0&&!rule.notes))return;var bar=document.getElementById('attachRequirementBar');if(!bar)return;bar.style.display='block';var r=checkRequiredAttachments(m,sn,x);var b=document.getElementById('attachRequirementBody'),h2='';if(rule.required.length>0){h2+='<div style="margin-bottom:4px;"><span class="text-sm fw-600" style="color:var(--red);">必传附件：</span>';for(var ri=0;ri<rule.required.length;ri++){var rn=rule.required[ri];h2+='<span class="tag '+(r.matched.indexOf(rn)!==-1?'tag-green':'tag-red')+'" style="margin:1px 3px;font-size:11px;">'+(r.matched.indexOf(rn)!==-1?'✅ ':'⚠️ ')+rn+'</span>'}h2+='</div>'}if(rule.other.length>0){h2+='<div style="margin-bottom:4px;"><span class="text-sm fw-600" style="color:var(--gray-600);">其他附件：</span>';for(var oi=0;oi<rule.other.length;oi++){h2+='<span class="tag tag-blue" style="margin:1px 3px;font-size:11px;background:var(--gray-100);color:var(--gray-600);">'+rule.other[oi]+'</span>'}h2+='</div>'}if(rule.notes){h2+='<div class="text-xs text-muted" style="margin-top:2px;"><span style="color:var(--orange);">💡 '+rule.notes+'</span></div>'}b.innerHTML=h2;})();
 
 // ===== 编辑模式：页面级控制 =====
 if (a.mode === 'edit') {

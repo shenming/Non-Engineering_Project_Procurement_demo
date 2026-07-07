@@ -27,6 +27,10 @@
         </div>
 
         <div class="text-sm fw-600" style="margin-top:20px;border-top:1px solid var(--gray-200);padding-top:16px;margin-bottom:8px;">📎 附件管理</div>
+        <div style="padding:8px 12px;background:var(--gray-50);border-radius:var(--radius);margin-bottom:12px;display:none;" id="attachRequirementBar">
+            <div class="text-sm fw-600 mb-4">📋 附件要求</div>
+            <div id="attachRequirementBody"></div>
+        </div>
         <div class="table-wrap">
             <table class="attach-table">
                 <thead><tr><th style="width:120px;">操作</th><th>附件类型</th><th>附件文档名称</th><th>组件名称</th><th>文件类型</th><th>文件大小（字节）</th><th>时戳编码</th><th>文件上传时间</th><th>上传操作用户名</th></tr></thead>
@@ -84,6 +88,9 @@
 </script>
 <script>
 (function initNode(){function gp(){var p={};location.search.replace('?','').split('&').forEach(function(s){var kv=s.split('=');if(kv[0])p[decodeURIComponent(kv[0])]=decodeURIComponent(kv[1]||'')});return p}var params=gp(),method=params.method||'公开招标',step=parseInt(params.step)||0,pd=JSON.parse(sessionStorage.getItem('procNodeData')||'{}');if(!pd||!pd[method]||!pd[method].nodes||!pd[method].nodes[step]){document.getElementById('cardRoot').innerHTML='<div class="card-body"><p class="text-muted">暂无数据</p></div>';return}var nd=pd[method].nodes[step],f=nd.form||{};document.getElementById('txtDesc').value=f.desc||'';var st=document.getElementById('statusTag'),sv=f.approvalStatus||'审批中';if(st){st.textContent=sv;st.className='tag '+(sv==='审批通过'||sv==='已生效'?'tag-green':sv.indexOf('中')>=0?'tag-yellow':'tag-gray')}var tbody=document.getElementById('attachBody'),atts=nd.attachments||[],html='';for(var i=0;i<atts.length;i++){var a=atts[i];html+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span></td><td>'+(a.type||'')+'</td><td>'+(a.name||'')+'</td><td>'+(a.comp||'')+'</td><td>'+(a.fileType||'')+'</td><td style="text-align:right;">'+(a.size||'')+'</td><td>'+(a.ts||'')+'</td><td>'+(a.time||'')+'</td><td>'+(a.user||'')+'</td></tr>'}tbody.innerHTML=html||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
+
+// ===== 渲染附件要求 =====
+(function(){var sn=(METHOD_STEPS[method]||[])[step]||'';if(!sn)return;var rule=getAttachmentRule(method,sn);if(!rule||(rule.required.length===0&&rule.other.length===0&&!rule.notes))return;var bar=document.getElementById('attachRequirementBar');if(!bar)return;bar.style.display='block';var r=checkRequiredAttachments(method,sn,atts);var b=document.getElementById('attachRequirementBody'),h2='';if(rule.required.length>0){h2+='<div style="margin-bottom:4px;"><span class="text-sm fw-600" style="color:var(--red);">必传附件：</span>';for(var ri=0;ri<rule.required.length;ri++){var rn=rule.required[ri];h2+='<span class="tag '+(r.matched.indexOf(rn)!==-1?'tag-green':'tag-red')+'" style="margin:1px 3px;font-size:11px;">'+(r.matched.indexOf(rn)!==-1?'✅ ':'⚠️ ')+rn+'</span>'}h2+='</div>'}if(rule.other.length>0){h2+='<div style="margin-bottom:4px;"><span class="text-sm fw-600" style="color:var(--gray-600);">其他附件：</span>';for(var oi=0;oi<rule.other.length;oi++){h2+='<span class="tag tag-blue" style="margin:1px 3px;font-size:11px;background:var(--gray-100);color:var(--gray-600);">'+rule.other[oi]+'</span>'}h2+='</div>'}if(rule.notes){h2+='<div class="text-xs text-muted" style="margin-top:2px;"><span style="color:var(--orange);">💡 '+rule.notes+'</span></div>'}b.innerHTML=h2;})();
 
 // ===== 编辑模式：页面级控制 =====
 if (params.mode === 'edit') {

@@ -58,6 +58,10 @@ body.content-page { padding: 16px; }
 </div>
 <div class="info-card">
   <div class="card-header"><h3>📎 附件管理</h3></div>
+  <div style="padding:8px 16px;border-bottom:1px solid var(--gray-200);background:var(--gray-50);display:none;" id="attachRequirementBar">
+    <div class="text-sm fw-600 mb-4">📋 附件要求</div>
+    <div id="attachRequirementBody"></div>
+  </div>
   <div class="card-body" style="padding:0;">
     <div class="sub-table-wrap">
       <table><thead><tr><th style="width:120px;">操作</th><th>附件类型</th><th>附件文档名称</th><th>组件名称</th><th>文件 ID</th><th>文件类型</th><th>文件大小(字节)</th><th>时戳</th><th>用户名</th></tr></thead>
@@ -192,6 +196,9 @@ body.content-page { padding: 16px; }
     }
     tb.innerHTML=ah||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
     if(ee)ee.style.display='none';
+
+    // ===== 渲染附件要求 =====
+    (function(){var sn=(METHOD_STEPS[m]||[])[s]||'';if(!sn)return;var rule=getAttachmentRule(m,sn);if(!rule||(rule.required.length===0&&rule.other.length===0&&!rule.notes))return;var bar=document.getElementById('attachRequirementBar');if(!bar)return;bar.style.display='block';var r=checkRequiredAttachments(m,sn,allAtts);var b=document.getElementById('attachRequirementBody'),h2='';if(rule.required.length>0){h2+='<div style="margin-bottom:4px;"><span class="text-sm fw-600" style="color:var(--red);">必传附件：</span>';for(var ri=0;ri<rule.required.length;ri++){var rn=rule.required[ri];h2+='<span class="tag '+(r.matched.indexOf(rn)!==-1?'tag-green':'tag-red')+'" style="margin:1px 3px;font-size:11px;">'+(r.matched.indexOf(rn)!==-1?'✅ ':'⚠️ ')+rn+'</span>'}h2+='</div>'}if(rule.other.length>0){h2+='<div style="margin-bottom:4px;"><span class="text-sm fw-600" style="color:var(--gray-600);">其他附件：</span>';for(var oi=0;oi<rule.other.length;oi++){h2+='<span class="tag tag-blue" style="margin:1px 3px;font-size:11px;background:var(--gray-100);color:var(--gray-600);">'+rule.other[oi]+'</span>'}h2+='</div>'}if(rule.notes){h2+='<div class="text-xs text-muted" style="margin-top:2px;"><span style="color:var(--orange);">💡 '+rule.notes+'</span></div>'}b.innerHTML=h2;})();
     window.selectSection=function(row){
         document.querySelectorAll('#sectionBody tr').forEach(function(r){r.classList.remove('selected')});
         row.classList.add('selected');row.querySelector('input[type="radio"]').checked=true;

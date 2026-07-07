@@ -57,6 +57,17 @@
     </div>
 </div>
 
+<!-- 采购附件要求 -->
+<div class="card dict-section">
+    <div class="card-header"><h3>📎 采购附件要求</h3></div>
+    <div class="card-body" style="padding:0;">
+        <table class="dict-table">
+            <thead><tr><th style="width:120px;">采购方式</th><th style="width:120px;">程序环节</th><th>必传附件</th><th>其他附件</th><th>说明</th></tr></thead>
+            <tbody id="attachRuleBody"></tbody>
+        </table>
+    </div>
+</div>
+
 <button class="btn btn-outline mt-12" onclick="navTo('settings')">← 返回配置</button>
 
 <script src="../common/scripts.js"></script>
@@ -116,6 +127,30 @@
         var tagCls = c.isAmount ? 'tag-green' : (c.id==='D6'?'tag-orange':'tag-red');
         var tagText = c.isAmount ? '金额触发' : (c.id==='D6'?'紧急触发':(c.id==='D7'?'政策触发':'人工判定'));
         html += '<tr><td>'+(i+1)+'</td><td><strong>'+c.label+'</strong></td><td class="text-sm text-muted">'+c.desc+'</td><td><span class="tag '+tagCls+'">'+tagText+'</span></td></tr>';
+    }
+    tbody.innerHTML = html;
+})();
+
+// 采购附件要求
+(function(){
+    var tbody = document.getElementById('attachRuleBody');
+    if (!tbody) return;
+    var keys = Object.keys(NODE_ATTACHMENT_RULES);
+    var html = '';
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var parts = key.split('|');
+        var method = parts[0] || '';
+        var stepName = parts[1] || '';
+        var rule = NODE_ATTACHMENT_RULES[key];
+        var reqHtml = rule.required && rule.required.length > 0
+            ? rule.required.map(function(r) { return '<span class="tag tag-red" style="margin:1px 2px;font-size:10px;">' + r + '</span>'; }).join('')
+            : '<span class="text-muted">—</span>';
+        var otherHtml = rule.other && rule.other.length > 0
+            ? rule.other.map(function(o) { return '<span class="tag" style="margin:1px 2px;font-size:10px;background:var(--gray-100);color:var(--gray-600);">' + o + '</span>'; }).join('')
+            : '<span class="text-muted">—</span>';
+        var noteText = rule.notes || '—';
+        html += '<tr><td><strong>' + method + '</strong></td><td>' + stepName + '</td><td>' + reqHtml + '</td><td>' + otherHtml + '</td><td class="text-xs text-muted">' + noteText + '</td></tr>';
     }
     tbody.innerHTML = html;
 })();

@@ -46,6 +46,10 @@ select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
         </table></div>
     </div>
     <div class="card-header" style="border-top:1px solid var(--gray-200);"><h3>📎 附件管理</h3></div>
+    <div class="card-body" style="padding:8px 16px;border-bottom:1px solid var(--gray-200);display:none;" id="attachRequirementBar">
+        <div class="text-sm fw-600 mb-4">📋 附件要求</div>
+        <div id="attachRequirementBody"></div>
+    </div>
     <div class="card-body" style="padding:0;">
         <div class="table-wrap">
             <table class="attach-table"><thead><tr><th style="width:120px;">操作</th><th>附件类型</th><th>附件文档名称</th><th>文件名（下载）</th><th>文件 ID</th><th>文件类型</th><th>文件大小（字节）</th><th>时戳</th><th>用户名</th></tr></thead>
@@ -218,6 +222,41 @@ select.form-control:disabled { cursor: not-allowed; opacity: 0.7; }
     var ats = nd.attachments||[], tb = document.getElementById('attachBody'), ah = '';
     for(var i=0;i<ats.length;i++){var o=ats[i];ah+='<tr><td><span class="op-icon disabled">📤</span><span class="op-icon disabled">🗑</span><span class="op-icon" onclick="alert(\'👁️ 预览\')">👁</span><span class="op-icon" onclick="alert(\'⬇️ 下载\')">⬇</span></td><td>'+(o.type||'')+'</td><td>'+(o.name||'')+'</td><td>'+(o.file||'')+'</td><td style="font-family:monospace;font-size:10px;">'+(o.fileId||'')+'</td><td>'+(o.fileType||'')+'</td><td style="text-align:right;">'+(o.size||'')+'</td><td>'+(o.ts||'')+'</td><td>'+(o.user||'')+'</td></tr>';}
     tb.innerHTML = ah||'<tr><td colspan="9" class="text-muted" style="text-align:center;padding:16px;">无附件</td></tr>';
+
+    // ===== 渲染附件要求 =====
+    (function() {
+        var steps = METHOD_STEPS[m] || [];
+        var stepName = steps[step] || '';
+        if (!stepName) return;
+        var rule = getAttachmentRule(m, stepName);
+        if (!rule || (rule.required.length === 0 && rule.other.length === 0 && !rule.notes)) return;
+        var bar = document.getElementById('attachRequirementBar');
+        if (!bar) return;
+        bar.style.display = 'block';
+        var result = checkRequiredAttachments(m, stepName, ats);
+        var body = document.getElementById('attachRequirementBody');
+        var h = '';
+        if (rule.required.length > 0) {
+            h += '<div style="margin-bottom:4px;"><span class="text-sm fw-600" style="color:var(--red);">必传附件：</span>';
+            for (var ri = 0; ri < rule.required.length; ri++) {
+                var rn = rule.required[ri];
+                var isMatched = result.matched.indexOf(rn) !== -1;
+                h += '<span class="tag ' + (isMatched ? 'tag-green' : 'tag-red') + '" style="margin:1px 3px;font-size:11px;">' + (isMatched ? '✅ ' : '⚠️ ') + rn + '</span>';
+            }
+            h += '</div>';
+        }
+        if (rule.other.length > 0) {
+            h += '<div style="margin-bottom:4px;"><span class="text-sm fw-600" style="color:var(--gray-600);">其他附件：</span>';
+            for (var oi = 0; oi < rule.other.length; oi++) {
+                h += '<span class="tag tag-blue" style="margin:1px 3px;font-size:11px;background:var(--gray-100);color:var(--gray-600);">' + rule.other[oi] + '</span>';
+            }
+            h += '</div>';
+        }
+        if (rule.notes) {
+            h += '<div class="text-xs text-muted" style="margin-top:2px;"><span style="color:var(--orange);">💡 ' + rule.notes + '</span></div>';
+        }
+        body.innerHTML = h;
+    })();
 
     // ===== 保存校验 + 数据回写（监听父页面消息）=====
     if(_editMode){
